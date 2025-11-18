@@ -1,0 +1,8 @@
+# Project exclude paths
+/anaconda_projects/
+/model_env/
+/output_data/
+/placement_ext/
+/points_all/
+/Prj_25.gdb/
+/years.gdb/
