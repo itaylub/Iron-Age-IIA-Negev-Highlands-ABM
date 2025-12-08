@@ -82,7 +82,9 @@ Two dynamic anthropogenic factors emerge from accumulated human activity across 
 
 Overall environmental suitability combines weighted parameters through linear summation:
 
-where calibrated weights (W<sub>i</sub>) determine relative parameter importance (Section 4.6). Parameters included in this summation are: proximity to Tel el-Qudeirat, proximity to permanent water sources, mean annual rainfall, slope, reuse of previously built sites, multi-annual resource exhaustion, and annual rainfall. Notably, proximity to arable soils and available pasture are excluded from the suitability calculation because both derive from annual rainfall; including them would overrepresent this base environmental resource.
+$$S_{total} = \sum_{i=1}^{n} W_i \cdot P_i$$
+
+where calibrated weights $(W_i)$ determine relative parameter importance (Section 4.6). Parameters included in this summation are: proximity to Tel el-Qudeirat, proximity to permanent water sources, mean annual rainfall, slope, reuse of previously built sites, multi-annual resource exhaustion, and annual rainfall. Notably, proximity to arable soils and available pasture are excluded from the suitability calculation because both derive from annual rainfall; including them would overrepresent this base environmental resource.
 
 All environmental layers are resampled to the model's 250m resolution and normalized to 0-10 scales through fuzzy membership functions (see [ARCGIS documentation](https://pro.arcgis.com/en/pro-app/3.3/tool-reference/spatial-analyst/fuzzy-membership.htm)), with transformation parameters tailored to each variable's relationship with settlement suitability. This preprocessing ensures computational compatibility while preserving meaningful variation across the heterogeneous Negev Highlands landscape.
 
@@ -110,9 +112,9 @@ From Year 2 onward, households augment environmental suitability with personal e
 
 **Experience-Based Suitability Modification**
 
-Households modify base environmental suitability through two additive adjustments. Territorial attachment operates through distance decay: cells within or near the previous year's territory receive suitability bonuses inversely proportional to distance from territory boundaries (up to 10 cells beyond), calculated as . This captures spatial inertia observed in pastoral systems where households preferentially return to familiar areas absent compelling reasons to relocate \[CITE: ethnographic examples of pastoral territorial attachment\].
+Households modify base environmental suitability through two additive adjustments. Territorial attachment operates through distance decay: cells within or near the previous year's territory receive suitability bonuses inversely proportional to distance from territory boundaries (up to 10 cells beyond), calculated as $bonus = \frac{k}{d + 1}$. This captures spatial inertia observed in pastoral systems where households preferentially return to familiar areas absent compelling reasons to relocate \[CITE: ethnographic examples of pastoral territorial attachment\].
 
-Memory adjustments apply location-specific modifications based on past occupation quality. Each household stores previous camp locations, experienced environmental quality, and occupation year. Memory influences future placement through time-weighted adjustments decaying hyperbolically as , with recent experiences weighing more heavily than distant memories \[CITE: cognitive psychology of spatial memory or ethnographic pastoral examples\].
+Memory adjustments apply location-specific modifications based on past occupation quality. Each household stores previous camp locations, experienced environmental quality, and occupation year. Memory influences future placement through time-weighted adjustments decaying hyperbolically as $w = \frac{1}{(T - t) + 1}$, with recent experiences weighing more heavily than distant memories \[CITE: cognitive psychology of spatial memory or ethnographic pastoral examples\].
 
 Memory effects vary by experience quality. Locations with favourable conditions (environmental quality ≥5 on 0-10 scale) receive positive suitability adjustments, encouraging return visits. Locations with marginal conditions (quality <5) suffer negative adjustments, discouraging immediate reuse. Critically, locations occupied in the current year receive fixed penalties regardless of quality, preventing immediate reoccupation and forcing annual movement. Memory persistence incorporates stochastic decay, with individual memories having variable lifespans averaging 5-10 years, reflecting imperfect intergenerational knowledge transmission.
 
@@ -134,7 +136,7 @@ Household economic viability depends on managing three interconnected resources:
 
 Households manage goat herds initialized around 105 goats (used as representative for all livestock) per nuclear family unit (approximately 1,050 animals per household; adapted from Rosen and Finkelstein 1992). The model tracks herd demographics through four general age-sex categories following proportions documented in literature, with differential productivity values reflecting their economic roles (Dahl and Hjort 1976:96; Günther et al. 2021): juvenile males (14.8%, value 0.3), adult males (8.8%, value 0.4), juvenile females (18.5%, value 0.25), and adult females (57.9%, value 0.2).
 
-Annual surplus generation converts livestock productivity into abstract resource units from animals exceeding subsistence requirements, calculated as manpower × 18 animals per person adjusted for environmental stress. Livestock productivity responds to environmental carrying capacity evaluated within a 25-cell radius, where medium-quality pasture (5 on 0-10 scale) supports 1.125 goats per 250m cell. When herd size exceeds local carrying capacity, stress accumulates through additional maintenance costs (15% of herd size × stress ratio), reducing surplus generation.
+Annual surplus generation converts livestock productivity into abstract resource units from animals exceeding subsistence requirements, calculated as $manpower \times 18$ animals per person adjusted for environmental stress. Livestock productivity responds to environmental carrying capacity evaluated within a 25-cell radius, where medium-quality pasture (5 on 0-10 scale) supports 1.125 goats per 250m cell. When herd size exceeds local carrying capacity, stress accumulates through additional maintenance costs (15% of herd size × stress ratio), reducing surplus generation.
 
 Agricultural potential within household territories reduces livestock subsistence requirements by up to 40%, enabling more livestock productivity to be converted into surplus (Rosen and Finkelstein 1992; Günther et al. 2021). Copper trade participation appears implicitly through reduced per-capita livestock requirements, acknowledging additional economic resources without explicitly modelling trade mechanics.
 
@@ -154,6 +156,8 @@ Enclosure construction represents households' strategic investment in permanent 
 
 Prosperity assessment combines economic capacity and environmental quality:
 
+$$P = \frac{surplus + manpower + environmental\_quality}{3}$$
+
 Households achieving prosperity index >0.7 become eligible for enclosure-related investments. Actual construction requires substantially higher criteria: reusing existing enclosures demands manpower ≥15 and surplus exceeding baseline threshold, while constructing new enclosures requires prosperity index >0.8, manpower ≥40, and surplus three times baseline threshold. These escalating requirements ensure only genuinely prosperous households in favorable conditions invest in permanent structures.
 
 Prosperous households first search for existing enclosures within their territory. The search prioritizes the household's own previous constructions (built within 20 years), then considers all landscape enclosures built within 15 years at lower priority (80% weighting). Environmental factors modify selection probabilities, with enclosures in locations having higher vegetation and agricultural values receiving enhanced scores. Stochastic variation (±20%) introduces probabilistic selection rather than deterministic choice. When suitable enclosures exist and thresholds are met, households reuse structures at reduced cost (10 manpower, 6 surplus). This represents practical strategies of returning to familiar locations with existing infrastructure.
@@ -168,7 +172,7 @@ Territory establishment structures household annual spatial claims and resource 
 
 **Territory Definition and Environmental Responsiveness**
 
-Immediately following location selection, households establish territories as Moore neighbourhoods centred on camp positions (Moore neighbourhoods reference). Territory size responds to local environmental quality of standard 20-cells radius neighbourhood: poor conditions (mean quality &lt;3.5 on 0-10 scale) trigger expansion to 30-cell radius, moderate conditions (3.5-5.0) produce 25-cell radius, and favourable conditions (&gt;5.0) maintain base 20-cell radius. This adaptive sizing represents pastoral ranging strategies where households exploit larger areas when resources are scarce \[CITE: ethnographic parallels for pastoral territory/ranging behavior\]. Territories persist for single annual cycles, resetting when households reposition each year.
+Immediately following location selection, households establish territories as Moore neighbourhoods centred on camp positions (Moore neighbourhoods reference). Territory size responds to local environmental quality of standard 20-cells radius neighbourhood: poor conditions (mean quality <3.5 on 0-10 scale) trigger expansion to 30-cell radius, moderate conditions (3.5-5.0) produce 25-cell radius, and favourable conditions (>5.0) maintain base 20-cell radius. This adaptive sizing represents pastoral ranging strategies where households exploit larger areas when resources are scarce \[CITE: ethnographic parallels for pastoral territory/ranging behavior\]. Territories persist for single annual cycles, resetting when households reposition each year.
 
 **Overlap Constraints and Competition**
 
@@ -206,11 +210,21 @@ Human occupation degrades local environmental quality through two mechanisms ope
 
 These immediate degradation effects operate within a single year. After each household or nuclear family placement, the model updates the suitability raster, ensuring that subsequent location decisions by other agents account for recently degraded areas. This creates dynamic competition for high-quality locations within each annual cycle, as early-placing households affect the landscape available to those placing later.
 
-**Equations 4.x and 4.x+1: Distance-based environmental degradation from household and nuclear family occupation.** Where S'(x,y) is the updated suitability at cell (x,y), S(x,y) is the original suitability, D is the degradation factor, d(x,y) is Manhattan distance from the occupied cell, and P is the position degradation factor for the center cell. Households use D = 0.5 and P = 0.9; nuclear family camps use D = 0.3 and P = 0.5. Minimum suitability is 0.0001.
+**Equations 4.x and 4.x+1: Distance-based environmental degradation from household and nuclear family occupation.**
+
+$$S'(x,y) = \max\left(S(x,y) - D \cdot \frac{1}{d(x,y) + 1}, 0.0001\right)$$
+
+$$S'(center) = \max(S(center) \cdot (1 - P), 0.0001)$$
+
+Where $S'(x,y)$ is the updated suitability at cell $(x,y)$, $S(x,y)$ is the original suitability, $D$ is the degradation factor, $d(x,y)$ is Manhattan distance from the occupied cell, and $P$ is the position degradation factor for the center cell. Households use $D = 0.5$ and $P = 0.9$; nuclear family camps use $D = 0.3$ and $P = 0.5$. Minimum suitability is 0.0001.
 
 Beyond immediate impacts, the model tracks inter-annual cumulative degradation through occupation intensity records. Each year's occupation pattern contributes to a weighted accumulation that spans multiple years. Recent occupation exerts stronger influence than older occupation, implementing an implicit recovery process: cells occupied in the previous year have had less time to recover than those last visited five or ten years ago. The temporal decay factor of 0.7 means degradation influence diminishes exponentially with time since occupation (eq 4.x+2).
 
-**Equation 4.3: Temporal decay weighting for inter-annual degradation.** w(t) is the weight applied to occupation in year t, T is the current year, and (T-t) is years since occupation. The decay factor of 0.7 weights recent occupation more heavily, implementing implicit landscape recovery over time.
+**Equation 4.3: Temporal decay weighting for inter-annual degradation.**
+
+$$w(t) = 0.7^{(T-t)}$$
+
+Where $w(t)$ is the weight applied to occupation in year $t$, $T$ is the current year, and $(T-t)$ is years since occupation. The decay factor of 0.7 weights recent occupation more heavily, implementing implicit landscape recovery over time.
 
 Cumulative degradation effects also diffuse spatially beyond the cells directly occupied. Using inverse-distance weighting over a 5km radius, the model spreads degradation pressure across neighbouring areas, representing processes such as grazing impacts that extend beyond immediate campsites. This spatial smoothing creates broader zones of reduced suitability around repeatedly occupied areas rather than isolated degraded points.
 
@@ -236,9 +250,17 @@ Environmental initialization proceeds in three stages. First, permanent environm
 
 These environmental layers combine through weighted summation to generate the initial suitability raster following the calibrated parameter values described in Section 4.6.3. This initial suitability calculation differs from subsequent years in lacking memory-based or experience-based modifications, representing a purely environmental landscape assessment unmediated by prior occupation.
 
-Household agent creation follows a conservative carrying capacity approach adapted from Rosen and Finkelstein's (1992) estimates for pastoral populations in the Negev Highlands. The model initializes nine household agents, calculated as , where the 18 km² denominator represents the spatial requirement per nuclear family unit (doubling the 9 km² baseline to account for marginal environment constraints), and the 0.05 factor reflects conservative occupation well below theoretical maximum capacity. This reduced starting population enables testing whether the nomadic development hypothesis can generate observed archaeological patterns even from modest initial conditions, avoiding assumptions about full landscape saturation.
+Household agent creation follows a conservative carrying capacity approach adapted from Rosen and Finkelstein's (1992) estimates for pastoral populations in the Negev Highlands. The model initializes nine household agents, calculated as:
 
-Each household initializes with stochastically determined livestock holdings drawn from a normal distribution centred at approximately 1,050 goats (105 per nuclear family unit × 10 families per household), representing the productive asset base necessary for pastoral subsistence in arid environments (Dahl & Hjort 1976 on pastoral herd sizes; Rosen & Finkelstein 1992). Manpower calculations derive from livestock holdings through , ensuring minimum viable workforce while scaling labor capacity to herd management requirements. All households begin with zero surplus, as Year 0 represents initial occupation before resource accumulation. The exception occurs only in subsequent years when replacement households inherit residual surplus from failed households, maintaining regional resource continuity despite demographic turnover.
+$$N_{households} = \frac{3251.54 \text{ km}^2}{18 \text{ km}^2} \times 0.05 \approx 9$$
+
+where the 18 km² denominator represents the spatial requirement per nuclear family unit (doubling the 9 km² baseline to account for marginal environment constraints), and the 0.05 factor reflects conservative occupation well below theoretical maximum capacity. This reduced starting population enables testing whether the nomadic development hypothesis can generate observed archaeological patterns even from modest initial conditions, avoiding assumptions about full landscape saturation.
+
+Each household initializes with stochastically determined livestock holdings drawn from a normal distribution centred at approximately 1,050 goats (105 per nuclear family unit × 10 families per household), representing the productive asset base necessary for pastoral subsistence in arid environments (Dahl & Hjort 1976 on pastoral herd sizes; Rosen & Finkelstein 1992). Manpower calculations derive from livestock holdings through:
+
+$$manpower = \max\left(\sqrt{\frac{livestock}{18}}, 5\right)$$
+
+ensuring minimum viable workforce while scaling labor capacity to herd management requirements. All households begin with zero surplus, as Year 0 represents initial occupation before resource accumulation. The exception occurs only in subsequent years when replacement households inherit residual surplus from failed households, maintaining regional resource continuity despite demographic turnover.
 
 Spatial placement proceeds sequentially in randomized order, with each household executing the location selection algorithm described in Section 4.3.1. Since Year 1 lacks accumulated experience, households select positions probabilistically based solely on environmental suitability, with selection probability proportional to suitability cubed. Following location selection, households immediately establish territories and position nuclear family camps within those territories using identical suitability-based probabilistic selection. Environmental degradation applies immediately after each household placement (Section 4.4.1), ensuring subsequent households in the placement sequence encounter landscapes already modified by earlier arrivals.
 
@@ -254,7 +276,7 @@ Following all household actions, the model records agent states (manpower, lives
 
 The environmental transition phase then resets household grid positions and updates dynamic environmental layers for the upcoming year. Annual rainfall conditions are randomly selected from historical records, driving recalculation of pastoral and agricultural resources. Multi-annual exhaustion incorporates the previous year's degradation through weighted temporal accumulation (Section 4.4.1), while reuse potential updates with newly constructed enclosures. The suitability raster recalculates from these revised parameters using calibrated weights (Section 4.6.3).
 
-Household repositioning completes the transition phase. Each household's memory undergoes stochastic pruning, retaining experiences where (current year - memory year) × random value <5. Households then execute location selection (Section 4.3.1) using personalized suitability rasters incorporating updated environmental conditions and retained memories. Territory establishment follows, nuclear family members position within territories, and environmental degradation applies immediately, completing the cycle.
+Household repositioning completes the transition phase. Each household's memory undergoes stochastic pruning, retaining experiences where $(current\_year - memory\_year) \times random\_value < 5$. Households then execute location selection (Section 4.3.1) using personalized suitability rasters incorporating updated environmental conditions and retained memories. Territory establishment follows, nuclear family members position within territories, and environmental degradation applies immediately, completing the cycle.
 
 The simulation terminates after Year 74's household decision-making phase without executing a final environmental transition, preserving the last year's spatial configuration for pattern analysis.
 
@@ -328,9 +350,9 @@ Parameter optimization employed Optuna (Akiba et al. 2019), a hyperparameter opt
 
 **Parameter Search Space and Representation**
 
-Each of the seven weights was parameterized as a discrete integer ranging from 0 to 7, creating eight ordinal importance levels for each environmental factor. This discretization serves two purposes. First, discrete integer spaces substantially reduce computational search space compared to continuous parameters: seven continuous parameters would require exploring infinite combinations, while seven discrete parameters with eight levels each define a finite (though still very large) search space of possible combinations. Second, the ordinal scale provides intuitive importance categorization where 0 represents exclusion of that factor, low values (1-2) indicate minor influence, moderate values (3-5) suggest intermediate importance, and high values (6-7) denote dominant factors. This representation balances exploratory flexibility with computational tractability.
+Each of the seven weights was parameterized as a discrete integer ranging from 0 to 7, creating eight ordinal importance levels for each environmental factor. This discretization serves two purposes. First, discrete integer spaces substantially reduce computational search space compared to continuous parameters: seven continuous parameters would require exploring infinite combinations, while seven discrete parameters with eight levels each define a finite (though still very large) search space of $8^7 = 2,097,152$ possible combinations. Second, the ordinal scale provides intuitive importance categorization where 0 represents exclusion of that factor, low values (1-2) indicate minor influence, moderate values (3-5) suggest intermediate importance, and high values (6-7) denote dominant factors. This representation balances exploratory flexibility with computational tractability.
 
-The seven discrete weights function not as independent parameters but as relative importance values normalized to sum to 1 before application. During each optimization trial, sampled integer values are summed and then divided by that sum, converting raw integers into proportional weights. For example, if sampled values were \[3, 0, 5, 2, 1, 4, 6\], they would normalize to \[0.143, 0.000, 0.238, 0.095, 0.048, 0.190, 0.286\]. This normalization ensures that weights represent relative environmental preferences rather than absolute scaling factors, preventing the search from exploring arbitrary magnitude combinations while maintaining interpretable importance rankings.
+The seven discrete weights function not as independent parameters but as relative importance values normalized to sum to 1 before application. During each optimization trial, sampled integer values are summed and then divided by that sum, converting raw integers into proportional weights. For example, if sampled values were [3, 0, 5, 2, 1, 4, 6], they would normalize to [0.143, 0.000, 0.238, 0.095, 0.048, 0.190, 0.286]. This normalization ensures that weights represent relative environmental preferences rather than absolute scaling factors, preventing the search from exploring arbitrary magnitude combinations while maintaining interpretable importance rankings.
 
 The environmental parameters calibrated through these weights represent factors directly incorporated into the suitability calculation. Parameters manifested indirectly through other variables were excluded from calibration to avoid redundancy. For example, agricultural suitability derives from the interaction between soil types and annual rainfall, making separate calibration of agricultural parameters unnecessary given that annual rainfall weights are optimized. Similarly, pasture availability emerges from vegetation type and annual rainfall interactions, eliminating need for independent pasture weighting.
 
@@ -340,13 +362,23 @@ The objective function quantifies model-data fit by combining two pattern simila
 
 Pattern similarity assessment proceeds through two parallel calculations (Figure 4.X). Spatial distribution similarity employs standard deviational ellipse overlap analysis comparing simulated and observed site distributions. Both datasets undergo ellipse calculation capturing 95% of points (two standard deviations), yielding ellipse area, centroid location, major and minor axes, and orientation angle. The spatial similarity component quantifies overlap through:
 
-Where represents area shared by both ellipses and represents non-overlapping areas. This metric ranges from -1 (complete separation) through 0 (equal overlap and non-overlap) to 1 (perfect overlap). The spatial similarity score converts this to: , yielding values from 0 (perfect match) to 2 (maximum dissimilarity).
+$$overlap\_metric = \frac{A_{overlap}}{A_{overlap} + A_{non-overlap}}$$
+
+Where $A_{overlap}$ represents area shared by both ellipses and $A_{non-overlap}$ represents non-overlapping areas. This metric ranges from -1 (complete separation) through 0 (equal overlap and non-overlap) to 1 (perfect overlap). The spatial similarity score converts this to:
+
+$$spatial\_score = 1 - overlap\_metric$$
+
+yielding values from 0 (perfect match) to 2 (maximum dissimilarity).
 
 Site-type ratio similarity compares the proportion of sites containing enclosed compounds between simulated and observed datasets. The observed archaeological pattern exhibits 32 enclosed compounds among 462 total sites (6.93% or ratio of 0.0693), while simulated patterns vary stochastically depending on household prosperity dynamics and construction decisions. The ratio similarity component calculates:
+
+$$ratio\_score = \left| \frac{simulated\_enclosures}{simulated\_total} - 0.0693 \right|$$
 
 This absolute difference quantifies how far the simulated enclosure frequency deviates from archaeological observations, with 0 indicating perfect match and larger values indicating increasing discrepancy.
 
 The composite objective score averages these two components:
+
+$$total\_score = \frac{spatial\_score + ratio\_score}{2}$$
 
 This equally weighted combination treats spatial distribution and site-type ratios as co-equal constraints, reflecting their complementary diagnostic value established in Section 4.6.1. Optuna seeks parameter combinations minimizing this total score, simultaneously improving both pattern matches. For each parameter combination, the ten replicate total scores are averaged using simple arithmetic mean, providing a single objective value that accounts for stochastic variation while avoiding sensitivity to individual outlier runs.
 
@@ -358,9 +390,9 @@ Optuna employed the Tree-structured Parzen Estimator (TPE) sampler for adaptive 
 
 Prior to formal optimization, exploratory calibration involved manual parameter testing to develop intuition about model sensitivity and reasonable parameter ranges. These initial runs served to verify that the model could produce qualitatively plausible outputs, identify parameters with strong versus weak effects on pattern matching, and debug technical implementation issues before committing computational resources to systematic optimization. Exploratory runs revealed, for example, that annual rainfall weights required substantial influence to generate appropriate temporal cycling, while some parameters initially considered (but later excluded as redundant) contributed minimal additional pattern-matching capability.
 
-Formal optimization executed \[PLACEHOLDER\] trials, each involving ten replicate simulations. With individual runs requiring approximately two minutes, single trials consumed roughly 20 minutes, and full optimization demanded substantial computational investment (\[PLACEHOLDER\] total hours). This computational constraint motivated the discrete parameter representation and algorithmic efficiency measures described above. The large search space (over 2 million possible discrete combinations) precludes exhaustive exploration, making adaptive sampling strategies essential for identifying high-quality parameter sets within feasible computational budgets.
+Formal optimization executed [PLACEHOLDER] trials, each involving ten replicate simulations. With individual runs requiring approximately two minutes, single trials consumed roughly 20 minutes, and full optimization demanded substantial computational investment ([PLACEHOLDER] total hours). This computational constraint motivated the discrete parameter representation and algorithmic efficiency measures described above. The large search space (over 2 million possible discrete combinations) precludes exhaustive exploration, making adaptive sampling strategies essential for identifying high-quality parameter sets within feasible computational budgets.
 
-Optimization terminated after completing the predetermined \[PLACEHOLDER\] trials rather than employing convergence criteria. This fixed-trial approach ensures reproducible optimization procedures while acknowledging that global optima may remain undiscovered given the vast parameter space and stochastic objective function. The best parameter combination identified through \[PLACEHOLDER\] trials provides a parameter set enabling pattern reproduction consistent with the nomadic development hypothesis, though alternative parameter combinations with similar performance may exist.
+Optimization terminated after completing the predetermined [PLACEHOLDER] trials rather than employing convergence criteria. This fixed-trial approach ensures reproducible optimization procedures while acknowledging that global optima may remain undiscovered given the vast parameter space and stochastic objective function. The best parameter combination identified through [PLACEHOLDER] trials provides a parameter set enabling pattern reproduction consistent with the nomadic development hypothesis, though alternative parameter combinations with similar performance may exist.
 
 ### 4.6.4 Validation Results: Model-Data Comparison (REPORTING)
 
@@ -384,9 +416,9 @@ Optimization terminated after completing the predetermined \[PLACEHOLDER\] trial
 
 ### 4.8.3 Alternative Scenarios
 
-- - Varying environmental conditions
-    - Different economic priorities
-    - Altered prosperity thresholds
+- Varying environmental conditions
+- Different economic priorities
+- Altered prosperity thresholds
 
 ### 4.8.4 Comparison with Archaeological Patterns (REPORTING scenarios comparison)
 
