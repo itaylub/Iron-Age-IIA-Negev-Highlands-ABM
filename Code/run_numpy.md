@@ -114,11 +114,9 @@ print(f"New dimensions: {new_rows} rows, {new_cols} columns")
     Original cell size: 12.500000000000004 m
     Original dimensions: 7170 rows, 7494 columns
     New dimensions: 280 rows, 318 columns
-    
-
 
 ```python
-output_dir = r"D:\itay\ABM"
+output_dir = r"/"
 # Create the filename with path
 output_file = os.path.join(output_dir, "yearly_data.h5")
 y_output = []
@@ -142,11 +140,10 @@ with h5py.File(output_file, 'r') as f:
         y_output.append(group_arrays)
 ```
 
-
 ```python
 # Open the HDF5 file in read mode
-permanent_results=[]
-file_path = r"D:\itay\ABM\per_data.h5"
+permanent_results = []
+file_path = r"/Data/per_data.h5"
 with h5py.File(file_path, 'r') as f:
     # Access metadata
     metadata = f['metadata']
@@ -157,9 +154,9 @@ with h5py.File(file_path, 'r') as f:
     # Load the arrays from the groups
 
     for i in range(num_groups):
-        group = f[f'group_{i+1}']
+        group = f[f'group_{i + 1}']
         group_arrays = [np.array(group[f'array_{j}']) for j in range(arrays_per_group)]
-        permanent_results=group_arrays
+        permanent_results = group_arrays
 ```
 
 # Yearly Function
