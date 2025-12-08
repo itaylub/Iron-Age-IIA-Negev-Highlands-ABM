@@ -156,7 +156,7 @@ Enclosure construction represents households' strategic investment in permanent 
 
 Prosperity assessment combines economic capacity and environmental quality:
 
-$$P = \frac{surplus + manpower + environmental\_quality}{3}$$
+$$P = \frac{surplus + manpower + \text{environmental quality}}{3}$$
 
 Households achieving prosperity index >0.7 become eligible for enclosure-related investments. Actual construction requires substantially higher criteria: reusing existing enclosures demands manpower ≥15 and surplus exceeding baseline threshold, while constructing new enclosures requires prosperity index >0.8, manpower ≥40, and surplus three times baseline threshold. These escalating requirements ensure only genuinely prosperous households in favorable conditions invest in permanent structures.
 
@@ -276,7 +276,7 @@ Following all household actions, the model records agent states (manpower, lives
 
 The environmental transition phase then resets household grid positions and updates dynamic environmental layers for the upcoming year. Annual rainfall conditions are randomly selected from historical records, driving recalculation of pastoral and agricultural resources. Multi-annual exhaustion incorporates the previous year's degradation through weighted temporal accumulation (Section 4.4.1), while reuse potential updates with newly constructed enclosures. The suitability raster recalculates from these revised parameters using calibrated weights (Section 4.6.3).
 
-Household repositioning completes the transition phase. Each household's memory undergoes stochastic pruning, retaining experiences where $(current\_year - memory\_year) \times random\_value < 5$. Households then execute location selection (Section 4.3.1) using personalized suitability rasters incorporating updated environmental conditions and retained memories. Territory establishment follows, nuclear family members position within territories, and environmental degradation applies immediately, completing the cycle.
+Household repositioning completes the transition phase. Each household's memory undergoes stochastic pruning, retaining experiences where $(\text{current year} - \text{memory year}) \times \text{random value} < 5$. Households then execute location selection (Section 4.3.1) using personalized suitability rasters incorporating updated environmental conditions and retained memories. Territory establishment follows, nuclear family members position within territories, and environmental degradation applies immediately, completing the cycle.
 
 The simulation terminates after Year 74's household decision-making phase without executing a final environmental transition, preserving the last year's spatial configuration for pattern analysis.
 
@@ -362,23 +362,23 @@ The objective function quantifies model-data fit by combining two pattern simila
 
 Pattern similarity assessment proceeds through two parallel calculations (Figure 4.X). Spatial distribution similarity employs standard deviational ellipse overlap analysis comparing simulated and observed site distributions. Both datasets undergo ellipse calculation capturing 95% of points (two standard deviations), yielding ellipse area, centroid location, major and minor axes, and orientation angle. The spatial similarity component quantifies overlap through:
 
-$$overlap\_metric = \frac{A_{overlap}}{A_{overlap} + A_{non-overlap}}$$
+$$\text{overlap metric} = \frac{A_{overlap}}{A_{overlap} + A_{non-overlap}}$$
 
 Where $A_{overlap}$ represents area shared by both ellipses and $A_{non-overlap}$ represents non-overlapping areas. This metric ranges from -1 (complete separation) through 0 (equal overlap and non-overlap) to 1 (perfect overlap). The spatial similarity score converts this to:
 
-$$spatial\_score = 1 - overlap\_metric$$
+$$\text{spatial score} = 1 - \text{overlap metric}$$
 
 yielding values from 0 (perfect match) to 2 (maximum dissimilarity).
 
 Site-type ratio similarity compares the proportion of sites containing enclosed compounds between simulated and observed datasets. The observed archaeological pattern exhibits 32 enclosed compounds among 462 total sites (6.93% or ratio of 0.0693), while simulated patterns vary stochastically depending on household prosperity dynamics and construction decisions. The ratio similarity component calculates:
 
-$$ratio\_score = \left| \frac{simulated\_enclosures}{simulated\_total} - 0.0693 \right|$$
+$$\text{ratio score} = \left| \frac{\text{simulated enclosures}}{\text{simulated total}} - 0.0693 \right|$$
 
 This absolute difference quantifies how far the simulated enclosure frequency deviates from archaeological observations, with 0 indicating perfect match and larger values indicating increasing discrepancy.
 
 The composite objective score averages these two components:
 
-$$total\_score = \frac{spatial\_score + ratio\_score}{2}$$
+$$\text{total score} = \frac{\text{spatial score} + \text{ratio score}}{2}$$
 
 This equally weighted combination treats spatial distribution and site-type ratios as co-equal constraints, reflecting their complementary diagnostic value established in Section 4.6.1. Optuna seeks parameter combinations minimizing this total score, simultaneously improving both pattern matches. For each parameter combination, the ten replicate total scores are averaged using simple arithmetic mean, providing a single objective value that accounts for stochastic variation while avoiding sensitivity to individual outlier runs.
 
