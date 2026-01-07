@@ -5,7 +5,59 @@ __pycache__/
 
 # C extensions
 *.so
+#---Folders---
+Results/
+anaconda_projects/
+# --- GIS & Data Exclusions ---
+*.gdb/
+*.lock
+*.atx
+*.spx
+*.gdbtable
+*.gdbindexes
 
+# --- Python & IDE Exclusions ---
+__pycache__/
+.idea/
+*.pyc
+# --- Raster and Metadata Exclusions ---
+*.tif
+*.tiff
+*.ovr
+*.aux
+*.xml
+
+# --- Long-named Metadata/Index Files ---
+a0000000*.atx
+a0000000*.gdbtable
+a0000000*.gdbindexes
+a0000000*.freelist
+# --- Shapefile & Spatial Index Exclusions ---
+*.shp
+*.shx
+*.dbf
+*.prj
+*.sbn
+*.sbx
+*.cpg
+*.shp.xml
+
+# --- Additional Raster Formats ---
+*.tfw
+*.jp2
+*.sid
+# --- Anaconda / Virtual Environment Exclusions ---
+model_env/
+anaconda/
+env/
+venv/
+.conda/
+conda-meta/
+Library/
+Scripts/
+bin/
+*.yml
+*.yaml
 # Distribution / packaging
 .Python
 build/
