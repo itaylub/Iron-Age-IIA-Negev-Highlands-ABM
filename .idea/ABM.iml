@@ -10,6 +10,32 @@
       <excludeFolder url="file://$MODULE_DIR$/anaconda_projects" />
       <excludeFolder url="file://$MODULE_DIR$/model_env" />
       <excludeFolder url="file://$MODULE_DIR$/years.gdb" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_0/run_2026-01-06_18-32-30" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_1/run_2026-01-06_18-33-50" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_10" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_11" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_12" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_13" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_14" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_15" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_16" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_17" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_18" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_19" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_2/run_2026-01-06_18-35-39" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_20" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_21" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_22" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_23" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/opt/trial_9" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/runs_simp/run_2025-04-09_11-59-24" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/runs_simp/run_2025-12-08_11-16-55" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/runs_simp/run_2025-12-08_15-38-49" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/runs_simp/run_2025-12-10_08-13-55" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/runs_simp/run_2025-12-10_17-05-51" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/runs_simp/run_2025-12-10_17-12-25" />
+      <excludeFolder url="file://$MODULE_DIR$/Results/runs_simp/run_2026-01-06_18-29-42" />
     </content>
     <orderEntry type="jdk" jdkName="D:\itay\Mesa_env" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
