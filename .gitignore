@@ -56,8 +56,6 @@ conda-meta/
 Library/
 Scripts/
 bin/
-*.yml
-*.yaml
 # Distribution / packaging
 .Python
 build/

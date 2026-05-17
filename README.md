@@ -33,14 +33,19 @@ protocol document is planned (see roadmap).
 
 ```
 .
-├── Code/                # model source (model_opt.py) and analysis notebooks
-│   ├── model_opt.py
-│   ├── model_opt_sensitivity.py
-│   ├── environment.yml
-│   └── *.ipynb
+├── Code/                # model source and analysis notebooks
+│   ├── model_opt.py                # main model (Mesa 3.0)
+│   ├── model_opt_sensitivity.py    # variant for sensitivity analysis
+│   ├── model_code_26_2.ipynb       # canonical optimization run notebook
+│   ├── sensitivity_analysis.ipynb  # sensitivity analysis notebook
+│   └── environment.yml             # conda environment
 ├── Data/                # HDF5/raster inputs (large; will move to Zenodo)
 ├── Results/             # simulation outputs (ignored by git)
+├── docs/                # supplementary documentation
+│   └── objective_function.md       # explanation of the calibration objective
 ├── Thesis Chapter/      # accompanying thesis chapter
+├── CITATION.cff
+├── CHANGELOG.md
 └── LICENSE
 ```
 
@@ -53,11 +58,18 @@ conda activate nomad_model
 
 ## How to run
 
-The model is currently driven from notebooks. Open
-`Code/run_numpy.ipynb` for a working example, or import the module:
+The model is driven from two notebooks:
+
+- **`Code/model_code_26_2.ipynb`** — optimization runs against
+  `model_opt.py`. This is the canonical run notebook.
+- **`Code/sensitivity_analysis.ipynb`** — sensitivity analysis against
+  `model_opt_sensitivity.py`.
+
+Both notebooks import the corresponding `.py` module from the same
+directory:
 
 ```python
-from Code.model_opt import run_model_opt
+from model_opt import run_model_opt
 run_model_opt(seed=42)
 ```
 
@@ -73,6 +85,11 @@ export NOMAD_ABM_CALIB_SHP=/path/to/P_for_calib.shp
 ```
 
 A CLI entry point (`python -m nomad_abm run`) is planned.
+
+> Legacy notebooks (`run_numpy.ipynb`, `model_code_26.ipynb`,
+> `convert_to_numpy.ipynb`, and everything that lived under `Code/old/`)
+> were removed in the Phase 4 cleanup. They are recoverable from the
+> `legacy-pre-publication` tag or from any commit on `master`.
 
 ## Reproducibility
 

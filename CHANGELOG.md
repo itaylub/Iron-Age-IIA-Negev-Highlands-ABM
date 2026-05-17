@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 4 — notebook hygiene (in progress)
+
+- Remove legacy notebooks: `Code/old/` (29 MB, six notebooks),
+  `Code/run_numpy.ipynb`, `Code/run_numpy.md`,
+  `Code/model_code_26.ipynb`, `Code/convert_to_numpy.ipynb`.
+- Tag `legacy-pre-publication` (local) preserves the pre-deletion
+  state; `master` also still contains all removed files for recovery.
+- Strip outputs from the two surviving notebooks:
+  `Code/model_code_26_2.ipynb` (384 KB → 20 KB) and
+  `Code/sensitivity_analysis.ipynb` (80 KB → 20 KB).
+- Move `Code/varia/obj_explain.md` → `docs/objective_function.md`;
+  remove duplicate `obj_func_explanation` (byte-identical to .md) and
+  `env111.txt` (byte-identical to `environment.yml`). Empty `varia/`
+  directory removed.
+- Add `.pre-commit-config.yaml` with nbstripout + standard hygiene
+  hooks (`trailing-whitespace`, `end-of-file-fixer`,
+  `check-added-large-files` capped at 1 MB) to keep notebook outputs
+  and large binaries from sneaking back in.
+- Remove overly broad `*.yml` / `*.yaml` rules from `.gitignore`
+  (they were blocking legitimate config files like
+  `.pre-commit-config.yaml`, future CI workflows, and the planned
+  `configs/default.yaml`).
+- README updated: clarifies which notebooks are canonical, points at
+  `docs/`, notes the legacy removal.
+
 ### Phase 3 — externalize hardcoded paths (in progress)
 
 - Remove hardcoded `D:\itay\ABM\...` Windows paths from
