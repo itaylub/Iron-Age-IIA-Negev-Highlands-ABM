@@ -39,12 +39,20 @@ from multiprocessing import shared_memory
 # ==========================================
 # DATA PATHS & LAZY LOADERS
 # ==========================================
-DATA_DIR = r"D:\itay\ABM\Data"
+# Paths default to <repo_root>/Data and <repo_root>/Results so the model
+# runs from any clone. Override individual paths with environment
+# variables: NOMAD_ABM_DATA_DIR, NOMAD_ABM_RESULTS_DIR, NOMAD_ABM_CALIB_SHP.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.environ.get("NOMAD_ABM_DATA_DIR") or os.path.join(_REPO_ROOT, "Data")
+RESULTS_DIR = os.environ.get("NOMAD_ABM_RESULTS_DIR") or os.path.join(_REPO_ROOT, "Results")
 YEARLY_DATA_PATH = os.path.join(DATA_DIR, "yearly_data_10_25.h5")
 PERMANENT_DATA_PATH = os.path.join(DATA_DIR, "per_data_10_25.h5")
 EXT_RASTER_PATH = os.path.join(DATA_DIR, "ext_raster.npy")
 PLACE_RASTER_PATH = os.path.join(DATA_DIR, "place_raster.npy")
-CALIB_SHP_PATH = r'D:\itay\ABM\points_all\P_for_calib.shp'
+CALIB_SHP_PATH = (
+    os.environ.get("NOMAD_ABM_CALIB_SHP")
+    or os.path.join(DATA_DIR, "P_for_calib.shp")
+)
 
 
 class LazyYearlyData:
@@ -1282,7 +1290,7 @@ def run_model_opt(model_years, ras_wts, main_run_directory, trial_number, iterat
 def objective_function(permanent_weights, yearly_weights, trial_n, trial, n_iterations=10, n_years=75,
                        random_seed=None):
     scores = []
-    main_run_directory = r"D:\itay\ABM\Results\run"
+    main_run_directory = os.path.join(RESULTS_DIR, "run")
 
     # Load calibration data once per worker
     if os.path.exists(CALIB_SHP_PATH):

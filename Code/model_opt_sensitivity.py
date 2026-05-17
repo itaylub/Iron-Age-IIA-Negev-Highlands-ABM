@@ -39,12 +39,20 @@ from multiprocessing import shared_memory
 # ==========================================
 # DATA PATHS & LAZY LOADERS
 # ==========================================
-DATA_DIR = r"D:\itay\ABM\Data"
+# Paths default to <repo_root>/Data and <repo_root>/Results so the model
+# runs from any clone. Override individual paths with environment
+# variables: NOMAD_ABM_DATA_DIR, NOMAD_ABM_RESULTS_DIR, NOMAD_ABM_CALIB_SHP.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.environ.get("NOMAD_ABM_DATA_DIR") or os.path.join(_REPO_ROOT, "Data")
+RESULTS_DIR = os.environ.get("NOMAD_ABM_RESULTS_DIR") or os.path.join(_REPO_ROOT, "Results")
 YEARLY_DATA_PATH = os.path.join(DATA_DIR, "yearly_data_10_25.h5")
 PERMANENT_DATA_PATH = os.path.join(DATA_DIR, "per_data_10_25.h5")
 EXT_RASTER_PATH = os.path.join(DATA_DIR, "ext_raster.npy")
 PLACE_RASTER_PATH = os.path.join(DATA_DIR, "place_raster.npy")
-CALIB_SHP_PATH = r'D:\itay\ABM\points_all\P_for_calib.shp'
+CALIB_SHP_PATH = (
+    os.environ.get("NOMAD_ABM_CALIB_SHP")
+    or os.path.join(DATA_DIR, "P_for_calib.shp")
+)
 
 
 class LazyYearlyData:

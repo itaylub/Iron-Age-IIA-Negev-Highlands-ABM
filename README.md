@@ -51,11 +51,6 @@ conda env create -f Code/environment.yml
 conda activate nomad_model
 ```
 
-> Note: `model_opt.py` currently contains hardcoded Windows data paths
-> (lines 42–47). On a non-Windows machine, or a different layout, you
-> need to edit them. Externalising these paths is the next planned
-> change.
-
 ## How to run
 
 The model is currently driven from notebooks. Open
@@ -64,6 +59,17 @@ The model is currently driven from notebooks. Open
 ```python
 from Code.model_opt import run_model_opt
 run_model_opt(seed=42)
+```
+
+By default, input data is loaded from `./Data/` and outputs land in
+`./Results/`, both relative to the repo root. To point at a different
+location, set environment variables before running:
+
+```bash
+# optional — only needed if your data lives outside the repo
+export NOMAD_ABM_DATA_DIR=/path/to/data
+export NOMAD_ABM_RESULTS_DIR=/path/to/results
+export NOMAD_ABM_CALIB_SHP=/path/to/P_for_calib.shp
 ```
 
 A CLI entry point (`python -m nomad_abm run`) is planned.

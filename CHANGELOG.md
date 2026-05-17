@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 3 — externalize hardcoded paths (in progress)
+
+- Remove hardcoded `D:\itay\ABM\...` Windows paths from
+  `Code/model_opt.py` (lines 42–47, 1285) and
+  `Code/model_opt_sensitivity.py` (lines 42–47).
+- Paths now default to `<repo_root>/Data` and `<repo_root>/Results`,
+  resolved at module import time relative to the source file.
+- Three environment variables override the defaults:
+  `NOMAD_ABM_DATA_DIR`, `NOMAD_ABM_RESULTS_DIR`, `NOMAD_ABM_CALIB_SHP`.
+- `README.md` documents the env-var contract.
+
 ### Phase 2 — citation metadata (in progress)
 
 - Add `CITATION.cff` so GitHub renders a "Cite this repository" button.
