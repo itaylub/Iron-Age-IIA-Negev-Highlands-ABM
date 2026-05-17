@@ -37,23 +37,39 @@ protocol document is planned (see roadmap).
 │   ├── model_opt.py                # main model (Mesa 3.0)
 │   ├── model_opt_sensitivity.py    # variant for sensitivity analysis
 │   ├── model_code_26_2.ipynb       # canonical optimization run notebook
-│   ├── sensitivity_analysis.ipynb  # sensitivity analysis notebook
-│   └── environment.yml             # conda environment
+│   └── sensitivity_analysis.ipynb  # sensitivity analysis notebook
 ├── Data/                # HDF5/raster inputs (large; will move to Zenodo)
 ├── Results/             # simulation outputs (ignored by git)
 ├── docs/                # supplementary documentation
 │   └── objective_function.md       # explanation of the calibration objective
 ├── Thesis Chapter/      # accompanying thesis chapter
+├── environment.yml      # conda environment
+├── requirements.txt     # pip-equivalent for non-conda users
+├── pyproject.toml       # packaging + ruff/black/pytest config
+├── .pre-commit-config.yaml
 ├── CITATION.cff
 ├── CHANGELOG.md
 └── LICENSE
 ```
 
-## Installation (current state)
+## Installation
+
+Choose one of:
 
 ```bash
-conda env create -f Code/environment.yml
+# Conda (recommended — pins geospatial libraries via conda-forge)
+conda env create -f environment.yml
 conda activate nomad_model
+
+# Or pip
+pip install -r requirements.txt
+```
+
+For development tools (ruff, black, pre-commit, nbstripout):
+
+```bash
+pip install -e ".[dev]"
+pre-commit install
 ```
 
 ## How to run

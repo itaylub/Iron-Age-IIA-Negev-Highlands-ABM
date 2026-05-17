@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 5 — quality gates and packaging foundations (in progress)
+
+- Add `pyproject.toml` with project metadata, runtime dependency list
+  (mirroring `environment.yml`), `[project.optional-dependencies] dev`
+  (ruff, black, pytest, pre-commit, nbstripout), and tool sections
+  (`[tool.ruff]`, `[tool.black]`, `[tool.pytest.ini_options]`).
+- Add `requirements.txt` so non-conda users can `pip install -r`.
+- Move `Code/environment.yml` → `environment.yml` at repo root
+  (standard location).
+- Add `.github/workflows/ci.yml` with three jobs:
+  - `lint`: `ruff check` on a conservative ruleset (catches real bugs:
+    syntax errors, undefined names; doesn't enforce style yet).
+  - `format-check`: `black --check --diff`, informational only
+    (continue-on-error); will become enforcing after a one-shot
+    reformat.
+  - `notebook-clean`: fails if any `*.ipynb` contains outputs or
+    execution counts. Backstop for the nbstripout pre-commit hook.
+- Extend `.pre-commit-config.yaml` with the ruff hook to match CI.
+- README install section rewritten with conda + pip + dev paths.
+
 ### Phase 4 — notebook hygiene (in progress)
 
 - Remove legacy notebooks: `Code/old/` (29 MB, six notebooks),

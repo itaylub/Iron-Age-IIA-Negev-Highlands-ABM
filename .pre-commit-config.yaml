@@ -1,4 +1,10 @@
 repos:
+  # Lint with ruff. Matches the rules in pyproject.toml.
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+
   # Strip outputs from Jupyter notebooks before commit so diffs stay clean
   # and the repo stays small. Run `pre-commit install` after `pip install
   # pre-commit nbstripout` (also in environment.yml from Phase 5 onward).
