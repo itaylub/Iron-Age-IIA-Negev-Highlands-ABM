@@ -86,12 +86,14 @@ the objective function is not yet included — see the publication plan.
 
 ## Citation
 
-A `CITATION.cff` file will be added in the next publication-readiness
-step. Until then, please cite as:
+Citation metadata lives in [`CITATION.cff`](CITATION.cff) — GitHub
+renders a "Cite this repository" button from it. To cite by hand:
 
 > Lubel, I. (2025). *Nomad ABM: Agent-Based Model of Iron Age IIA
-> Settlement in the Negev Highlands* (version 0.1.0). GitHub.
-> https://github.com/itaylub/ABM
+> Settlement in the Negev Highlands* (version 0.1.0). Hebrew University
+> of Jerusalem. https://github.com/itaylub/ABM
+
+A Zenodo DOI will be minted with the v1.0.0 release (see roadmap).
 
 ## License
 

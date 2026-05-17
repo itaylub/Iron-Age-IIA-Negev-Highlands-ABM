@@ -1,0 +1,37 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Phase 2 — citation metadata (in progress)
+
+- Add `CITATION.cff` so GitHub renders a "Cite this repository" button.
+- Add this `CHANGELOG.md`.
+- Update `LICENSE` copyright holder from the GitHub handle to the
+  author's full name.
+
+### Phase 1 — quick wins (merged via PR #2)
+
+- Rewrite `README.md` with project abstract, install, run instructions,
+  reproducibility notes, and a publication-status notice. Replaces the
+  3-line placeholder.
+- Stop tracking `.idea/` and `.ipynb_checkpoints/` (rules already
+  existed in `.gitignore`).
+- Remove orphaned files: `output.jpg`, `Code/varia/*.html` (stale
+  notebook exports), empty `Thesis Chapter/overview.md`.
+- Trim 191 lines of enumerated per-run PNG entries from `.gitignore`;
+  blanket `Results/` rule covers them.
+
+## [0.1.0] — 2025-01-01
+
+Initial snapshot of the model accompanying Chapter 4 of the thesis.
+Functional Mesa 3.0 agent-based model with Optuna calibration, but with
+the publication-readiness gaps tracked above (hardcoded paths, no
+tests, no ODD protocol, large data in git, etc.).
+
+[Unreleased]: https://github.com/itaylub/ABM/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/itaylub/ABM/releases/tag/v0.1.0
