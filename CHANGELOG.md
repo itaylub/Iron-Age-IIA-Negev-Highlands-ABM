@@ -16,14 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `requirements.txt` so non-conda users can `pip install -r`.
 - Move `Code/environment.yml` → `environment.yml` at repo root
   (standard location).
-- Add `.github/workflows/ci.yml` with three jobs:
+- Add `.github/workflows/ci.yml` with two jobs:
   - `lint`: `ruff check` on a conservative ruleset (catches real bugs:
     syntax errors, undefined names; doesn't enforce style yet).
-  - `format-check`: `black --check --diff`, informational only
-    (continue-on-error); will become enforcing after a one-shot
-    reformat.
   - `notebook-clean`: fails if any `*.ipynb` contains outputs or
     execution counts. Backstop for the nbstripout pre-commit hook.
+  - A `black --check` job will be added once the codebase has been
+    reformatted in a dedicated pass.
 - Extend `.pre-commit-config.yaml` with the ruff hook to match CI.
 - README install section rewritten with conda + pip + dev paths.
 
