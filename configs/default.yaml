@@ -1,0 +1,22 @@
+# Default configuration for nomad-abm.
+#
+# Run with:
+#   python -m nomad_abm run --config configs/default.yaml --seed 42
+#
+# All path keys are optional. When unset, the model falls back to
+#   <repo_root>/Data
+#   <repo_root>/Results
+#   <repo_root>/Data/P_for_calib.shp
+# resolved at module import time. Override individual paths by
+# uncommenting the relevant key below, or set the matching environment
+# variable (NOMAD_ABM_DATA_DIR / NOMAD_ABM_RESULTS_DIR /
+# NOMAD_ABM_CALIB_SHP) outside the file.
+
+paths:
+  # data_dir: D:\itay\ABM\Data
+  # results_dir: D:\itay\ABM\Results
+  # calib_shp: D:\itay\ABM\points_all\P_for_calib.shp
+
+run:
+  # Random seed. Pass --seed on the command line to override.
+  seed: 42

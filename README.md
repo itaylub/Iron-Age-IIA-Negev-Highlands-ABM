@@ -33,16 +33,24 @@ protocol document is planned (see roadmap).
 
 ```
 .
-├── Code/                # model source and analysis notebooks
-│   ├── model_opt.py                # main model (Mesa 3.0)
-│   ├── model_opt_sensitivity.py    # variant for sensitivity analysis
+├── src/nomad_abm/       # the canonical Python package
+│   ├── model.py                    # main model (Mesa 3.0)
+│   ├── sensitivity.py              # variant for sensitivity analysis
+│   ├── cli.py                      # `python -m nomad_abm run ...`
+│   └── __init__.py / __main__.py
+├── Code/                # analysis notebooks + thin backwards-compat shims
 │   ├── model_code_26_2.ipynb       # canonical optimization run notebook
-│   └── sensitivity_analysis.ipynb  # sensitivity analysis notebook
+│   ├── sensitivity_analysis.ipynb  # sensitivity analysis notebook
+│   ├── model_opt.py                # shim → nomad_abm.model
+│   └── model_opt_sensitivity.py    # shim → nomad_abm.sensitivity
+├── configs/             # YAML run configurations
+│   └── default.yaml
 ├── Data/                # HDF5/raster inputs (large; will move to Zenodo)
 ├── Results/             # simulation outputs (ignored by git)
 ├── docs/                # supplementary documentation
 │   └── objective_function.md       # explanation of the calibration objective
 ├── Thesis Chapter/      # accompanying thesis chapter
+├── legacy/              # frozen pre-Phase-6 snapshot of Code/ for revert
 ├── environment.yml      # conda environment
 ├── requirements.txt     # pip-equivalent for non-conda users
 ├── pyproject.toml       # packaging + ruff/black/pytest config
@@ -54,15 +62,15 @@ protocol document is planned (see roadmap).
 
 ## Installation
 
-Choose one of:
-
 ```bash
 # Conda (recommended — pins geospatial libraries via conda-forge)
 conda env create -f environment.yml
 conda activate nomad_model
+pip install -e .
 
-# Or pip
-pip install -r requirements.txt
+# Or pure pip
+pip install -e .            # installs runtime deps from pyproject.toml
+# (or, for exact pins) pip install -r requirements.txt
 ```
 
 For development tools (ruff, black, pre-commit, nbstripout):
@@ -74,38 +82,57 @@ pre-commit install
 
 ## How to run
 
-The model is driven from two notebooks:
+### From the command line
 
-- **`Code/model_code_26_2.ipynb`** — optimization runs against
-  `model_opt.py`. This is the canonical run notebook.
-- **`Code/sensitivity_analysis.ipynb`** — sensitivity analysis against
-  `model_opt_sensitivity.py`.
+After `pip install -e .` (or with the conda environment active):
 
-Both notebooks import the corresponding `.py` module from the same
-directory:
+```bash
+python -m nomad_abm run --config configs/default.yaml --seed 42
+```
+
+The YAML config sets path overrides; `--seed` is optional and overrides
+the config value.
+
+### From a notebook
+
+The two canonical notebooks live in `Code/`:
+
+- **`Code/model_code_26_2.ipynb`** — optimization runs (uses
+  `nomad_abm.model`).
+- **`Code/sensitivity_analysis.ipynb`** — sensitivity analysis (uses
+  `nomad_abm.sensitivity`).
+
+Either of these import patterns works:
 
 ```python
+# new layout (preferred)
+from nomad_abm.model import run_model_opt
+
+# old layout — still works via a thin shim in Code/model_opt.py
 from model_opt import run_model_opt
+
 run_model_opt(seed=42)
 ```
 
+### Data paths
+
 By default, input data is loaded from `./Data/` and outputs land in
 `./Results/`, both relative to the repo root. To point at a different
-location, set environment variables before running:
+location, edit `configs/default.yaml` or export environment variables:
 
 ```bash
-# optional — only needed if your data lives outside the repo
 export NOMAD_ABM_DATA_DIR=/path/to/data
 export NOMAD_ABM_RESULTS_DIR=/path/to/results
 export NOMAD_ABM_CALIB_SHP=/path/to/P_for_calib.shp
 ```
 
-A CLI entry point (`python -m nomad_abm run`) is planned.
+The YAML config is applied first, then env vars override it (env vars
+win because the model reads them at import time).
 
-> Legacy notebooks (`run_numpy.ipynb`, `model_code_26.ipynb`,
-> `convert_to_numpy.ipynb`, and everything that lived under `Code/old/`)
-> were removed in the Phase 4 cleanup. They are recoverable from the
-> `legacy-pre-publication` tag or from any commit on `master`.
+> The pre-Phase-6 source layout is preserved in two places: the
+> `legacy/` directory (browsable, easy to copy back) and the
+> `legacy-pre-publication` git tag (recoverable via
+> `git checkout legacy-pre-publication -- <path>`).
 
 ## Reproducibility
 

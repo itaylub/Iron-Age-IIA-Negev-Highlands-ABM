@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 6 — package layout, CLI, YAML config (in progress)
+
+- New package at `src/nomad_abm/`:
+  - `model.py` (canonical home of the simulation; was `Code/model_opt.py`).
+  - `sensitivity.py` (sensitivity variant; was
+    `Code/model_opt_sensitivity.py`).
+  - `cli.py` exposing `python -m nomad_abm run --config <path>
+    --seed <int>` as the canonical entry point.
+  - `__init__.py`, `__main__.py`.
+- `configs/default.yaml` — YAML config consumed by the CLI. Settings
+  in `paths.*` are translated into `NOMAD_ABM_*` env vars before the
+  model module is imported, so existing env-var contracts still hold.
+- `Code/model_opt.py` and `Code/model_opt_sensitivity.py` are now
+  thin **shims** that re-export from the new package. Existing
+  notebooks that say `from model_opt import ...` keep working without
+  any edits. The shims inject `src/` onto `sys.path` so they work
+  even without `pip install -e .`.
+- `legacy/` directory holds a frozen pre-Phase-6 copy of the four
+  `Code/` files (two `.py`, two `.ipynb`) and a `legacy/README.md`
+  explaining the revert procedure.
+- `pyproject.toml`: added `[project.scripts] nomad-abm` entry point,
+  `[tool.setuptools.packages.find] where = ["src"]`, `pyyaml` runtime
+  dep, ruff per-file-ignores moved to the new file paths, ruff
+  `extend-exclude` skips `legacy/`.
+- `environment.yml` and `requirements.txt` gain `pyyaml`.
+- README rewritten: install adds `pip install -e .`, "How to run"
+  documents both the CLI and the notebook paths, layout updated.
+
 ### Phase 5 — quality gates and packaging foundations (in progress)
 
 - Add `pyproject.toml` with project metadata, runtime dependency list
