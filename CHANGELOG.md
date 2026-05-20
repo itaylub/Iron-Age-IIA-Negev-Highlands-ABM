@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 8 — ODD protocol and documentation (in progress)
+
+- `docs/ODD.md` — canonical model description following Grimm et al.
+  (2020). Seven standard sections (Purpose & patterns, Entities &
+  state variables, Process overview, Design concepts, Initialisation,
+  Input data, Submodels) seeded from the current thesis Chapter 4 and
+  Appendix 4 (read from the author's Drive; .docx files untouched).
+  Cross-references Appendix 4 sections for full parameter tables
+  rather than duplicating them.
+- `docs/DATA.md` — data dictionary of every input file under `Data/`:
+  format, shape, units, CRS (EPSG:2039 / ITM), source. Includes a
+  list of open items needing data-machine confirmation (HDF5 internal
+  layout, `ext_raster.npy` provenance, file checksums for the planned
+  Zenodo bundle).
+- `docs/INSTALL.md` — long-form install guide for Linux / macOS /
+  Windows, with conda (recommended) and pip paths and a
+  troubleshooting table.
+- `docs/objective_function.md` — header rewritten to clarify it is a
+  *code-level* walkthrough; mathematical statement is in §4.6.3 +
+  §A4.3 of the thesis and summarised in `docs/ODD.md` §7.6.
+- Rename `Thesis Chapter/` → `thesis/` (no space — friendlier to
+  shell scripts and CI). Seven tracked files renamed cleanly via
+  `git mv`.
+- README layout block updated to reflect the new `docs/` contents and
+  the renamed `thesis/` directory; `pyproject.toml` ruff
+  `extend-exclude` follows the rename.
+- The author's `.docx` thesis materials on Drive (`full_thesis.docx`,
+  `Appendix 4. ABM.docx`, `Appendix 6. Glossary.docx`, the per-chapter
+  tables/figures docs) are treated as **read-only**: they were
+  consulted to author the ODD and DATA documents but **never
+  modified**.
+
 ### Phase 6 — package layout, CLI, YAML config (in progress)
 
 - New package at `src/nomad_abm/`:

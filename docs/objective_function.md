@@ -1,4 +1,21 @@
-# Detailed Explanation of the NumPy/SciPy Version
+# Calibration objective — code-level walkthrough
+
+> This document is the **code-level** explanation of the calibration
+> objective function as implemented in `nomad_abm.model.obj_func`. For
+> the **conceptual / mathematical** statement of the objective, see
+> §4.6.3 of the thesis (Chapter 4) and §A4.3 of the appendix. A
+> high-level summary also appears in [`docs/ODD.md`](ODD.md) §7.6.
+>
+> Mapping: in the equations, `p` is the proportion of enclosed
+> compounds among classified sites; in the code below, that
+> corresponds to `ratio_enc` (computed as the ratio of `value == 2`
+> counts to `value == 1` counts). The spatial component (IoU on the
+> standard deviational ellipses) is captured by the `overlap_func`
+> term.
+
+---
+
+## Detailed Explanation of the NumPy/SciPy Version
 
 This function calculates a similarity score between two GeoDataFrames (`gdf` and `gdf1`) by comparing their spatial distribution patterns and value distributions. Let me break down each part:
 

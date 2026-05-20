@@ -26,8 +26,10 @@ geospatial / scientific libraries (rasterio, geopandas, numpy, scipy,
 h5py).
 
 For the full conceptual and mathematical description, see
-[`Thesis Chapter/ch.4-ABM.md`](Thesis%20Chapter/ch.4-ABM.md). An ODD
-protocol document is planned (see roadmap).
+[`docs/ODD.md`](docs/ODD.md) (the canonical technical reference) and
+the accompanying thesis material under [`thesis/`](thesis/). Detailed
+parameter tables and equations live in Appendix 4 of the thesis
+(see Drive — kept outside the repo for now).
 
 ## Repository layout
 
@@ -48,8 +50,11 @@ protocol document is planned (see roadmap).
 ├── Data/                # HDF5/raster inputs (large; will move to Zenodo)
 ├── Results/             # simulation outputs (ignored by git)
 ├── docs/                # supplementary documentation
-│   └── objective_function.md       # explanation of the calibration objective
-├── Thesis Chapter/      # accompanying thesis chapter
+│   ├── ODD.md                      # canonical model description (Grimm et al. 2020)
+│   ├── DATA.md                     # data dictionary
+│   ├── INSTALL.md                  # long-form install guide
+│   └── objective_function.md       # code-level walkthrough of the objective
+├── thesis/              # accompanying thesis chapter + appendices
 ├── legacy/              # frozen pre-Phase-6 snapshot of Code/ for revert
 ├── environment.yml      # conda environment
 ├── requirements.txt     # pip-equivalent for non-conda users
