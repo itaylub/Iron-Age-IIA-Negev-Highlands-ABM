@@ -40,6 +40,7 @@ def test_cli_help_runs():
     assert proc.returncode == 0, f"stderr:\n{proc.stderr}"
     assert "--config" in proc.stdout
     assert "--seed" in proc.stdout
+    assert "--years" in proc.stdout
 
 
 def test_legacy_shim_redirects(env_with_synthetic_data):

@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 6 follow-up: CLI was broken; fixed
+
+- Discovery: the Phase 6 CLI in `src/nomad_abm/cli.py` called
+  `run_model_opt(seed=seed)` — but `run_model_opt` requires five
+  positional arguments (`model_years`, `ras_wts`,
+  `main_run_directory`, `trial_number`, `iteration`). The smoke test
+  only exercised `--help`, so the breakage slipped past CI.
+- Fix: the CLI now constructs a single replicate run with the
+  calibrated weights from §4.6.4 of the thesis as defaults
+  (best-trial integer weights `[7, 1, 3, 0, 7, 5, 0]` normalised to
+  the published `[0.304, 0.043, 0.130, 0, 0.304, 0.217, 0]`), creates
+  a timestamped output directory under `RESULTS_DIR`, calls
+  `ensure_data_loaded()`, and invokes `run_model_opt` with all
+  required arguments.
+- New `--years` flag (default 75; documented as `--years 5` for a
+  ~3-min smoke run before committing to the full ~50-min single
+  replicate).
+- `configs/default.yaml` rewritten with a `run.weights.permanent` /
+  `run.weights.yearly` block exposing the seven integer weights so
+  users can experiment with alternative configurations without
+  editing Python. The CLI normalises to sum 1 before passing to
+  the model.
+- `tests/test_smoke.py` `test_cli_help_runs` extended to assert
+  `--years` is in the help output. (A test that actually runs the
+  model is not added — fixture rasters are random noise and would
+  produce nonsense; a real end-to-end run requires the Zenodo data.)
+
 ### Phase 9 — Zenodo archive published
 
 - Data bundle published as **Zenodo DOI

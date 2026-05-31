@@ -3,20 +3,41 @@
 # Run with:
 #   python -m nomad_abm run --config configs/default.yaml --seed 42
 #
-# All path keys are optional. When unset, the model falls back to
-#   <repo_root>/Data
-#   <repo_root>/Results
-#   <repo_root>/Data/P_for_calib.shp
-# resolved at module import time. Override individual paths by
-# uncommenting the relevant key below, or set the matching environment
-# variable (NOMAD_ABM_DATA_DIR / NOMAD_ABM_RESULTS_DIR /
-# NOMAD_ABM_CALIB_SHP) outside the file.
+# Override individual values on the command line (--seed, --years) or
+# by copying this file and editing the copy.
 
 paths:
+  # All paths are optional. When unset, the model falls back to
+  # <repo_root>/Data, <repo_root>/Results, and Data/P_for_calib.shp
+  # respectively. Override either here or via the NOMAD_ABM_DATA_DIR /
+  # NOMAD_ABM_RESULTS_DIR / NOMAD_ABM_CALIB_SHP environment variables.
   # data_dir: D:\itay\ABM\Data
   # results_dir: D:\itay\ABM\Results
-  # calib_shp: D:\itay\ABM\points_all\P_for_calib.shp
+  # calib_shp: D:\itay\ABM\Data\P_for_calib.shp
 
 run:
-  # Random seed. Pass --seed on the command line to override.
+  # Random seed for reproducibility (overridable with --seed).
   seed: 42
+
+  # Number of simulated years (overridable with --years).
+  # 75 matches the published calibration (full run, ~50 min on a
+  # single CPU). Use 5 for a quick smoke run (~3 min) to verify the
+  # install end-to-end before committing to a full run.
+  years: 75
+
+  # Integer weights for the seven environmental suitability terms.
+  # Defaults are the best-trial integer weights from Section 4.6.4 of
+  # the thesis (sum 23 → normalised [0.304, 0.043, 0.130, 0.000,
+  # 0.304, 0.217, 0.000]). Override individual values to test
+  # alternative parameter combinations. The CLI normalises to sum 1
+  # before passing to the model.
+  weights:
+    permanent:
+      dist_to_kb: 7
+      p_water: 1
+      Mean_rain: 3
+      slope_suitability: 0
+    yearly:
+      return_to_site: 7
+      humen_stress: 5
+      Yearly_rain: 0
