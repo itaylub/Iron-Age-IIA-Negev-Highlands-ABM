@@ -44,3 +44,28 @@ jobs:
             fi
           done
           exit $fail
+
+  tests:
+    name: Tests (pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          environment-file: environment.yml
+          activate-environment: nomad_model
+          auto-activate-base: false
+
+      - name: Install package + test deps
+        run: |
+          pip install -e .
+          pip install pytest
+
+      - name: Run pytest
+        run: pytest -q

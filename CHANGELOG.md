@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 7 — smoke tests + synthetic fixture + CI pytest job
+
+- `tests/fixtures/make_fixture.py` builds a tiny synthetic `Data/`
+  directory at a caller-supplied path. Layout matches the real schema
+  confirmed by `scripts/inspect_data.py` and documented in
+  `docs/DATA.md`:
+  - `yearly_data*.h5`: `group_0..N` with `array_0..M`.
+  - `per_data*.h5`: singleton `group_1` (1-indexed) + sibling
+    `metadata` group.
+  - `place_raster.npy` / `ext_raster.npy`: `uint8` binary masks
+    of shape (318, 280).
+  - `P_for_calib.shp`: EPSG:2039 points with `value` 1 or 2.
+  Values are random noise — for smoke tests only.
+- `tests/conftest.py` provides session-scoped `synthetic_data_dir`
+  and per-test `env_with_synthetic_data` fixtures (the latter
+  monkeypatches the three `NOMAD_ABM_*` env vars).
+- `tests/test_smoke.py` exercises the package import, the
+  `python -m nomad_abm run --help` CLI surface, the `Code/`
+  backwards-compat shim, the synthetic fixture schema, the
+  calibration shapefile classes, and the shipped `configs/default.yaml`.
+- New `tests` job in `.github/workflows/ci.yml` uses
+  `conda-incubator/setup-miniconda` to create the `nomad_model`
+  environment from `environment.yml`, installs the package with
+  `pip install -e .`, and runs `pytest -q`. Runs alongside the
+  existing `lint` and `notebook-clean` jobs.
+
 ### Phase 5b — dependency cleanup (informed by data-machine inventory)
 
 - Ran `scripts/inspect_data.py` on the data machine (Windows, conda
