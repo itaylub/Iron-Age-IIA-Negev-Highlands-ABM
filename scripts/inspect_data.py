@@ -29,15 +29,25 @@ import sys
 from pathlib import Path
 
 
+def _script_path() -> Path | None:
+    """Resolve this file's path, or None when running in a REPL/notebook
+    cell where ``__file__`` is undefined."""
+    try:
+        return Path(__file__).resolve()
+    except NameError:
+        return None
+
+
 def find_data_dir() -> Path:
     env = os.environ.get("NOMAD_ABM_DATA_DIR")
     candidates: list[Path] = []
     if env:
         candidates.append(Path(env))
     candidates.append(Path.cwd() / "Data")
-    here = Path(__file__).resolve()
-    for ancestor in (here.parent, here.parent.parent, here.parent.parent.parent):
-        candidates.append(ancestor / "Data")
+    here = _script_path()
+    if here is not None:
+        for ancestor in (here.parent, here.parent.parent, here.parent.parent.parent):
+            candidates.append(ancestor / "Data")
     candidates.append(Path("D:/itay/ABM/Data"))
     candidates.append(Path("/home/user/ABM/Data"))
     seen: set[Path] = set()
@@ -177,8 +187,10 @@ def find_calib_shp() -> list[str]:
     """Locate ``P_for_calib.shp`` anywhere the user might keep it."""
     seen: set[Path] = set()
     candidates: list[Path] = []
-    here = Path(__file__).resolve()
-    roots: list[Path] = [Path.cwd(), here.parent, here.parent.parent]
+    roots: list[Path] = [Path.cwd()]
+    here = _script_path()
+    if here is not None:
+        roots.extend([here.parent, here.parent.parent])
     for extra in ("D:/itay", "D:/itay/ABM", "D:/itay/ABM/points_all", "/home/user/ABM"):
         p = Path(extra)
         if p.exists():
