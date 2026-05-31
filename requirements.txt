@@ -1,0 +1,21 @@
+# pip-equivalent of environment.yml for non-conda users.
+# Verified working on Python 3.14 with numpy 2.3, mesa 3.3, geopandas 1.1.
+# fiona and pyproj come transitively with geopandas.
+
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+
+geopandas>=0.14
+shapely>=2.0
+
+matplotlib>=3.8
+seaborn>=0.13
+
+mesa>=3.0,<4.0
+
+optuna>=3.5
+
+h5py>=3.10
+
+pyyaml>=6.0

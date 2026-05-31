@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Nomad ABM: Agent-Based Model of Iron Age IIA Settlement in the Negev Highlands"
+abstract: >-
+  An agent-based model implemented in Mesa 3.0 that simulates 75 years of
+  annual household repositioning across a 318 x 280 grid of the Negev
+  Highlands. The model tests whether autochthonous nomadic processes
+  (temporal cycling driven by environmental volatility and degradation
+  feedback) can plausibly generate the spatial palimpsest documented in
+  the Iron Age IIA archaeological record (c. 980-830 BCE).
+authors:
+  - family-names: Lubel
+    given-names: Itay
+    affiliation: "Hebrew University of Jerusalem, Department of Archaeology"
+version: "1.0.0"
+date-released: "2026-05-31"
+license: MIT
+repository-code: "https://github.com/itaylub/ABM"
+identifiers:
+  - description: "Archived input data bundle (Zenodo)"
+    type: doi
+    value: "10.5281/zenodo.20473345"
+keywords:
+  - agent-based-model
+  - archaeology
+  - iron-age
+  - negev-highlands
+  - nomadism
+  - palimpsest
+  - mesa
+  - simulation

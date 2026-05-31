@@ -1,0 +1,40 @@
+name: nomad_model
+channels:
+  - conda-forge
+  - defaults
+
+# Version constraints are open-ended (>=) for forwards compatibility.
+# Verified working on Python 3.14 with numpy 2.3, mesa 3.3, geopandas 1.1
+# (the author's current data-machine environment as of May 2026).
+# Original pins (numpy 1.26, mesa 3.0, etc.) also work but are no longer
+# enforced. fiona and pyproj are pulled in transitively by geopandas.
+
+dependencies:
+  - python>=3.11
+
+  # Core scientific computing
+  - numpy>=1.26
+  - pandas>=2.1
+  - scipy>=1.11
+
+  # Geospatial — fiona, pyproj come along with geopandas
+  - geopandas>=0.14
+  - shapely>=2.0
+
+  # Visualization
+  - matplotlib>=3.8
+  - seaborn>=0.13
+
+  # Agent-based modeling
+  - mesa>=3.0,<4.0
+
+  # Optimization
+  - optuna>=3.5
+
+  # Data handling
+  - h5py>=3.10
+
+  # YAML config (read by nomad_abm.cli)
+  - pyyaml>=6.0
+
+  - pip

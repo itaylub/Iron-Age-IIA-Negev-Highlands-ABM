@@ -1,0 +1,117 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nomad-abm"
+version = "1.0.0"
+description = "Agent-based model of Iron Age IIA settlement in the Negev Highlands"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+authors = [
+  { name = "Itay Lubel" },
+]
+keywords = [
+  "agent-based-model",
+  "archaeology",
+  "iron-age",
+  "negev-highlands",
+  "mesa",
+  "simulation",
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Scientific/Engineering",
+]
+# Runtime dependencies. Mirrored in environment.yml / requirements.txt.
+# Open-ended (>=) so the bleeding-edge data-machine env (Python 3.14,
+# numpy 2.3, mesa 3.3, geopandas 1.1) keeps working. fiona and pyproj
+# arrive transitively via geopandas.
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "scipy>=1.11",
+  "geopandas>=0.14",
+  "shapely>=2.0",
+  "matplotlib>=3.8",
+  "seaborn>=0.13",
+  "mesa>=3.0,<4.0",
+  "optuna>=3.5",
+  "h5py>=3.10",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "ruff>=0.6.9",
+  "black>=24.8",
+  "pytest>=8.0",
+  "pre-commit>=3.8",
+  "nbstripout>=0.7",
+]
+
+[project.urls]
+Homepage = "https://github.com/itaylub/ABM"
+Issues = "https://github.com/itaylub/ABM/issues"
+
+[project.scripts]
+nomad-abm = "nomad_abm.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# ---------------------------------------------------------------------------
+# Tool configuration
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = [
+  "thesis",
+  "Results",
+  "Data",
+  "legacy",
+  "*.ipynb",
+]
+
+[tool.ruff.lint]
+# Conservative initial ruleset: catches real bugs (syntax errors,
+# undefined names) without forcing a wholesale reformat of the existing
+# code. Stricter rules (E, W, I, B, UP) will be enabled in a future
+# pass once the codebase has been formatted with black.
+select = [
+  "E9",   # syntax errors
+  "F63",  # invalid comparisons
+  "F7",   # suspicious code
+  "F82",  # undefined-name
+]
+
+[tool.ruff.lint.per-file-ignores]
+# The model modules intentionally set OMP_NUM_THREADS etc. between
+# `import os` and the numpy imports, which triggers E402 (module-level
+# import not at top of file). The pattern is required to keep
+# numpy/scipy single-threaded under multiprocessing.
+"src/nomad_abm/model.py" = ["E402"]
+"src/nomad_abm/sensitivity.py" = ["E402"]
+
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+extend-exclude = '''
+(
+  ^/thesis/
+  | ^/Results/
+  | ^/Data/
+  | ^/legacy/
+)
+'''
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-q --strict-markers"

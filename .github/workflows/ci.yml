@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ruff
+        run: pip install "ruff==0.6.9"
+
+      - name: ruff check
+        run: ruff check .
+
+  notebook-clean:
+    # Fail if a committed .ipynb contains outputs or execution counts.
+    name: Notebooks have no outputs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check notebooks are stripped
+        run: |
+          set -e
+          shopt -s nullglob globstar
+          fail=0
+          for nb in **/*.ipynb; do
+            outputs=$(jq '[.cells[] | select(.cell_type=="code") | .outputs | length] | add // 0' "$nb")
+            execs=$(jq '[.cells[] | select(.cell_type=="code") | .execution_count | select(. != null)] | length' "$nb")
+            if [ "$outputs" -ne 0 ] || [ "$execs" -ne 0 ]; then
+              echo "::error file=$nb::contains $outputs output(s) and $execs execution_count(s); run 'nbstripout $nb'"
+              fail=1
+            fi
+          done
+          exit $fail
+
+  tests:
+    name: Tests (pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          environment-file: environment.yml
+          activate-environment: nomad_model
+          auto-activate-base: false
+
+      - name: Install package + test deps
+        run: |
+          pip install -e .
+          pip install pytest
+
+      - name: Run pytest
+        run: pytest -q
