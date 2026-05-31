@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 9 — Zenodo bundle scaffolding (awaiting DOI)
+
+- `scripts/build_data_bundle.py` — builds the canonical input bundle
+  (`nomad-abm-data-v1.0.zip`) by zipping the five runtime files
+  (`yearly_data_10_25.h5`, `per_data_10_25.h5`, `ext_raster.npy`,
+  `place_raster.npy`, `P_for_calib.shp` + sidecars) with a flat
+  internal layout. Auto-discovers the calibration shapefile whether
+  it lives at `Data/P_for_calib.shp` or
+  `Data/points_all/P_for_calib.shp`. Prints the SHA-256 needed for
+  the Zenodo upload.
+- `scripts/download_data.py` — companion downloader. Idempotent,
+  stdlib-only (uses `urllib.request`). Currently has placeholders
+  (`ZENODO_RECORD_ID`, `BUNDLE_SHA256`) and exits with a clear error
+  message if invoked before the upload. After the upload these
+  three values will be patched in and the script becomes runnable
+  on a fresh clone.
+- `docs/ZENODO_UPLOAD.md` — step-by-step walkthrough for the
+  one-time Zenodo upload: account creation, build/upload/metadata
+  flow, what to send back after publishing, and the "New version"
+  workflow for future data regenerations.
+
 ### Phase 7 — smoke tests + synthetic fixture + CI pytest job
 
 - `tests/fixtures/make_fixture.py` builds a tiny synthetic `Data/`
