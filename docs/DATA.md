@@ -30,23 +30,32 @@ calibration (verified by `scripts/inspect_data.py`).
 
 ### Files the model loads at runtime
 
+These are the **current** (October 2025 regeneration) inputs. The
+`_10_25` suffix is a date stamp, not a window subset.
+
 | File | Size | Loaded by | Notes |
 |---|---|---|---|
-| `yearly_data_10_25.h5` | 63.8 MB | `nomad_abm.model.LazyYearlyData` | Lazy-loaded year stack used by the standard calibration run. |
-| `per_data_10_25.h5` | 1.5 MB | `nomad_abm.model.load_permanent_data` | Permanent layers used by the standard calibration run. |
+| `yearly_data_10_25.h5` | 63.8 MB | `nomad_abm.model.LazyYearlyData` | Lazy-loaded yearly stack. |
+| `per_data_10_25.h5` | 1.5 MB | `nomad_abm.model.load_permanent_data` | Permanent layers. |
 | `ext_raster.npy` | 89 KB | `nomad_abm.model` (`GlobalData.ext_raster`) | Binary `uint8` mask, 318 × 280. |
 | `place_raster.npy` | 89 KB | `nomad_abm.model` (`GlobalData.place_raster`) | Binary `uint8` mask, 318 × 280. |
 | `P_for_calib.shp` (+ .shx/.dbf/.prj) | small | `nomad_abm.model.obj_func` | Point shapefile, archaeological calibration targets. **Currently lives at `Data/points_all/P_for_calib.shp` — one folder below where the model's default looks.** Either copy it up to `Data/`, point `NOMAD_ABM_CALIB_SHP` at it, or set `paths.calib_shp` in `configs/default.yaml`. |
 
-### Files retained for reference / Zenodo bundle
+### Legacy files (kept for reference; not loaded by current code)
 
-| File | Size | Use |
+| File | Size | Notes |
 |---|---|---|
-| `yearly_data.h5` | 87.0 MB | Full-history yearly stack (76 groups); the `_10_25` variant is a subset, but the full stack is needed to reproduce alternative-window experiments. |
-| `per_data.h5` | 2.4 MB | Full-history permanent stack; analogous to `yearly_data.h5`. |
+| `yearly_data.h5` | 87.0 MB | Earlier (pre-October-2025) regeneration of the yearly stack. 4 arrays per group instead of the current 3. |
+| `per_data.h5` | 2.4 MB | Earlier permanent stack. 8 arrays per `group_1` instead of the current 6. |
 | `distac_pw.tif` + `.tfw` | 0.6 MB + 93 B | Source raster (cost-distance to permanent water sources) from which `pw_distance` is derived; kept for traceability. |
 | `cntrl_outputs.pkl` / `.pbz2` | 7.1 MB / 7.8 MB | Reference outputs from earlier runs used in analysis notebooks. |
 | `yearly_outputs.pkl` | 35.6 MB | Cached processed year-by-year arrays from an earlier run. |
+
+> **Zenodo plan:** the published archive should include only the
+> current files (the four `*_10_25.h5` / `.npy` and the calibration
+> shapefile). The legacy `.h5` / `.pkl` / `.tif` artifacts above can
+> stay on the data machine; they aren't needed to reproduce
+> published results.
 
 ## HDF5 internal layout
 
@@ -62,7 +71,7 @@ below.
   /array_0   : float64 [318, 280]
   /array_1   : float32 [318, 280]
   /array_2   : float32 [318, 280]
-  /array_3   : float32 [318, 280]    # full-history file only
+  /array_3   : float32 [318, 280]    # legacy file only
 ```
 
 Notes:
@@ -71,8 +80,8 @@ Notes:
 - Each group's datasets are named `array_<j>`. The model reads them
   positionally via `sorted(group.keys(), key=lambda x:
   int(x.split('_')[1]))` — so the order matters, not the names.
-- The `_10_25` subset retains 3 arrays per group; the full version
-  retains 4. The model code only uses the first three positions.
+- The current (`_10_25`) file has 3 arrays per group; the legacy file
+  has 4. The model code only uses the first three positions.
 - All groups have identical structure (`sample_structurally_uniform =
   true`).
 
@@ -80,8 +89,8 @@ Notes:
 
 ```
 /group_1                    # single group (note: 1-indexed!)
-  /array_0 .. /array_7      # 8 arrays in per_data.h5
-  /array_0 .. /array_5      #  or 6 arrays in per_data_10_25.h5
+  /array_0 .. /array_5      # 6 arrays in the current per_data_10_25.h5
+                            #  (8 arrays in the legacy per_data.h5)
                             # all float32 [318, 280] except one float64
 /metadata                   # sibling group; not consumed by the model
 ```
@@ -129,8 +138,12 @@ fixed in `configs/default.yaml`.
 
 ## Zenodo plan (Phase 9)
 
-When Phase 9 lands, all files listed above (including the calibration
-shapefile) will be bundled into a single versioned `.zip`, uploaded
-to Zenodo, and fetched by `scripts/download_data.py` using the
-SHA-256s above. The repository itself will then carry only a tiny
-synthetic fixture under `tests/fixtures/` for CI.
+When Phase 9 lands, the **current** input files —
+`yearly_data_10_25.h5`, `per_data_10_25.h5`, `ext_raster.npy`,
+`place_raster.npy`, and the calibration shapefile — will be bundled
+into a single versioned `.zip`, uploaded to Zenodo, and fetched by
+`scripts/download_data.py` using the SHA-256s above. Legacy
+artefacts (`yearly_data.h5`, `per_data.h5`, `.pkl` caches,
+`distac_pw.tif`) stay on the data machine; they are not needed to
+reproduce published results. The repository itself will then carry
+only a tiny synthetic fixture under `tests/fixtures/` for CI.
