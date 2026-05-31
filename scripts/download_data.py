@@ -30,7 +30,7 @@ from pathlib import Path
 #   BUNDLE_SHA256    = "<paste the sha256 printed by build_data_bundle.py>"
 ZENODO_RECORD_ID: str | None = "20473345"
 BUNDLE_FILENAME: str = "nomad-abm-data-v1.0.zip"
-BUNDLE_SHA256: str | None = None  # TODO: fill in once we have the SHA-256 from the data machine
+BUNDLE_SHA256: str | None = "c47a5658414d63510f2172a1da4d606bd7e326dcbeb0521608f29ca37249214f"
 # ==============================================================================
 
 

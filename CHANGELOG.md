@@ -12,10 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Data bundle published as **Zenodo DOI
   [10.5281/zenodo.20473345](https://doi.org/10.5281/zenodo.20473345)**
   (`nomad-abm-data-v1.0.zip`, 5 current input files).
-- `scripts/download_data.py` updated with the record ID. Bundle
-  SHA-256 still to be filled in once captured from the data machine
-  (the script refuses to run until it is, so it cannot silently
-  succeed on a corrupted download).
+- `scripts/download_data.py` updated with the record ID **and**
+  bundle SHA-256 (`c47a5658...49214f`, derived from
+  `build_data_bundle.py` on the data machine; Python's
+  `zipfile.ZIP_DEFLATED` is deterministic over the same inputs and
+  source-file mtimes, so the local digest matches what Zenodo stored
+  on upload).
 - DOI badge added to `README.md`.
 - `CITATION.cff` gains an `identifiers` block linking the software
   citation to the Zenodo dataset DOI.
