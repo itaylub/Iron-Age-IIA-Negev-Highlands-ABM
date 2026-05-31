@@ -28,9 +28,9 @@ from pathlib import Path
 #   ZENODO_RECORD_ID = "12345678"        ← the trailing digits of the Zenodo URL
 #   BUNDLE_FILENAME  = "nomad-abm-data-v1.0.zip"
 #   BUNDLE_SHA256    = "<paste the sha256 printed by build_data_bundle.py>"
-ZENODO_RECORD_ID: str | None = None
+ZENODO_RECORD_ID: str | None = "20473345"
 BUNDLE_FILENAME: str = "nomad-abm-data-v1.0.zip"
-BUNDLE_SHA256: str | None = None
+BUNDLE_SHA256: str | None = None  # TODO: fill in once we have the SHA-256 from the data machine
 # ==============================================================================
 
 

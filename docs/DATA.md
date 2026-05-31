@@ -1,10 +1,18 @@
 # Data dictionary
 
-Inputs consumed by the Nomad ABM. Until the Zenodo archive lands
-(Phase 9 of the publication-readiness pass), these files live under
-`Data/` on the author's data machine (`D:\itay\ABM\Data`) and are
-**not committed to git** (large binaries plus the `.gitignore`
-already excludes `*.h5`, `*.npy`, `*.shp`, `*.tif`, etc.).
+Inputs consumed by the Nomad ABM. The canonical archive of these files
+lives at **Zenodo: [10.5281/zenodo.20473345](https://doi.org/10.5281/zenodo.20473345)**
+(bundled as `nomad-abm-data-v1.0.zip`). Fetch them on a fresh clone
+with:
+
+```bash
+python scripts/download_data.py
+```
+
+This downloads the bundle, verifies its SHA-256, and extracts the
+files into `Data/`. The legacy `.h5` / `.pkl` / `.tif` files documented
+below are **not** in the Zenodo bundle; they live only on the author's
+data machine.
 
 This document is the single source of truth for the file layout the
 model expects. Schemas and checksums below were captured by
@@ -136,14 +144,24 @@ yet in this manifest because the file currently sits at
 moved (or symlinked) to `Data/P_for_calib.shp` or its location is
 fixed in `configs/default.yaml`.
 
-## Zenodo plan (Phase 9)
+## Zenodo archive (Phase 9 — done)
 
-When Phase 9 lands, the **current** input files —
-`yearly_data_10_25.h5`, `per_data_10_25.h5`, `ext_raster.npy`,
-`place_raster.npy`, and the calibration shapefile — will be bundled
-into a single versioned `.zip`, uploaded to Zenodo, and fetched by
-`scripts/download_data.py` using the SHA-256s above. Legacy
-artefacts (`yearly_data.h5`, `per_data.h5`, `.pkl` caches,
-`distac_pw.tif`) stay on the data machine; they are not needed to
-reproduce published results. The repository itself will then carry
-only a tiny synthetic fixture under `tests/fixtures/` for CI.
+The canonical archive is at
+[10.5281/zenodo.20473345](https://doi.org/10.5281/zenodo.20473345).
+The bundle (`nomad-abm-data-v1.0.zip`) contains exactly the five
+current input files (`yearly_data_10_25.h5`, `per_data_10_25.h5`,
+`ext_raster.npy`, `place_raster.npy`, and `P_for_calib.shp` +
+sidecars). Fetch with:
+
+```bash
+python scripts/download_data.py
+```
+
+`scripts/download_data.py` verifies the bundle's SHA-256 before
+extracting, so any tampering or corruption in transit is caught
+automatically.
+
+Future regenerations of the data should use Zenodo's *New version*
+flow on the same record (the concept DOI stays stable, a new version
+DOI is issued, and `scripts/download_data.py` gets a one-line bump).
+See `docs/ZENODO_UPLOAD.md`.

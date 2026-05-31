@@ -17,6 +17,10 @@ version: "0.1.0"
 date-released: "2025-01-01"
 license: MIT
 repository-code: "https://github.com/itaylub/ABM"
+identifiers:
+  - description: "Archived input data bundle (Zenodo)"
+    type: doi
+    value: "10.5281/zenodo.20473345"
 keywords:
   - agent-based-model
   - archaeology

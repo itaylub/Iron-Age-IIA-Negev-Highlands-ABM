@@ -1,5 +1,7 @@
 # Nomad ABM — Iron Age IIA Settlement in the Negev Highlands
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20473345.svg)](https://doi.org/10.5281/zenodo.20473345)
+
 > Agent-based model of household mobility, environmental degradation, and
 > palimpsest formation in the Negev Highlands during the Iron Age IIA
 > (c. 980–830 BCE). Companion code to Chapter 4 of the thesis.

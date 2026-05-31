@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 9 — Zenodo archive published
+
+- Data bundle published as **Zenodo DOI
+  [10.5281/zenodo.20473345](https://doi.org/10.5281/zenodo.20473345)**
+  (`nomad-abm-data-v1.0.zip`, 5 current input files).
+- `scripts/download_data.py` updated with the record ID. Bundle
+  SHA-256 still to be filled in once captured from the data machine
+  (the script refuses to run until it is, so it cannot silently
+  succeed on a corrupted download).
+- DOI badge added to `README.md`.
+- `CITATION.cff` gains an `identifiers` block linking the software
+  citation to the Zenodo dataset DOI.
+- `docs/DATA.md` rewritten to point at the published archive and
+  document the `python scripts/download_data.py` fetch flow as the
+  canonical way to obtain inputs.
+
 ### Phase 9 — Zenodo bundle scaffolding (awaiting DOI)
 
 - `scripts/build_data_bundle.py` — builds the canonical input bundle
