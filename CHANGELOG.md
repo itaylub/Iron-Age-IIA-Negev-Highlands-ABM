@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] — 2026-05-31
+
+First public release. Companion to Chapter 4 of Itay Lubel's MA
+thesis (Hebrew University of Jerusalem). Data archived at
+[10.5281/zenodo.20473345](https://doi.org/10.5281/zenodo.20473345).
+
 ### Phase 6 follow-up: CLI was broken; fixed
 
 - Discovery: the Phase 6 CLI in `src/nomad_abm/cli.py` called

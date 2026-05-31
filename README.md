@@ -6,11 +6,6 @@
 > palimpsest formation in the Negev Highlands during the Iron Age IIA
 > (c. 980–830 BCE). Companion code to Chapter 4 of the thesis.
 
-> ⚠️ **Status: work in progress.** This repository is being prepared for
-> academic publication. APIs, file layout, and data hosting are
-> evolving. See [`/root/.claude/plans/i-will-need-to-mutable-pascal.md`](#)
-> (local) for the publication-readiness plan and roadmap.
-
 ## Overview
 
 This model simulates 75 years of annual household repositioning across a

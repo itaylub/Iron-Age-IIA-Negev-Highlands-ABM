@@ -5,4 +5,4 @@ formation in the Negev Highlands. See the project README and
 ``docs/ODD.md`` for a full description.
 """
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"

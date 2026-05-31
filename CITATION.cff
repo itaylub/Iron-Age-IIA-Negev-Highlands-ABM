@@ -13,8 +13,8 @@ authors:
   - family-names: Lubel
     given-names: Itay
     affiliation: "Hebrew University of Jerusalem, Department of Archaeology"
-version: "0.1.0"
-date-released: "2025-01-01"
+version: "1.0.0"
+date-released: "2026-05-31"
 license: MIT
 repository-code: "https://github.com/itaylub/ABM"
 identifiers:
