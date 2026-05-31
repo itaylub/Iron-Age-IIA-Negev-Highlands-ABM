@@ -1,32 +1,59 @@
 """Inventory and sanity-check the local Data/ directory.
 
-Read-only. Writes a JSON report describing every file under ``Data/``:
-size, SHA-256, and, for the geospatial files, the internal schema
-(HDF5 layout, raster CRS, shapefile feature counts). The report is
-both printed to stdout and saved to ``scripts/inspect_data.report.json``
-(git-ignored).
+Read-only. Walks Data/ and emits a JSON report (sizes, SHA-256, HDF5
+layouts, raster CRS, shapefile counts) to stdout AND to a file next
+to Data/.
 
-Run from the repository root in the ``nomad_model`` conda env::
+Locating Data/ — tries, in order:
+  1. NOMAD_ABM_DATA_DIR  environment variable
+  2. ./Data               (cwd)
+  3. <repo-root>/Data     where repo root is two levels up from this file
+  4. D:/itay/ABM/Data     the documented user data location
+  5. /home/user/ABM/Data  the documented cloud-container path
 
-    conda activate nomad_model
-    python scripts/inspect_data.py
+Usage (Windows, after `conda activate nomad_model`):
 
-The stdout is what drives the Phase 7 test-fixture generator and the
-Phase 9 Zenodo manifest, so paste it into the publication-readiness
-conversation when done.
+    cd /d D:\\itay\\ABM
+    python scripts\\inspect_data.py
+
+The script can live anywhere — drop it in the repo root or in
+``scripts/`` and run it from any working directory.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
-HERE = Path(__file__).resolve()
-REPO = HERE.parent.parent
-DATA = REPO / "Data"
-REPORT_PATH = HERE.parent / "inspect_data.report.json"
+
+def find_data_dir() -> Path:
+    env = os.environ.get("NOMAD_ABM_DATA_DIR")
+    candidates: list[Path] = []
+    if env:
+        candidates.append(Path(env))
+    candidates.append(Path.cwd() / "Data")
+    here = Path(__file__).resolve()
+    for ancestor in (here.parent, here.parent.parent, here.parent.parent.parent):
+        candidates.append(ancestor / "Data")
+    candidates.append(Path("D:/itay/ABM/Data"))
+    candidates.append(Path("/home/user/ABM/Data"))
+    seen: set[Path] = set()
+    for c in candidates:
+        try:
+            c = c.resolve()
+        except OSError:
+            continue
+        if c in seen:
+            continue
+        seen.add(c)
+        if c.is_dir():
+            return c
+    raise SystemExit(
+        "ERROR: could not find Data/. Tried:\n  " + "\n  ".join(str(c) for c in seen)
+    )
 
 
 def sha256_file(path: Path, chunk: int = 1 << 20) -> str:
@@ -63,8 +90,8 @@ def inspect_h5(path: Path) -> dict:
                     "mean": float(arr.mean()),
                 }
             info["first_group_datasets"] = datasets
-            sample_structures = [tuple(sorted(f[k].keys())) for k in top[: min(5, len(top))]]
-            info["sample_structurally_uniform"] = len(set(sample_structures)) == 1
+            sample = [tuple(sorted(f[k].keys())) for k in top[: min(5, len(top))]]
+            info["sample_structurally_uniform"] = len(set(sample)) == 1
         else:
             info["layout"] = "flat"
             datasets = {}
@@ -147,25 +174,19 @@ def library_versions() -> dict:
 
 
 def find_calib_shp() -> list[str]:
-    """Locate ``P_for_calib.shp`` anywhere the user might keep it.
-
-    The model references ``Data/P_for_calib.shp`` but it is not in the
-    repo's ``Data/`` snapshot. This widens the search so the user does
-    not have to hunt manually.
-    """
+    """Locate ``P_for_calib.shp`` anywhere the user might keep it."""
     seen: set[Path] = set()
     candidates: list[Path] = []
-    roots = [REPO, DATA, REPO.parent]
-    # On Windows the user mentioned D:\itay\ABM — also probe its likely siblings.
-    for extra in ("D:/itay", "D:/itay/ABM", "D:/itay/ABM/points_all"):
+    here = Path(__file__).resolve()
+    roots: list[Path] = [Path.cwd(), here.parent, here.parent.parent]
+    for extra in ("D:/itay", "D:/itay/ABM", "D:/itay/ABM/points_all", "/home/user/ABM"):
         p = Path(extra)
         if p.exists():
             roots.append(p)
-    patterns = ("P_for_calib.shp", "*calib*.shp")
     for root in roots:
         if not root.exists():
             continue
-        for pat in patterns:
+        for pat in ("P_for_calib.shp", "*calib*.shp"):
             for hit in root.rglob(pat):
                 if hit not in seen:
                     seen.add(hit)
@@ -174,20 +195,16 @@ def find_calib_shp() -> list[str]:
 
 
 def main() -> int:
-    if not DATA.exists():
-        print(
-            f"ERROR: {DATA} does not exist. Run from the repo root with Data/ present.",
-            file=sys.stderr,
-        )
-        return 1
+    data = find_data_dir()
+    report_path = data.parent / "inspect_data.report.json"
 
     report: dict = {
         "library_versions": library_versions(),
-        "data_dir": str(DATA),
+        "data_dir": str(data),
         "files": {},
     }
 
-    for path in sorted(DATA.iterdir()):
+    for path in sorted(data.iterdir()):
         if not path.is_file():
             continue
         suffix = path.suffix.lower()
@@ -210,9 +227,9 @@ def main() -> int:
 
     report["calib_shp_search"] = find_calib_shp()
 
-    REPORT_PATH.write_text(json.dumps(report, indent=2))
+    report_path.write_text(json.dumps(report, indent=2))
     print(json.dumps(report, indent=2))
-    print(f"\n# report written to: {REPORT_PATH}", file=sys.stderr)
+    print(f"\n# report also written to: {report_path}", file=sys.stderr)
     return 0
 
 
