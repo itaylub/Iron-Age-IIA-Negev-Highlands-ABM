@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Phase 5b — dependency cleanup (informed by data-machine inventory)
+
+- Ran `scripts/inspect_data.py` on the data machine (Windows, conda
+  env `Mesa_env`, Python 3.14.0). Output drove the following changes.
+- Dropped explicit dependencies that the package code never imports:
+  `rasterio`, `folium`, `pysal`, `scikit-learn`, `sympy`, `tqdm`,
+  `fiona`, `pyproj`. (`fiona` and `pyproj` still arrive transitively
+  through `geopandas`.) Reduces the dep surface from ~20 to 11 and
+  matches the author's actually-installed Mesa env (which lacks
+  `rasterio` yet runs the model successfully).
+- Relaxed version pins to `>=` with an upper bound only on `mesa`
+  (where 4.0 will be a breaking change). The previously exact pins
+  (`numpy 1.26`, `mesa 3.0`, etc.) blocked the data machine's
+  working configuration (`numpy 2.3.3`, `mesa 3.3.0`,
+  `geopandas 1.1.1`, `pandas 2.3.3`, `h5py 3.15.0`, `optuna 4.5.0`).
+- `pyproject.toml` `[tool.black] extend-exclude` updated to the new
+  `thesis/` path (was `Thesis Chapter/`) and now also skips
+  `legacy/`.
+
 ### Phase 8 — ODD protocol and documentation (in progress)
 
 - `docs/ODD.md` — canonical model description following Grimm et al.

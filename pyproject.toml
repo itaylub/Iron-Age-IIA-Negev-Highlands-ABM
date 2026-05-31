@@ -27,30 +27,22 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Topic :: Scientific/Engineering",
 ]
-# Runtime dependencies are pinned in environment.yml / requirements.txt.
-# This list mirrors them at a higher level so `pip install .` works without
-# the full conda environment. Versions are minor-floored to match the
-# environment file.
+# Runtime dependencies. Mirrored in environment.yml / requirements.txt.
+# Open-ended (>=) so the bleeding-edge data-machine env (Python 3.14,
+# numpy 2.3, mesa 3.3, geopandas 1.1) keeps working. fiona and pyproj
+# arrive transitively via geopandas.
 dependencies = [
-  "numpy>=1.26,<2.0",
-  "pandas>=2.1,<2.3",
-  "scipy>=1.11,<1.13",
-  "rasterio>=1.3.9,<1.4",
-  "geopandas>=0.14,<0.15",
-  "fiona>=1.9,<2.0",
-  "shapely>=2.0,<3.0",
-  "pyproj>=3.6,<4.0",
-  "matplotlib>=3.8,<3.10",
-  "seaborn>=0.13,<0.14",
-  "folium>=0.15,<0.18",
-  "mesa>=3.0,<3.2",
-  "optuna>=3.5,<4.0",
-  "scikit-learn>=1.4,<1.6",
-  "h5py>=3.10,<3.13",
-  "tqdm>=4.66,<5.0",
-  "sympy>=1.12,<2.0",
-  "pysal>=24.1",
-  "pyyaml>=6.0,<7.0",
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "scipy>=1.11",
+  "geopandas>=0.14",
+  "shapely>=2.0",
+  "matplotlib>=3.8",
+  "seaborn>=0.13",
+  "mesa>=3.0,<4.0",
+  "optuna>=3.5",
+  "h5py>=3.10",
+  "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
@@ -112,9 +104,10 @@ line-length = 120
 target-version = ["py311"]
 extend-exclude = '''
 (
-  ^/Thesis\ Chapter/
+  ^/thesis/
   | ^/Results/
   | ^/Data/
+  | ^/legacy/
 )
 '''
 
