@@ -22,9 +22,12 @@ with [Optuna](https://optuna.org/) for parameter calibration and standard
 geospatial / scientific libraries (geopandas, shapely, numpy, scipy,
 h5py).
 
-For the full conceptual and mathematical description, see
-[`docs/ODD.md`](docs/ODD.md) (the canonical technical reference) and
-the accompanying thesis material under [`thesis/`](thesis/).
+For the full conceptual description of the model, see the accompanying
+thesis chapter ([`thesis/ch.4-ABM.md`](thesis/ch.4-ABM.md)); the exact
+parameters, units, and sources are tabulated in the technical appendix
+under [`thesis/`](thesis/). A formal ODD-protocol description
+(Grimm et al. 2020) is planned as part of preparing the model for
+journal publication (see [Future development](#future-development)).
 
 ## Repository layout
 
@@ -41,13 +44,12 @@ with the plain Python module it imports, plus the data and documentation.
 ├── Data/                # input rasters etc. — fetched from Zenodo (not stored in git)
 ├── Results/             # simulation outputs (created on each run; not stored in git)
 ├── docs/                # supplementary documentation
-│   ├── ODD.md                     # canonical model description (Grimm et al. 2020)
 │   ├── DATA.md                    # data dictionary
 │   ├── INSTALL.md                 # long-form install guide
 │   └── objective_function.md      # code-level walkthrough of the objective
 ├── scripts/
 │   └── download_data.py           # fetch the input-data bundle from Zenodo
-├── thesis/              # accompanying thesis chapter + appendices
+├── thesis/              # model description: ABM chapter + parameter appendix
 ├── environment.yml      # conda environment
 ├── requirements.txt     # pip-equivalent dependency list
 ├── CITATION.cff
@@ -142,6 +144,16 @@ the `P_for_calib.shp` calibration shapefile) are archived on
 [Zenodo (10.5281/zenodo.20473345)](https://doi.org/10.5281/zenodo.20473345)
 and fetched with `scripts/download_data.py`. The full schema is
 documented in [`docs/DATA.md`](docs/DATA.md).
+
+## Future development
+
+Planned before submitting the model for journal publication:
+
+- A formal **ODD-protocol** description (Grimm et al. 2020) of the model
+  as implemented, superseding the narrative thesis chapter as the
+  canonical technical reference.
+- A citable **software DOI** for the code itself (via the GitHub↔Zenodo
+  integration), alongside the existing input-data DOI.
 
 ## Citation
 

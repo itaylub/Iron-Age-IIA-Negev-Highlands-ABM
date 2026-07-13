@@ -3,8 +3,7 @@
 > This document is the **code-level** explanation of the calibration
 > objective function as implemented in `model.obj_func`. For
 > the **conceptual / mathematical** statement of the objective, see
-> §4.6.3 of the thesis (Chapter 4) and §A4.3 of the appendix. A
-> high-level summary also appears in [`docs/ODD.md`](ODD.md) §7.6.
+> §4.6.3 of the thesis (Chapter 4) and §A4.3 of the appendix.
 >
 > Mapping: in the equations, `p` is the proportion of enclosed
 > compounds among classified sites; in the code below, that
