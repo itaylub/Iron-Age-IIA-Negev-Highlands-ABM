@@ -1,4 +1,4 @@
-# Nomad ABM — Iron Age IIA Settlement in the Negev Highlands
+# Nomad ABM — Iron Age IIA Negev Highlands Human-Environment Dynamics Model
 
 [![Software DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21336898.svg)](https://doi.org/10.5281/zenodo.21336898)
 [![Data DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20473345.svg)](https://doi.org/10.5281/zenodo.20473345)
@@ -166,8 +166,8 @@ Planned before submitting the model for journal publication:
 Citation metadata lives in [`CITATION.cff`](CITATION.cff) — GitHub
 renders a "Cite this repository" button from it. To cite by hand:
 
-> Lubel, I. (2026). *Nomad ABM: Agent-Based Model of Iron Age IIA
-> Settlement in the Negev Highlands* (version 1.0.0). Hebrew University
+> Lubel, I. (2026). *Nomad ABM: Iron Age IIA Negev Highlands
+> Human-Environment Dynamics Model* (version 1.0.0). Hebrew University
 > of Jerusalem. https://doi.org/10.5281/zenodo.21336898
 
 The software is archived on Zenodo
