@@ -16,7 +16,7 @@ authors:
 version: "1.0.0"
 date-released: "2026-05-31"
 license: MIT
-repository-code: "https://github.com/itaylub/ABM"
+repository-code: "https://github.com/itaylub/Iron-Age-IIA-Negev-Highlands-ABM"
 identifiers:
   - description: "Archived input data bundle (Zenodo)"
     type: doi

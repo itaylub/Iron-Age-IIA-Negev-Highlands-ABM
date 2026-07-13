@@ -167,7 +167,7 @@ renders a "Cite this repository" button from it. To cite by hand:
 
 > Lubel, I. (2026). *Nomad ABM: Agent-Based Model of Iron Age IIA
 > Settlement in the Negev Highlands* (version 1.0.0). Hebrew University
-> of Jerusalem. https://github.com/itaylub/ABM
+> of Jerusalem. https://github.com/itaylub/Iron-Age-IIA-Negev-Highlands-ABM
 
 The input-data archive has its own DOI
 ([10.5281/zenodo.20473345](https://doi.org/10.5281/zenodo.20473345)).
@@ -179,4 +179,4 @@ This project is released under the [MIT License](LICENSE).
 ## Contact
 
 Issues and questions: please use the
-[GitHub issue tracker](https://github.com/itaylub/ABM/issues).
+[GitHub issue tracker](https://github.com/itaylub/Iron-Age-IIA-Negev-Highlands-ABM/issues).
