@@ -85,7 +85,7 @@ Fields not listed can stay empty.
 | **Version** | `1.0` |
 | **License** | `Creative Commons Attribution 4.0 International (CC-BY-4.0)` — standard for open data; allows reuse with attribution |
 | **Keywords** | `agent-based model`, `archaeology`, `Iron Age IIA`, `Negev Highlands`, `pastoralism`, `palimpsest`, `Mesa`, `Optuna`, `Israel` |
-| **Related/alternate identifiers** | Add `https://github.com/itaylub/ABM` with relation type `is supplement to` |
+| **Related/alternate identifiers** | Add `https://github.com/itaylub/Iron-Age-IIA-Negev-Highlands-ABM` with relation type `is supplement to` |
 | **Communities** | Optional. Search for `CoMSES` and add it if you plan to submit to the CoMSES model library |
 
 ### Description template (copy-paste, edit as you like)
@@ -96,7 +96,7 @@ Fields not listed can stay empty.
 > environmental rasters (HDF5), valid-placement masks (NumPy), and
 > archaeological calibration points (ESRI shapefile, EPSG:2039 /
 > Israel Transverse Mercator) consumed by the model code at
-> https://github.com/itaylub/ABM.
+> https://github.com/itaylub/Iron-Age-IIA-Negev-Highlands-ABM.
 >
 > A complete data dictionary and reproducibility instructions are in
 > the `docs/` directory of the code repository, and the model

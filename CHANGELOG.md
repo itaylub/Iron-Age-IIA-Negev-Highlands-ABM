@@ -297,5 +297,5 @@ Functional Mesa 3.0 agent-based model with Optuna calibration, but with
 the publication-readiness gaps tracked above (hardcoded paths, no
 tests, no ODD protocol, large data in git, etc.).
 
-[Unreleased]: https://github.com/itaylub/ABM/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/itaylub/ABM/releases/tag/v0.1.0
+[Unreleased]: https://github.com/itaylub/Iron-Age-IIA-Negev-Highlands-ABM/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/itaylub/Iron-Age-IIA-Negev-Highlands-ABM/releases/tag/v0.1.0
