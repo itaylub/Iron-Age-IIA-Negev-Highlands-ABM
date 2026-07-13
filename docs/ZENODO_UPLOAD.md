@@ -106,7 +106,7 @@ Fields not listed can stay empty.
 > archive and verifies its SHA-256 before extracting into
 > `Data/`.
 >
-> Released alongside Chapter 4 of Itay Lubel's MA thesis
+> Released alongside Chapter 5 of Itay Lubel's MA thesis
 > (forthcoming), The Hebrew University of Jerusalem.
 
 ## Step 4 — Save draft, sanity-check, publish

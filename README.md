@@ -4,7 +4,7 @@
 
 > Agent-based model of household mobility, environmental degradation, and
 > palimpsest formation in the Negev Highlands during the Iron Age IIA
-> (c. 980–830 BCE). Companion code to Chapter 4 of the thesis.
+> (c. 980–830 BCE). Companion code to Chapter 5 of the thesis.
 
 ## Overview
 
@@ -23,9 +23,11 @@ geospatial / scientific libraries (geopandas, shapely, numpy, scipy,
 h5py).
 
 For the full conceptual description of the model, see the accompanying
-thesis chapter ([`thesis/ch.4-ABM.md`](thesis/ch.4-ABM.md)); the exact
-parameters, units, and sources are tabulated in the technical appendix
-under [`thesis/`](thesis/). A formal ODD-protocol description
+thesis chapter ([`thesis/chapter-5-ABM.docx`](thesis/chapter-5-ABM.docx));
+the exact parameters, units, equations, and sources are given in the
+technical appendix
+([`thesis/appendix-5-ABM.docx`](thesis/appendix-5-ABM.docx)). A formal
+ODD-protocol description
 (Grimm et al. 2020) is planned as part of preparing the model for
 journal publication (see [Future development](#future-development)).
 
@@ -49,7 +51,10 @@ with the plain Python module it imports, plus the data and documentation.
 │   └── objective_function.md      # code-level walkthrough of the objective
 ├── scripts/
 │   └── download_data.py           # fetch the input-data bundle from Zenodo
-├── thesis/              # model description: ABM chapter + parameter appendix
+├── thesis/              # model description (the appendix material)
+│   ├── chapter-5-ABM.docx                 # ABM chapter (narrative description)
+│   ├── chapter-5-tables-and-figures.docx  # its tables and figures
+│   └── appendix-5-ABM.docx                # technical appendix (parameters, equations)
 ├── environment.yml      # conda environment
 ├── requirements.txt     # pip-equivalent dependency list
 ├── CITATION.cff
