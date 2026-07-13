@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
-title: "Nomad ABM: Agent-Based Model of Iron Age IIA Settlement in the Negev Highlands"
+title: "Nomad ABM: Iron Age IIA Negev Highlands Human-Environment Dynamics Model"
 abstract: >-
   An agent-based model implemented in Mesa 3.0 that simulates 75 years of
   annual household repositioning across a 318 x 280 grid of the Negev
