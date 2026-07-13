@@ -98,14 +98,15 @@ Fields not listed can stay empty.
 > Israel Transverse Mercator) consumed by the model code at
 > https://github.com/itaylub/ABM.
 >
-> A complete data dictionary, the ODD model description, and
-> reproducibility instructions are in the `docs/` directory of the
-> code repository. The download utility
+> A complete data dictionary and reproducibility instructions are in
+> the `docs/` directory of the code repository, and the model
+> description is in the accompanying thesis chapter under `thesis/`.
+> The download utility
 > `scripts/download_data.py` in that repository fetches this
 > archive and verifies its SHA-256 before extracting into
 > `Data/`.
 >
-> Released alongside Chapter 4 of Itay Lubel's MA thesis
+> Released alongside Chapter 5 of Itay Lubel's MA thesis
 > (forthcoming), The Hebrew University of Jerusalem.
 
 ## Step 4 — Save draft, sanity-check, publish

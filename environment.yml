@@ -34,7 +34,7 @@ dependencies:
   # Data handling
   - h5py>=3.10
 
-  # YAML config (read by nomad_abm.cli)
+  # YAML support (optional; not required by the notebooks)
   - pyyaml>=6.0
 
   - pip

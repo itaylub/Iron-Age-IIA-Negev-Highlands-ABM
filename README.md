@@ -4,7 +4,7 @@
 
 > Agent-based model of household mobility, environmental degradation, and
 > palimpsest formation in the Negev Highlands during the Iron Age IIA
-> (c. 980–830 BCE). Companion code to Chapter 4 of the thesis.
+> (c. 980–830 BCE). Companion code to Chapter 5 of the thesis.
 
 ## Overview
 
@@ -19,44 +19,44 @@ under stochastic rainfall regimes.
 
 The model is implemented in Python on top of [Mesa 3.0](https://mesa.readthedocs.io/),
 with [Optuna](https://optuna.org/) for parameter calibration and standard
-geospatial / scientific libraries (rasterio, geopandas, numpy, scipy,
+geospatial / scientific libraries (geopandas, shapely, numpy, scipy,
 h5py).
 
-For the full conceptual and mathematical description, see
-[`docs/ODD.md`](docs/ODD.md) (the canonical technical reference) and
-the accompanying thesis material under [`thesis/`](thesis/). Detailed
-parameter tables and equations live in Appendix 4 of the thesis
-(see Drive — kept outside the repo for now).
+For the full conceptual description of the model, see the accompanying
+thesis chapter ([`thesis/chapter-5-ABM.docx`](thesis/chapter-5-ABM.docx));
+the exact parameters, units, equations, and sources are given in the
+technical appendix
+([`thesis/appendix-5-ABM.docx`](thesis/appendix-5-ABM.docx)). A formal
+ODD-protocol description
+(Grimm et al. 2020) is planned as part of preparing the model for
+journal publication (see [Future development](#future-development)).
 
 ## Repository layout
 
+The project is deliberately simple: two Jupyter notebooks, each paired
+with the plain Python module it imports, plus the data and documentation.
+
 ```
 .
-├── src/nomad_abm/       # the canonical Python package
-│   ├── model.py                    # main model (Mesa 3.0)
-│   ├── sensitivity.py              # variant for sensitivity analysis
-│   ├── cli.py                      # `python -m nomad_abm run ...`
-│   └── __init__.py / __main__.py
-├── Code/                # analysis notebooks + thin backwards-compat shims
-│   ├── model_code_26_2.ipynb       # canonical optimization run notebook
-│   ├── sensitivity_analysis.ipynb  # sensitivity analysis notebook
-│   ├── model_opt.py                # shim → nomad_abm.model
-│   └── model_opt_sensitivity.py    # shim → nomad_abm.sensitivity
-├── configs/             # YAML run configurations
-│   └── default.yaml
-├── Data/                # HDF5/raster inputs (large; will move to Zenodo)
-├── Results/             # simulation outputs (ignored by git)
+├── Code/
+│   ├── calibration.ipynb          # main calibration / optimization runs
+│   ├── model.py                   #   ↳ the agent-based model it imports
+│   ├── sensitivity_analysis.ipynb # sensitivity analysis
+│   └── sensitivity_model.py       #   ↳ the model variant it imports
+├── Data/                # input rasters etc. — fetched from Zenodo (not stored in git)
+├── Results/             # simulation outputs (created on each run; not stored in git)
 ├── docs/                # supplementary documentation
-│   ├── ODD.md                      # canonical model description (Grimm et al. 2020)
-│   ├── DATA.md                     # data dictionary
-│   ├── INSTALL.md                  # long-form install guide
-│   └── objective_function.md       # code-level walkthrough of the objective
-├── thesis/              # accompanying thesis chapter + appendices
-├── legacy/              # frozen pre-Phase-6 snapshot of Code/ for revert
+│   ├── DATA.md                    # data dictionary
+│   ├── INSTALL.md                 # long-form install guide
+│   └── objective_function.md      # code-level walkthrough of the objective
+├── scripts/
+│   └── download_data.py           # fetch the input-data bundle from Zenodo
+├── thesis/              # model description (the appendix material)
+│   ├── chapter-5-ABM.docx                 # ABM chapter (narrative description)
+│   ├── chapter-5-tables-and-figures.docx  # its tables and figures
+│   └── appendix-5-ABM.docx                # technical appendix (parameters, equations)
 ├── environment.yml      # conda environment
-├── requirements.txt     # pip-equivalent for non-conda users
-├── pyproject.toml       # packaging + ruff/black/pytest config
-├── .pre-commit-config.yaml
+├── requirements.txt     # pip-equivalent dependency list
 ├── CITATION.cff
 ├── CHANGELOG.md
 └── LICENSE
@@ -64,63 +64,70 @@ parameter tables and equations live in Appendix 4 of the thesis
 
 ## Installation
 
+The model is developed and tested on **Python 3.11**. The geospatial
+libraries (geopandas, shapely, fiona, pyproj) install most reliably via
+**conda**, so that path is recommended.
+
 ```bash
-# Conda (recommended — pins geospatial libraries via conda-forge)
+# Conda (recommended)
 conda env create -f environment.yml
 conda activate nomad_model
-pip install -e .
 
 # Or pure pip
-pip install -e .            # installs runtime deps from pyproject.toml
-# (or, for exact pins) pip install -r requirements.txt
+python3.11 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
-For development tools (ruff, black, pre-commit, nbstripout):
-
-```bash
-pip install -e ".[dev]"
-pre-commit install
-```
+There is nothing to "install" beyond the dependencies — the model is
+plain `.py` files that the notebooks import directly. See
+[`docs/INSTALL.md`](docs/INSTALL.md) for per-platform notes and
+troubleshooting.
 
 ## How to run
 
-### From the command line
+The two notebooks in `Code/` are the entry points:
 
-After `pip install -e .` (or with the conda environment active):
+- **`Code/calibration.ipynb`** — the calibration / optimization runs
+  (imports `model.py`).
+- **`Code/sensitivity_analysis.ipynb`** — the sensitivity analysis
+  (imports `sensitivity_model.py`).
+
+Launch Jupyter from the repository root and open either notebook:
 
 ```bash
-python -m nomad_abm run --config configs/default.yaml --seed 42
+conda activate nomad_model
+jupyter lab            # or: jupyter notebook
 ```
 
-The YAML config sets path overrides; `--seed` is optional and overrides
-the config value.
-
-### From a notebook
-
-The two canonical notebooks live in `Code/`:
-
-- **`Code/model_code_26_2.ipynb`** — optimization runs (uses
-  `nomad_abm.model`).
-- **`Code/sensitivity_analysis.ipynb`** — sensitivity analysis (uses
-  `nomad_abm.sensitivity`).
-
-Either of these import patterns works:
+Because each notebook lives next to the module it imports, the imports
+just work:
 
 ```python
-# new layout (preferred)
-from nomad_abm.model import run_model_opt
+import model                       # in calibration.ipynb
+model.run_model_opt(seed=42)
 
-# old layout — still works via a thin shim in Code/model_opt.py
-from model_opt import run_model_opt
-
-run_model_opt(seed=42)
+import sensitivity_model           # in sensitivity_analysis.ipynb
 ```
+
+### Getting the data
+
+The input data is archived on Zenodo (DOI above), not stored in git.
+Fetch it into `Data/` on a fresh clone with:
+
+```bash
+python scripts/download_data.py
+```
+
+This downloads the bundle, verifies its checksum, and extracts the
+rasters, masks, and calibration shapefile into `Data/`. See
+[`docs/DATA.md`](docs/DATA.md) for the full data dictionary.
 
 ### Data paths
 
-By default, input data is loaded from `./Data/` and outputs land in
-`./Results/`, both relative to the repo root. To point at a different
-location, edit `configs/default.yaml` or export environment variables:
+By default the model reads inputs from `./Data/` and writes outputs to
+`./Results/`, relative to the repository root. To point elsewhere, set
+environment variables before launching Jupyter:
 
 ```bash
 export NOMAD_ABM_DATA_DIR=/path/to/data
@@ -128,40 +135,42 @@ export NOMAD_ABM_RESULTS_DIR=/path/to/results
 export NOMAD_ABM_CALIB_SHP=/path/to/P_for_calib.shp
 ```
 
-The YAML config is applied first, then env vars override it (env vars
-win because the model reads them at import time).
-
-> The pre-Phase-6 source layout is preserved in two places: the
-> `legacy/` directory (browsable, easy to copy back) and the
-> `legacy-pre-publication` git tag (recoverable via
-> `git checkout legacy-pre-publication -- <path>`).
-
 ## Reproducibility
 
-- `Code/environment.yml` pins Python 3.11 plus every dependency to a
-  specific minor version.
+- `environment.yml` and `requirements.txt` list every dependency.
 - The model accepts a `seed` argument and seeds both `random` and
-  `numpy.random` (see `Code/model_opt.py:238–240`).
+  `numpy.random`, so a given seed reproduces a given run.
 - Simulation outputs land in timestamped folders under `Results/`.
 
 ## Data
 
-Input data (HDF5 yearly/permanent rasters, GeoTIFF, .npy) live under
-`Data/`. They are currently committed to the repository (~184 MB), but
-will be archived on Zenodo with a DOI as part of publication
-preparation. The calibration shapefile `P_for_calib.shp` referenced by
-the objective function is not yet included — see the publication plan.
+Input data (HDF5 yearly/permanent rasters, GeoTIFF, `.npy` masks, and
+the `P_for_calib.shp` calibration shapefile) are archived on
+[Zenodo (10.5281/zenodo.20473345)](https://doi.org/10.5281/zenodo.20473345)
+and fetched with `scripts/download_data.py`. The full schema is
+documented in [`docs/DATA.md`](docs/DATA.md).
+
+## Future development
+
+Planned before submitting the model for journal publication:
+
+- A formal **ODD-protocol** description (Grimm et al. 2020) of the model
+  as implemented, superseding the narrative thesis chapter as the
+  canonical technical reference.
+- A citable **software DOI** for the code itself (via the GitHub↔Zenodo
+  integration), alongside the existing input-data DOI.
 
 ## Citation
 
 Citation metadata lives in [`CITATION.cff`](CITATION.cff) — GitHub
 renders a "Cite this repository" button from it. To cite by hand:
 
-> Lubel, I. (2025). *Nomad ABM: Agent-Based Model of Iron Age IIA
-> Settlement in the Negev Highlands* (version 0.1.0). Hebrew University
+> Lubel, I. (2026). *Nomad ABM: Agent-Based Model of Iron Age IIA
+> Settlement in the Negev Highlands* (version 1.0.0). Hebrew University
 > of Jerusalem. https://github.com/itaylub/ABM
 
-A Zenodo DOI will be minted with the v1.0.0 release (see roadmap).
+The input-data archive has its own DOI
+([10.5281/zenodo.20473345](https://doi.org/10.5281/zenodo.20473345)).
 
 ## License
 
