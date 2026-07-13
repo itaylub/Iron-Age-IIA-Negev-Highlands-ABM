@@ -7,9 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Reshaped the repository for submission as a dissertation appendix:
+from a packaged software tool into the simple analysis pipeline it
+actually is (Jupyter notebooks + the plain Python modules they import).
+
+### Changed
+
+- Moved the model out of the `src/nomad_abm/` package to plain modules
+  next to the notebooks that import them, and gave them intuitive names:
+  - `src/nomad_abm/model.py` → `Code/model.py`
+  - `src/nomad_abm/sensitivity.py` → `Code/sensitivity_model.py`
+  - `Code/model_code_26_2.ipynb` → `Code/calibration.ipynb`
+- Model documentation is now the thesis **Chapter 5** and **Appendix 5**
+  (technical specification) rather than a formal ODD protocol. A formal
+  ODD is planned before journal publication.
+- Rewrote `README`, `docs/INSTALL.md`, and `docs/DATA.md` for the
+  notebook workflow.
+
+### Added
+
+- `thesis/` now holds the current Chapter 5, its tables and figures, and
+  the Appendix 5 technical specification.
+
+### Removed
+
+- The installable package, command-line interface, YAML config,
+  packaging/tooling files (`pyproject.toml`, `.pre-commit-config.yaml`),
+  the test suite, the CI workflow, the `legacy/` snapshot, and the
+  formal `docs/ODD.md`.
+- `Data/` and `Results/` are no longer tracked in git — input data is
+  archived on Zenodo and fetched by `scripts/download_data.py`, and
+  results are regenerable.
+
 ## [1.0.0] — 2026-05-31
 
-First public release. Companion to Chapter 4 of Itay Lubel's MA
+First public release. Companion to Chapter 5 of Itay Lubel's MA
 thesis (Hebrew University of Jerusalem). Data archived at
 [10.5281/zenodo.20473345](https://doi.org/10.5281/zenodo.20473345).
 
