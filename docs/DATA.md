@@ -43,11 +43,11 @@ These are the **current** (October 2025 regeneration) inputs. The
 
 | File | Size | Loaded by | Notes |
 |---|---|---|---|
-| `yearly_data_10_25.h5` | 63.8 MB | `nomad_abm.model.LazyYearlyData` | Lazy-loaded yearly stack. |
-| `per_data_10_25.h5` | 1.5 MB | `nomad_abm.model.load_permanent_data` | Permanent layers. |
-| `ext_raster.npy` | 89 KB | `nomad_abm.model` (`GlobalData.ext_raster`) | Binary `uint8` mask, 318 × 280. |
-| `place_raster.npy` | 89 KB | `nomad_abm.model` (`GlobalData.place_raster`) | Binary `uint8` mask, 318 × 280. |
-| `P_for_calib.shp` (+ .shx/.dbf/.prj) | small | `nomad_abm.model.obj_func` | Point shapefile, archaeological calibration targets. **Currently lives at `Data/points_all/P_for_calib.shp` — one folder below where the model's default looks.** Either copy it up to `Data/`, point `NOMAD_ABM_CALIB_SHP` at it, or set `paths.calib_shp` in `configs/default.yaml`. |
+| `yearly_data_10_25.h5` | 63.8 MB | `model.LazyYearlyData` | Lazy-loaded yearly stack. |
+| `per_data_10_25.h5` | 1.5 MB | `model.load_permanent_data` | Permanent layers. |
+| `ext_raster.npy` | 89 KB | `model` (`GlobalData.ext_raster`) | Binary `uint8` mask, 318 × 280. |
+| `place_raster.npy` | 89 KB | `model` (`GlobalData.place_raster`) | Binary `uint8` mask, 318 × 280. |
+| `P_for_calib.shp` (+ .shx/.dbf/.prj) | small | `model.obj_func` | Point shapefile, archaeological calibration targets. Shipped in the Zenodo bundle and extracted to `Data/P_for_calib.shp` by `scripts/download_data.py`, which is where the model looks by default. If it is stored elsewhere, point `NOMAD_ABM_CALIB_SHP` at it. |
 
 ### Legacy files (kept for reference; not loaded by current code)
 
@@ -68,8 +68,8 @@ These are the **current** (October 2025 regeneration) inputs. The
 ## HDF5 internal layout
 
 **Confirmed against the actual files via `scripts/inspect_data.py`**;
-the model's `nomad_abm.model.LazyYearlyData` and
-`nomad_abm.model.load_permanent_data` index into the structure shown
+the model's `model.LazyYearlyData` and
+`model.load_permanent_data` index into the structure shown
 below.
 
 ### `yearly_data.h5` and `yearly_data_10_25.h5`
@@ -138,13 +138,11 @@ yearly_data_10_25.h5    e45c0f272fac39c038cc481ded64cba3c72c895da5e63fd884005695
 yearly_outputs.pkl      cf25483bcae98509c9bedf07458e66168d01ebbf80e5a8edf385b08ea457d9ac
 ```
 
-`P_for_calib.shp` and its sidecars (`.shx`, `.dbf`, `.prj`) are not
-yet in this manifest because the file currently sits at
-`Data/points_all/P_for_calib.shp`; checksums will be added once it is
-moved (or symlinked) to `Data/P_for_calib.shp` or its location is
-fixed in `configs/default.yaml`.
+`P_for_calib.shp` and its sidecars (`.shx`, `.dbf`, `.prj`) ship inside
+the Zenodo bundle and are extracted to `Data/P_for_calib.shp` by
+`scripts/download_data.py` — the location the model reads by default.
 
-## Zenodo archive (Phase 9 — done)
+## Zenodo archive
 
 The canonical archive is at
 [10.5281/zenodo.20473345](https://doi.org/10.5281/zenodo.20473345).

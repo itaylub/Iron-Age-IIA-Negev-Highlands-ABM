@@ -44,7 +44,8 @@ from multiprocessing import shared_memory
 # Paths default to <repo_root>/Data and <repo_root>/Results so the model
 # runs from any clone. Override individual paths with environment
 # variables: NOMAD_ABM_DATA_DIR, NOMAD_ABM_RESULTS_DIR, NOMAD_ABM_CALIB_SHP.
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# This file lives in Code/, one level below the repo root.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.environ.get("NOMAD_ABM_DATA_DIR") or os.path.join(_REPO_ROOT, "Data")
 RESULTS_DIR = os.environ.get("NOMAD_ABM_RESULTS_DIR") or os.path.join(_REPO_ROOT, "Results")
 YEARLY_DATA_PATH = os.path.join(DATA_DIR, "yearly_data_10_25.h5")

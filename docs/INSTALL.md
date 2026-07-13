@@ -1,28 +1,19 @@
 # Installation
 
 The model is tested on **Python 3.11**. Geospatial dependencies
-(`rasterio`, `geopandas`, `fiona`, `pyproj`, `shapely`) are easier to
-install via **conda** than via plain `pip`, especially on Windows; the
-conda path is therefore recommended.
+(`geopandas`, `fiona`, `pyproj`, `shapely`) are easier to install via
+**conda** than via plain `pip`, especially on Windows; the conda path is
+therefore recommended.
+
+There is no package to build or install: the model is plain `.py` files
+in `Code/` that the notebooks import directly. "Installing" just means
+creating a Python environment with the dependencies.
 
 ## Path A — Conda (recommended)
 
 ```bash
 conda env create -f environment.yml
 conda activate nomad_model
-pip install -e .
-```
-
-`pip install -e .` makes the `nomad_abm` package importable from
-anywhere and registers the `nomad-abm` console script. Without it the
-package is still usable through the backwards-compatibility shims in
-`Code/`.
-
-For development tools (ruff, black, pre-commit, nbstripout, pytest):
-
-```bash
-pip install -e ".[dev]"
-pre-commit install
 ```
 
 ## Path B — Pure pip
@@ -32,12 +23,11 @@ This path works but is more brittle on Windows because of GDAL.
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate         # PowerShell: .venv\Scripts\Activate.ps1
-pip install -r requirements.txt   # exact pins
-pip install -e .
+pip install -r requirements.txt
 ```
 
-If you see errors compiling `rasterio` or `fiona` from source on
-Windows, install the matching pre-built wheels from
+If you see errors compiling `fiona` or `pyproj` from source on Windows,
+install the matching pre-built wheels from
 [Gohlke's archive](https://github.com/cgohlke/geospatial-wheels) for
 your Python version first, then re-run `pip install -r requirements.txt`.
 
@@ -46,7 +36,7 @@ your Python version first, then re-run `pip install -r requirements.txt`.
 ### macOS
 
 ```bash
-# Apple Silicon: use the conda-forge channel (already pinned in environment.yml)
+# Apple Silicon: use the conda-forge channel (already set in environment.yml)
 xcode-select --install            # Command Line Tools
 conda env create -f environment.yml
 ```
@@ -64,28 +54,32 @@ If conda is not an option, see the Gohlke-wheels footnote above.
 ## Verifying the install
 
 ```bash
-# CLI is registered:
-python -m nomad_abm run --help
-nomad-abm run --help              # only after `pip install -e .`
+# The scientific stack imports cleanly:
+python -c "import numpy, scipy, pandas, geopandas, mesa, optuna, h5py; print('ok')"
+```
 
-# Package is importable:
-python -c "import nomad_abm; print(nomad_abm.__version__)"
+Then launch Jupyter from the repository root and open a notebook:
 
-# Lint passes:
-ruff check .
+```bash
+jupyter lab            # or: jupyter notebook
 ```
 
 To actually run a simulation, the data files described in
-[`DATA.md`](DATA.md) must be present (default location `./Data/`, or
-point `NOMAD_ABM_DATA_DIR` elsewhere). Without data the CLI will
-import successfully but fail at the first HDF5 read.
+[`DATA.md`](DATA.md) must be present. Fetch them with:
+
+```bash
+python scripts/download_data.py
+```
+
+They land in `./Data/` by default (or wherever `NOMAD_ABM_DATA_DIR`
+points). Without data the notebooks import fine but fail at the first
+HDF5 read.
 
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| `ImportError: cannot find _rasterio` on Linux | GDAL/PROJ version mismatch | Reinstall via conda: `conda install -c conda-forge rasterio=1.3.9` |
-| `Could not find a version that satisfies the requirement ruff==0.6.9` | Air-gapped/no PyPI access | Skip; install `pip install -e ".[dev]"` from a machine with network and copy the env |
-| `nomad_abm` not found from a notebook | Notebook is in `Code/` but the shim's `sys.path` insert hit a stale `__pycache__` | `rm -rf Code/__pycache__ src/nomad_abm/__pycache__` and re-import |
-| `FileNotFoundError: yearly_data_10_25.h5` | `Data/` empty or env var pointed elsewhere | Confirm `echo $NOMAD_ABM_DATA_DIR` or copy the file into `./Data/` |
-| Hardcoded `D:\itay\ABM\...` path still appears in stack trace | Old shell session, env vars stale | Restart the shell / re-source `conda activate`; see `docs/objective_function.md` |
+| `ImportError` for `fiona`/`pyproj`/GDAL on Linux | GDAL/PROJ version mismatch | Reinstall via conda-forge: `conda install -c conda-forge geopandas` |
+| `ModuleNotFoundError: No module named 'model'` in a notebook | Jupyter was launched from the wrong folder | Launch Jupyter from `Code/` (or from the repo root and open the notebook there) so the notebook sits next to `model.py` |
+| `FileNotFoundError: yearly_data_10_25.h5` | `Data/` empty or env var pointed elsewhere | Run `python scripts/download_data.py`, or check `echo $NOMAD_ABM_DATA_DIR` |
+| `FileNotFoundError: P_for_calib.shp` | calibration shapefile not extracted | Re-run `download_data.py`, or set `NOMAD_ABM_CALIB_SHP` to its path |
