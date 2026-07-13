@@ -7,6 +7,9 @@ __pycache__/
 *.so
 #---Folders---
 Results/
+# Input data is archived on Zenodo and fetched by scripts/download_data.py;
+# it is not stored in git. See docs/DATA.md.
+Data/
 anaconda_projects/
 # --- GIS & Data Exclusions ---
 *.gdb/
