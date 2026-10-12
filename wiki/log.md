@@ -74,3 +74,9 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - AGENTS.md: GitHub organisation ABMArchaeologists added to the conventions reference.
 - updated: mechanisms/suitability-surface.md, mechanisms/herd-dynamics.md, mechanisms/enclosure-construction.md (range of Q), model/assumptions.md (M1, M2, M11), model/odd-map.md, model/overview.md (environment), model/experiments.md (pasture input in every run), AGENTS.md
 - open in this round: what excludes the eastern part of the mask band (map shared); deferral of Q's range to the enclosure round (proposed)
+
+## [2026-10-12] readings | suitability round closed (model extent) | — | Claude (research-wiki)
+- answers recorded: the eastern part of the mask band is lowland, not Negev Highlands; the range of Q deferred to the enclosure round; the household count keeps the 3,251.54 km² `ext_raster` area (buffer included), halved for a minimal population.
+- new for the write-up: Table A5.4 and Ch. 5 §5.2.4 describe the 3,251.54 km² as bounded by the Negev Highlands and the border, while it also holds the buffer.
+- AGENTS.md: the conventions reference now names <https://github.com/SantaFeInstitute/ABMA> (replacing the organisation link).
+- updated: mechanisms/suitability-surface.md, mechanisms/enclosure-construction.md, model/overview.md, model/parameters.md, model/odd-map.md, AGENTS.md

@@ -27,7 +27,7 @@ Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which c
 | Parameter | Code | Where | Documented |
 |---|---|---|---|
 | Grid | 318 × 280 (rows × cols), from raster shape | `NomadModel.__init__` L957–958; `ensure_data_loaded` L193 | 318 × 280 cells, 250 m (A5.4) |
-| Model area (for agent count) | 3,251.54 km² | `Num_agents` L284 | 3,251.54 km² (A5.4) |
+| Model area (for agent count) | 3,251.54 km² | `Num_agents` L284 | 3,251.54 km² (A5.4). The `ext_raster` area, buffer included; kept (Itay, 2026-10-12; [overview](overview.md), Things to check) |
 | Run length | 75 years | `objective_function` L1294; notebooks | 75 years (A5.4; Ch. 5 §5.2.3) |
 | Edge buffer for camps | 20 cells | `place_household` L351–354 | — |
 | CRS origin, cell size | (139,554.93, 478,515.53), 250 m | `to_gdf` L1131 | ITM (Ch. 5 §5.2.1.1) |
