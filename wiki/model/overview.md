@@ -17,7 +17,7 @@ An agent-based model in Python on Mesa 3 (`Code/model.py`) in which nine nomadic
 
 What the documentation says, in Itay's words:
 
-> “The current model aspires to answer the following question: **Can autochthonous nomadic processes, operating through temporal mobility and environmental feedbacks, sufficiently generate patterns similar to the observed Iron Age IIA archaeological record?**” (Ch. 5 §5.1)
+> “The current model aspires to answer the following question: Can autochthonous nomadic processes, operating through temporal mobility and environmental feedbacks, sufficiently generate patterns similar to the observed Iron Age IIA archaeological record?” (Ch. 5 §5.1, p. 132; the question is in bold in the original)
 
 Ch. 5 §5.1 frames the simulation more cautiously in the canonical version: the palimpsest model "cannot be tested directly in the field", but "it is possible to gain important insights regarding the observed archaeological record and the mechanisms that led to is formation through a series of computerised simulations that model locational decision making of participating social agents" (Ch. 5 §5.1). The behavioural rules "are set this way not because they are thought to truly and fully represent how the population of the Negev Highlands Iron Age IIA behaved, but as general, simplified, tentative behaviours" (Ch. 5 §5.1).
 
@@ -68,7 +68,7 @@ As implemented in `run_model_opt` (L1242–1291), with `model.step` and `model.m
 
 Placement and the economic step are two separate passes over the households, each in its own random order. Ch. 5 §5.4 describes one pass in which each household places and then manages its herd. See Things to check.
 
-Ch. 5 Fig. 5.3 lists "Eight sequential stages" per year: "environmental update; household repositioning in randomised order; territory establishment; resource calculation; prosperity assessment and enclosure decision; crisis check; livestock and demographic adjustment; and end-of-year bookkeeping". Ch. 5 Fig. 5.6 gives the outer loop: "model.move_year() resets household grid positions and updates dynamic environmental layers, followed by model.step() executing the full annual household decision sequence". The captions were read from full_thesis.md; the figure images were not seen.
+Ch. 5 Fig. 5.3 lists "Eight sequential stages" per year: "environmental update; household repositioning in randomised order; territory establishment; resource calculation; prosperity assessment and enclosure decision; crisis check; livestock and demographic adjustment; and end-of-year bookkeeping". Ch. 5 Fig. 5.6 gives the outer loop: "model.move_year() resets household grid positions and updates dynamic environmental layers, followed by model.step() executing the full annual household decision sequence". Captions as printed on pp. 146 and 160 of the thesis PDF; the figure images have not been examined.
 
 ## Initialisation
 

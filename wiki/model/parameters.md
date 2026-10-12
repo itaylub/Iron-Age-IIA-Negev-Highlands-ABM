@@ -21,7 +21,7 @@ Normalised integer weights, sampled 0–7 (`objective`, L1353–1367).
 | `humen_stress` | multi-annual resource exhaustion | 5 (0.217) | 0.217 ± 0.010 | suitability |
 | `Yearly_rain` | current-year rainfall | 0 | 0 in all 19 | suitability |
 
-Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which cites "§4.6.4 of the thesis" (older numbering). Cluster means from Ch. 5 §5.5.4 ("the 19 trials scoring below 0.21"). Ch. 5 Fig. 5.9 shows the 19-trial means (caption read from full_thesis.md). The best trial's own integers appear only in the CHANGELOG. Best calibration score 0.2013; 30-replicate re-run 0.213 ± 0.021 (Ch. 5 §5.5.4).
+Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which cites "§4.6.4 of the thesis" (older numbering). Cluster means from Ch. 5 §5.5.4 ("the 19 trials scoring below 0.21"). Ch. 5 Fig. 5.9 (p. 169) shows the 19-trial means. The best trial's own integers appear only in the CHANGELOG. Best calibration score 0.2013; 30-replicate re-run 0.213 ± 0.021 (Ch. 5 §5.5.4).
 
 ## Spatial and temporal
 | Parameter | Code | Where | Documented |

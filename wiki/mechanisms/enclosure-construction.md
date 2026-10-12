@@ -29,7 +29,7 @@ Ch. 5 §5.1 (behavioural rules): "Enclosed compounds are taken to express a form
 
 ## Justification
 - Owner's documentation: Ch. 5 §5.1 and §5.3.3, with Fig. 5.5 (decision logic). The thresholds "were set during model construction as plausible working values; they stand in for a process the archaeological record cannot specify and are deliberately kept simple" (Ch. 5 §5.3.3).
-- Archaeological framing: Ch. 5 points to Chapter 6 for the functions of the compounds. The earlier repository copy of §5.1 cited Aharoni et al. 1960 and Cohen & Cohen Amin 2004 for the architecture; the canonical version no longer has that paragraph.
+- Archaeological framing: Ch. 5 points to Chapter 6 for the functions of the compounds. An earlier draft of §5.1 (formerly in `thesis/`) cited Aharoni et al. 1960 and Cohen & Cohen Amin 2004 for the architecture; the final text no longer has that paragraph.
 
 ## My rationale
 **My rationale** · owed

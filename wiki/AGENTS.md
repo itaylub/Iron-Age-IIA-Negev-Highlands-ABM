@@ -44,14 +44,27 @@ The guides come from the research-wiki skill and may be refreshed. Wiki-specific
 
 ## Local conventions
 These were agreed with the owner, and they override the guides.
-- **The wiki lives inside the model repository** (`wiki/` at the repo root), at the owner's choice, rather than in a sibling `<repo>-wiki` folder. Paths to repository files are written relative to the repo root (`Code/model.py`, `thesis/appendix-5-ABM.docx`); links from wiki pages to them are relative (`../../Code/model.py`).
-- **Thesis Chapter 5 and Appendix 5 are the owner's own model documentation.** Treat them like a NetLogo Info tab or README: quote and cite them as the owner's words, compare them with the code, and record where they disagree under Things to check. They get no source pages and no reading interviews. Locators are section, table, figure and equation numbers as printed, since neither file has fixed page numbers: `(Ch. 5 §5.3.1)`, `(Ch. 5 Fig. 5.3)`, `(App. 5 Table A5.4)`, `(App. 5 eq. A5.1)`. The literature they cite gets source pages only when a source is ingested from the original (see `model/literature-cited.md`).
-  - **Canonical versions** (named by the owner on 2026-10-12):
-    - Ch. 5: the "Chapter 5: Agent-Based Model" section of `G:\My Drive\MA Thesis\context\thesis_reference\full_thesis.md` (Drive version of 2026-10-04).
-    - App. 5: `G:\My Drive\MA Thesis\Thesis_submission\appendices\Appendix 5. ABM.docx` (Drive version of 2026-07-13, Word revision 14).
-    - Quote from these. Before relying on them, check whether they have changed since these dates.
-  - **Repository copies** in `thesis/` (`chapter-5-ABM.docx`, `appendix-5-ABM.docx`, `chapter-5-tables-and-figures.docx`) are older. The chapter copy predates the full_thesis.md text, and the appendix copy is Word revision 13 of 2026-07-07. See `model/inventory.md` › Documentation.
-  - **Equations.** full_thesis.md carries no equations: they were lost in its Markdown export, leaving blank lines. Equation forms are therefore cited from App. 5 or from the repository Ch. 5 copy, and are not verified against the canonical chapter.
-  - **Text-box captions.** App. 5 keeps its equation, table and figure captions in text boxes, which a plain pandoc export skips. Read them from the document XML.
+- **The wiki lives inside the model repository** (`wiki/` at the repo root), at the owner's choice, rather than in a sibling `<repo>-wiki` folder. Paths to repository files are written relative to the repo root (`Code/model.py`, `thesis/Lubel_Itay_MA_Thesis_ABM.pdf`); links from wiki pages to them are relative (`../../Code/model.py`).
+- **Thesis Chapter 5 and Appendix 5 are the owner's own model documentation.** Treat them like a NetLogo Info tab or README: quote and cite them as the owner's words, compare them with the code, and record where they disagree under Things to check. They get no source pages and no reading interviews. The literature they cite gets source pages only when a source is ingested from the original (see `model/literature-cited.md`).
+  - **Canonical version: `thesis/Lubel_Itay_MA_Thesis_ABM.pdf`** (in the repository since 2026-10-12, the owner's final text). Its 67 PDF pages hold:
+    - Ch. 5 on printed pp. 131–176 (PDF pp. 1–46);
+    - a tables page, printed p. 229 (PDF p. 47), with the end of Table 4.3 and Table 5.1;
+    - the Appendices note and App. 5 on printed pp. 235–254 (PDF pp. 48–67).
+  - **Locators** are section, figure, table and equation numbers, with the printed page added where it helps: `(Ch. 5 §5.3.1)`, `(Ch. 5 Fig. 5.3, p. 146)`, `(App. 5 Table A5.4)`, `(App. 5 eq. A5.1)`. App. 5 captions call the degradation equations A5.1–A5.3, while the equation objects themselves read "eq 4.1", "eq 4.2" and "eq 4.3 + 2"; cite them as A5.1–A5.3.
+  - **Working copies.** The PDF's text matches the owner's working copies word for word: Ch. 5 in `G:\My Drive\MA Thesis\context\thesis_reference\full_thesis.md` (Drive 2026-10-04) and `G:\My Drive\MA Thesis\Thesis_submission\appendices\Appendix 5. ABM.docx` (Drive 2026-07-13). The PDF also carries the equations, which the full_thesis.md export lost. If the working copies change later, ask whether the PDF should be replaced.
+  - **Text layer.** `pdftotext` drops hyphens at line breaks, giving "costdistance" for "cost-distance". When checking quotes, `_tools/verify_quotes.py` reports these as LOOSE, which is fine.
+- **Answering in place** (agreed 2026-10-12). Itay answers owed questions by editing the wiki files directly, outside agent sessions:
+  - **A reading or rationale:** write the answer on the lines under the `> Q:` line, as plain text, and leave the `· owed` header as it is.
+  - **A reply to a Things to check item:** add a line under the item starting `Itay:`.
+  - **Other corrections:** Itay may edit anything else, and those edits are the owner's.
+
+  The next agent session integrates the answers before anything else. For each answer:
+  1. Replace the `· owed` header with `· Itay, <date>`. Take the date from the commit that added the answer (`git log -1 --format=%ad --date=short -- <file>`), or ask.
+  2. Keep the words exactly, fixing only obvious typos. Keep the question as a `> Q:` line above the answer.
+  3. For an `Itay:` reply, keep it in place, and update the assumptions register (`model/assumptions.md`) or other pages where the reply settles a status. The reply remains the owner's decision, attributed and dated.
+  4. When an answer contradicts the code or the documentation, add a Things to check line rather than changing either.
+  5. Ask about anything ambiguous rather than guessing.
+
+  Finish with bookkeeping: index, log (operation `readings`), and the status brief.
 - **Code locators** name the file relative to `Code/`, the class or function, and line numbers at the commit recorded in `model/overview.md`: `(model.py › Household_Agent.step, L544–616)`. `model.py` is the calibrated model; `sensitivity_model.py` is the variant the sensitivity notebook imports. When the commit changes, re-check line numbers (see `_guide/ingest-code.md` › Updates).
 - **Rationale questions** for mechanisms aim at what Chapter 5 and Appendix 5 do not already say (values marked "Assumed" in App. 5 Table A5.4, and places where code and documentation differ), since the documented reasoning is already the owner's own account.

@@ -23,7 +23,7 @@ The exhaustion layer also scales pasture for herds: `veg_map = veg_ras × (1 −
 ## Inputs and parameters
 | Parameter | Value | Where | Documented |
 |---|---|---|---|
-| Temporal decay of accumulator | 0.5 per year | L437 | App. 5 Table A5.1 and A5.4 ("Temporal decay factor 0.5"); Ch. 5 §5.3.1 (`Sₜ = 0.5 × Sₜ₋₁ + Oₜ`) |
+| Temporal decay of accumulator | 0.5 per year | L437 | App. 5 Table A5.1 ("Temporal decay factor = 0.5") and Table A5.4 (0.5, Assumed); Ch. 5 §5.3.1 (`Sₜ = 0.5 × Sₜ₋₁ + Oₜ`) |
 | Extra weight for cells ≥ 2 | × 1.5 | L433–434 | not documented |
 | Smoothing window | ±20 cells (square, 41 × 41), weights 1/(d+1)², normalised | L442–446 | App. 5: "spatial radius = 5 km", "inverse-distance weighting" |
 | Fuzzy exhaustion range | 0 → 10, 2 → 0 (linear, clipped) | L458–463 | Ch. 5 §5.3.1 ("cells far from any occupation score 10 and heavily occupied ones approach 0"); the value 2 is not documented |

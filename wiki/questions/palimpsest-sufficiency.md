@@ -1,7 +1,7 @@
 ---
 type: question
 created: 2026-10-08
-origin: "Ch. 5 §5.1 (thesis/chapter-5-ABM.docx), copied verbatim at setup; edit freely"
+origin: "Ch. 5 §5.1 (thesis/Lubel_Itay_MA_Thesis_ABM.pdf, p. 132), copied verbatim at setup; edit freely"
 ---
 
 # Can autochthonous nomadic processes generate the Iron Age IIA pattern?

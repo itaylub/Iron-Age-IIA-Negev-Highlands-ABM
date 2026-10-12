@@ -29,7 +29,7 @@ Candidates marked ★ carry a model value or rule directly. They are the ones th
 ## Behaviour
 - ★ Avni 1996; Galilee 2013; Hammer 2014; Meraiot et al. 2021: spatial inertia of pastoral camps (Ch. 5 §5.3.1)
 - Khazanov 1984; Salzman 2004; Hammer 2025: household-level decisions (Ch. 5 §5.2.2)
-- Aharoni et al. 1960; Cohen & Cohen Amin 2004: enclosed compound architecture (only in the older repository copy of Ch. 5 §5.1; not cited in the canonical version)
+- Aharoni et al. 1960; Cohen & Cohen Amin 2004: enclosed compound architecture (only in an earlier draft of Ch. 5 §5.1, formerly in `thesis/`; not cited in the final text)
 - Ben-Dor Evian 2017: Tell el-Qudeirat as the central hub and fresh-water oasis (Ch. 5 §5.1)
 - Rosen 2017: multi-resourced nomadism (Ch. 5 §5.1)
 
