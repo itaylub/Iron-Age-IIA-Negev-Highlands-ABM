@@ -61,3 +61,10 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - updated: model/inventory.md, model/assumptions.md (M7), model/odd-map.md (interaction), model/experiments.md, mechanisms/camp-and-territory-placement.md, mechanisms/crisis-and-replacement.md, mechanisms/calibration-objective.md, AGENTS.md
 - added to the separate-PR list: align `sensitivity_model.py`'s Year-0 territory with `model.py`; the overlap-rule bug in `model.py` (fix to be decided, it changes calibrated behaviour). Thesis text (owner's PDF, not the repository): renumber the App. 5 equation objects to A5.1–A5.3.
 - open in this round: deferral of the Year-0 effect on §5.6 to the experiments round (proposed)
+
+## [2026-10-12] readings | inventory round closed; conventions reference; suitability data checks | — | Claude (research-wiki)
+- deferred by agreement: the effect of the sensitivity file's Year-0 rule on §5.6, to the experiments round.
+- AGENTS.md › Local conventions: the conventions reference is the `ABMA_Skill` folder on Google Drive (`G:\My Drive\skills\ABMA_Skill`), a reference distilled from Romanowska, Wren & Crabtree 2021, readable through the Drive connector; never cited as evidence.
+- checked in the calibration data (numpy, HDF5 C library): yearly array 2 ≈ veg_fit × array 0 / 10; group 74's array 2 has no-data cells (359 inside ext); the Tell el-Qudeirat layer's top zone is an east–west strip ~59 × 14 km; place_raster (2,347 km²) sits inside ext_raster (3,251 km²) with a 905 km² band between them.
+- updated: mechanisms/suitability-surface.md (checks), model/inventory.md, model/experiments.md, AGENTS.md
+- added to the separate-PR list: if pasture switches to array 2, handle group 74's no-data cells.
