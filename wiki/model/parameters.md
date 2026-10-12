@@ -39,7 +39,7 @@ Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which c
 | Initial herd | Σ₁₀ ⌊N(105, 15)⌋ | `Household_Agent.__init__` L519–522 | ~105 per family, ~1,050 (A5.4, modified from Rosen & Finkelstein 1992) |
 | Initial manpower | max(35, ⌊herd/20⌋) | L526–527 | Ch. 5 §5.2.2 |
 | Initial surplus | 0 | L531–532 | Ch. 5 §5.2.4 ("no accumulated experience or surplus") |
-| Year-0 territory radius | 25 | L993, L1002 | — (≠ year_initiation's 20/25/30) |
+| Year-0 territory radius | 25 | L993, L1002 | — (≠ year_initiation's 20/25/30). Intended (Itay, 2026-10-12; [overview](overview.md), Things to check) |
 
 ## Suitability and occupation history ([suitability](../mechanisms/suitability-surface.md), [history layers](../mechanisms/occupation-history-layers.md))
 | Parameter | Code | Where | Documented |

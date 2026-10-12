@@ -27,7 +27,7 @@ None of the result files are in the repository. `Results/` is untracked, and the
 | Test | Settings in code | Seeds | Reported (Ch. 5 §5.6; App. 5 §A5.7) |
 |---|---|---|---|
 | Null baseline (cell 9) | all weights 1/7; 30 × 75 y | 3000 + i | mean 0.318, 95% CI 0.309–0.328; best calibrated 0.201; "36.7% reduction in error" |
-| Time horizon (cell 3) | one run, 150 y, scored every 10 y | 42 | composite falls to year 75 mainly through ratio error; spatial error 0.27–0.32, drifting up after year 100; near-complete coverage by years 100–150 |
+| Time horizon (cell 3) | one run, 150 y, scored every 10 y; rainfall years recycle in the same shuffled order after the 76 groups (`sensitivity_model.py` L399, L945), as Itay intended (2026-10-12: "for longer runs … I reused some of the years"); App. 5 §A5.7.2 does not mention the reuse | 42 | composite falls to year 75 mainly through ratio error; spatial error 0.27–0.32, drifting up after year 100; near-complete coverage by years 100–150 |
 | Number of agents (cell 5) | 5, 15, 20 agents; 5 × 75 y each | 1000 + 100n + i | 5 too few sites; 15–20 score better but cover "practically the entire valid landscape" (App. 5 §A5.7.3) |
 | Territory (cell 7) | fixed vs flexible; 5 × 75 y each | 2000 + 100·fixed + i | mean ~0.25 fixed vs ~0.21 flexible; fixed far more variable, one run 0.41 |
 | Site threshold | 0.1–1.0 on one run's output | — | 245 sites at 0.6; ~6,000 at 0.1–0.2; 73 at 0.8–1.0; enclosure share <1% → 16.7% (0.6) → 56% |

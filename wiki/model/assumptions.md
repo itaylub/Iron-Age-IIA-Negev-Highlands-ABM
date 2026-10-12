@@ -21,9 +21,9 @@ The `My rationale` blocks on the mechanism pages will move items from "none reco
 | C2 | Part of the population moved seasonally between the Arabah and the Highlands; one move per year | annual `move_year` / `year_initiation` | owner's rationale (Ch. 5 §5.1, §5.2.3) |
 | C3 | Multi-resourced nomadism, relying primarily on pastoralism, copper manufacture and trade ("possibly other desert goods"), and opportunistic agriculture | 18 goats/person, agricultural offset | sourced (Ch. 5 §5.1: Rosen 2017; §5.2.2: Dahl & Hjort 1976; Rosen & Finkelstein 1992) |
 | C4 | Stone-built structures of all types, including enclosed compounds, represent seasonal, not permanent, occupation | site classification | owner's rationale (Ch. 5 §5.1) |
-| C5 | Tell el-Qudeirat was the central hub of the system, as the region's primary fresh-water oasis (an earlier draft, formerly in `thesis/`, said "main destination for people and goods coming from the Arabah") | `dist_to_kb` layer (justified in Ch. 5 §5.2.1.2 by the Tell el-Qudeirat–Faynan corridor) | sourced (Ch. 5 §5.1: Ben-Dor Evian 2017) |
+| C5 | Tell el-Qudeirat was the central hub of the system, as the region's primary fresh-water oasis (an earlier draft, formerly in `thesis/`, said "main destination for people and goods coming from the Arabah") | `dist_to_kb` layer (justified in Ch. 5 §5.2.1.2 by the Tell el-Qudeirat–Faynan corridor). The layer is the corridor; it was a point earlier and the code name was kept (Itay, 2026-10-12) | sourced (Ch. 5 §5.1: Ben-Dor Evian 2017) |
 | C6 | Population constant: "while households may die, the populations stays stable by replacing those" | `Num_agents`, one-for-one replacement | owner's rationale (Ch. 5 §5.1, §5.2.4) |
-| C7 | Climate similar to the present; modern rainfall years drawn at random | yearly stack, shuffled `inds` (L1254–1255) | sourced (Ch. 5 §5.1: Goldsmith et al. 2023; Langgut & Finkelstein 2023) |
+| C7 | Climate similar to the present; modern rainfall years drawn at random. Itay (2026-10-12): 75 years prepared so each year of a run differs; only the longer sensitivity runs reuse years | yearly stack, shuffled `inds` (L1254–1255) | sourced (Ch. 5 §5.1: Goldsmith et al. 2023; Langgut & Finkelstein 2023) |
 | C8 | The system lasted at least 75 years | run length | sourced (Ch. 5 §5.2.3: Boaretto et al. 2010; Finkelstein & Piasetzky 2011) |
 | C9 | The household (about ten nuclear families) is the decision unit | `Household_Agent` | sourced (Ch. 5 §5.2.2: Khazanov 1984; Salzman 2004; Hammer 2025) |
 | C11 | Behavioural rules are "general, simplified, tentative behaviours" in line with C1–C10, not a full representation of how the population behaved | all mechanisms | owner's rationale (Ch. 5 §5.1) |
@@ -32,12 +32,12 @@ The `My rationale` blocks on the mechanism pages will move items from "none reco
 ## Mechanism assumptions
 | # | Assumption | Encoded in | Status |
 |---|---|---|---|
-| M1 | Households read one weighted, additive suitability score | `get_suitability_raster` L501–506 | owner's rationale (Ch. 5 §5.2.1.2) |
+| M1 | Households read one weighted, additive suitability score | `get_suitability_raster` L501–506 | owner's rationale (Ch. 5 §5.2.1.2; [My rationale](../mechanisms/suitability-surface.md#my-rationale), Itay 2026-10-12) |
 | M2 | Very steep cells (slope suitability < 1) are unusable | L505 | none recorded (threshold) |
 | M3 | Camp choice is probabilistic, ∝ suitability³ | `place_household` L336 | owner's rationale (Ch. 5 §5.3.1); exponent: none recorded |
 | M4 | Spatial inertia: home-range centre and territory bonus | L917–937 | sourced (Ch. 5 §5.3.1: Avni 1996; Galilee 2013; Hammer 2014; Meraiot et al. 2021); values none recorded |
 | M5 | Camp memory: good camps attract, poor ones repel, fading as 1/√years; pruned after ~15 years | L938–949, L620 | owner's rationale (Ch. 5 §5.3.1); values none recorded |
-| M6 | Territories widen on poor ground (20/25/30) | L631–641 | owner's rationale (Ch. 5 §5.3.1); values none recorded |
+| M6 | Territories widen on poor ground (20/25/30); at Year 0 the radius is fixed at 25, which is intended (Itay, 2026-10-12) | L631–641; Year 0 L993 | owner's rationale (Ch. 5 §5.3.1); values none recorded |
 | M7 | Territories should not overlap by more than 25% | `overlap_territory` | none recorded ("cooperative coexistence"); see camp page on whether it fires |
 | M8 | Occupation degrades its surroundings at once, decaying with distance | `env_degrade` | sourced in general (Ch. 5 §5.3.1: Boles et al. 2019; Meroz et al. 2023); magnitudes none recorded |
 | M9 | Degradation persists with half-life of one year, spread over ~5 km | `Yi_params` | owner's rationale (Ch. 5 §5.3.1); values none recorded |
