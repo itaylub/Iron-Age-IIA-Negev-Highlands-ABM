@@ -51,7 +51,10 @@ The 3 exponent is coming from face validation in the initial experimental runs.
   - Itay, 2026-10-12 (inventory round): On the overlap rule never firing - yes this is a bug I didn't notice at the time.
   - The two files' different overlap tests (inventory, difference 1) were deferred to this page (agreed 2026-10-12).
   - Asked whether `sensitivity_model.py`'s measure (each territory's share of the candidate area's cells) is the intended one. Itay, 2026-10-12: If I understood correctly the sensitivity one is correct. The idea is that if a given territory overlaps 25% or more with other households territories, it is not valid.
-  - As coded, the sensitivity test checks each other territory separately (`> 0.25` with any one of them, L268–270), always over a radius-20 candidate area, whatever radius the territory then gets. Open: per territory, or in total?
+  - As coded, the sensitivity test checks each other territory separately (`> 0.25` with any one of them, L268–270), always over a radius-20 candidate area, whatever radius the territory then gets.
+  - Asked whether the 25% applies to each other territory separately or to the total. Itay, 2026-10-12: In total, all other territories combined.
+  - On the radius-20 candidate area. Itay, 2026-10-12: This is intended as it is the base diameter.
+  - For the separate PR: share of the candidate area's cells that fall in the union of this year's other territories, rejected at 25% or more (Itay's wording; the code tests `> 0.25`).
 - `model.territories` is appended every year and never cleared in either file (L642; `sensitivity_model.py` L561–563). `sensitivity_model.py` tests overlap against this whole history, so territories from past years count. App. 5 Table A5.6 describes it as the "Registry of all active household territories for the current year".
   - Asked which territories the overlap test should count. Itay, 2026-10-12: Only this year.
   - Neither file does that now: `model.territories` is never cleared, and `reset_pos` takes households off the grid but leaves each household's `territory` from last year until it places again (L1045–1047; `territory` reset only in `__init__`, L536). For the separate PR.

@@ -105,3 +105,8 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - updated: mechanisms/camp-and-territory-placement.md, mechanisms/crisis-and-replacement.md, model/assumptions.md (M3, M6, M7), model/parameters.md (exponent)
 - added to the separate-PR list: overlap test as in `sensitivity_model.py`, counting this year's territories only (clear `model.territories` and stale `territory` attributes each year); `and` → `or` in the re-draw loop, with a guard against endless re-draws; test whether `Agent.remove()` leaves the grid. Write-up: Ch. 5 §5.6 wording on fixed territories.
 - open in this round: overlap counted per territory or in total.
+
+## [2026-10-12] readings | camp and territory placement round closed | — | Claude (research-wiki)
+- answers recorded: the 25% overlap counts all other territories combined; the radius-20 candidate area is intended (the base radius).
+- updated: mechanisms/camp-and-territory-placement.md, model/assumptions.md (M7)
+- separate-PR list: overlap = share of the candidate area in the union of this year's other territories, rejected at ≥ 25%.
