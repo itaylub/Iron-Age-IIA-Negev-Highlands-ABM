@@ -32,8 +32,8 @@ The `My rationale` blocks on the mechanism pages will move items from "none reco
 ## Mechanism assumptions
 | # | Assumption | Encoded in | Status |
 |---|---|---|---|
-| M1 | Households read one weighted, additive suitability score | `get_suitability_raster` L501–506 | owner's rationale (Ch. 5 §5.2.1.2; [My rationale](../mechanisms/suitability-surface.md#my-rationale), Itay 2026-10-12) |
-| M2 | Very steep cells (slope suitability < 1) are unusable | L505 | none recorded (threshold) |
+| M1 | Households read one weighted, additive suitability score | `get_suitability_raster` L501–506 | owner's rationale (Ch. 5 §5.2.1.2; [My rationale](../mechanisms/suitability-surface.md#my-rationale), Itay 2026-10-12: weights calibrated as the balance is unknown; addition as the simplest form, KISS) |
+| M2 | Very steep cells (slope suitability < 1) are unusable | L505 | owner's rationale (Itay, 2026-10-12: values ≤ 1 from the fuzzy transformation are very steep, uninhabitable slopes such as cliffs; ≈ 31° by Table A5.1's parameters, [suitability](../mechanisms/suitability-surface.md#justification)) |
 | M3 | Camp choice is probabilistic, ∝ suitability³ | `place_household` L336 | owner's rationale (Ch. 5 §5.3.1); exponent: none recorded |
 | M4 | Spatial inertia: home-range centre and territory bonus | L917–937 | sourced (Ch. 5 §5.3.1: Avni 1996; Galilee 2013; Hammer 2014; Meraiot et al. 2021); values none recorded |
 | M5 | Camp memory: good camps attract, poor ones repel, fading as 1/√years; pruned after ~15 years | L938–949, L620 | owner's rationale (Ch. 5 §5.3.1); values none recorded |
@@ -42,7 +42,7 @@ The `My rationale` blocks on the mechanism pages will move items from "none reco
 | M8 | Occupation degrades its surroundings at once, decaying with distance | `env_degrade` | sourced in general (Ch. 5 §5.3.1: Boles et al. 2019; Meroz et al. 2023); magnitudes none recorded |
 | M9 | Degradation persists with half-life of one year, spread over ~5 km | `Yi_params` | owner's rationale (Ch. 5 §5.3.1); values none recorded |
 | M10 | Past occupation raises reuse potential (built infrastructure) | `Yi_params` L465 | owner's rationale (Ch. 5 §5.2.1.2); ×5 none recorded |
-| M11 | Herd capacity 1.125 goats per 250 m cell at medium pasture | `update_flock_size`, `calc_surplus` | sourced (Seligman et al. 1962 via Rosen & Finkelstein 1992; Ch. 5 §5.2.4) |
+| M11 | Herd capacity 1.125 goats per 250 m cell at medium pasture. The code's pasture input is yearly array 0 (rainfall) instead of array 2 (pasture), a bug (Itay, 2026-10-12) | `update_flock_size`, `calc_surplus` | sourced (Seligman et al. 1962 via Rosen & Finkelstein 1992; Ch. 5 §5.2.4) |
 | M12 | Herd growth up to ~20%/yr, decline 10–30%, faster for small herds | `update_flock_size` | "Literature-based" (A5.4), no source named |
 | M13 | 18 goats/person subsistence (half of pastoral-only 37) | `calc_surplus` L664 | sourced (Dahl & Hjort 1976; Rosen & Finkelstein 1992) plus owner's rationale for halving |
 | M14 | Cultivation offsets up to 40% of livestock need | L663 | sourced (Rosen & Finkelstein 1992; Günther et al. 2021) |

@@ -68,3 +68,9 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - checked in the calibration data (numpy, HDF5 C library): yearly array 2 ≈ veg_fit × array 0 / 10; group 74's array 2 has no-data cells (359 inside ext); the Tell el-Qudeirat layer's top zone is an east–west strip ~59 × 14 km; place_raster (2,347 km²) sits inside ext_raster (3,251 km²) with a 905 km² band between them.
 - updated: mechanisms/suitability-surface.md (checks), model/inventory.md, model/experiments.md, AGENTS.md
 - added to the separate-PR list: if pasture switches to array 2, handle group 74's no-data cells.
+
+## [2026-10-12] readings | mechanisms/suitability-surface.md (chat round) | — | Claude (research-wiki)
+- answers recorded: pasture array fix goes in the separate PR ("a big red flag"); the A5.3 sentence is a preliminary observation and can go; `ext_raster` is the Negev Highlands outline, `place_raster` the valid placement, the band between them the buffer (earlier reply marked superseded); "base suitability" = the shared surface, without each household's perception; the slope cut at ≤ 1 marks uninhabitable slopes such as cliffs (≈ 31° by Table A5.1's parameters, calculated); addition chosen as the simplest form (KISS), with all layers on one 0–10 scale.
+- AGENTS.md: GitHub organisation ABMArchaeologists added to the conventions reference.
+- updated: mechanisms/suitability-surface.md, mechanisms/herd-dynamics.md, mechanisms/enclosure-construction.md (range of Q), model/assumptions.md (M1, M2, M11), model/odd-map.md, model/overview.md (environment), model/experiments.md (pasture input in every run), AGENTS.md
+- open in this round: what excludes the eastern part of the mask band (map shared); deferral of Q's range to the enclosure round (proposed)

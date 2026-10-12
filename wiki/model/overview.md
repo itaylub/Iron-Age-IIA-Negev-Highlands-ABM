@@ -54,7 +54,7 @@ Ch. 5 §5.2.2 and App. 5 Table A5.5 also list a crisis flag (`in_severe_crisis`)
 
 **Nuclear families** are not agents. Each year nine family camps are drawn inside the household's territory (`year_initiation`, L645–649).
 
-**Environment** (`NomadModel`, L952–1058): `suitability_raster`, `return_raster` (the occupation accumulator), `stress_ras` (resource-exhaustion layer, 10 = untouched), `veg_ras`/`veg_map` (pasture), `ag_ras` (agricultural potential), `target_raster` (this year's occupation signal), `place_raster` (valid-placement mask), `enclosures` (list of `[cell, year, agent]`), `territories`. App. 5 Table A5.6 documents these.
+**Environment** (`NomadModel`, L952–1058): `suitability_raster`, `return_raster` (the occupation accumulator), `stress_ras` (resource-exhaustion layer, 10 = untouched), `veg_ras`/`veg_map` (pasture), `ag_ras` (agricultural potential), `target_raster` (this year's occupation signal), `place_raster` (valid-placement mask; where data suffice, excluding the Egyptian side, per Itay 2026-10-12), `ext_raster` (the Negev Highlands outline; the band between the two masks is the buffer, per Itay 2026-10-12), `enclosures` (list of `[cell, year, agent]`), `territories`. App. 5 Table A5.6 documents these.
 
 ## Scales
 
