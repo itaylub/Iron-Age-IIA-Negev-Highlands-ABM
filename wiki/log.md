@@ -110,3 +110,10 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - answers recorded: the 25% overlap counts all other territories combined; the radius-20 candidate area is intended (the base radius).
 - updated: mechanisms/camp-and-territory-placement.md, model/assumptions.md (M7)
 - separate-PR list: overlap = share of the candidate area in the union of this year's other territories, rejected at ≥ 25%.
+
+## [2026-10-12] readings | mechanisms/crisis-and-replacement.md (chat round) | — | Claude (research-wiki)
+- reading written: My rationale (the replacement is an abstract successor).
+- answers recorded: reserve capped at 100 (a herd the household "can work with"); failure tested on manpower after the set-aside; surplus criterion should be ≤ 0; population constant in fixed-territory runs too; replacements placed like all others.
+- updated: mechanisms/crisis-and-replacement.md, model/assumptions.md (M18, M19), model/experiments.md (fixed-territory households)
+- added to the separate-PR list: `surplus <= 0` in the failure test; no replacement queued when a fixed-territory household is reset (or no reset); replacements in `sensitivity_model.py` placed once with the others. Write-up: Ch. 5 §5.3.4 reserve cap.
+- open in this round: the replacement's starting manpower.

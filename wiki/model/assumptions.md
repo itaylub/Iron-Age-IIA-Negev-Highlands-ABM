@@ -49,8 +49,8 @@ The `My rationale` blocks on the mechanism pages will move items from "none reco
 | M15 | Surplus is abstract wealth: 30% yearly loss, 1.2/person consumption, progressive decay above 100, cap 200 + 2.5M | `calc_surplus`, `step` | owner's rationale (Ch. 5 §5.3.2); values none recorded |
 | M16 | Enclosures need prosperity (surplus per worker × local suitability) > 0.6, or > 0.8 to build new | `step` L552–587 | owner's rationale (Ch. 5 §5.3.3: "plausible working values"); values none recorded |
 | M17 | Households prefer reusing their own enclosures, then others' | `find_recent_enclosure`, `build_enclosure` | owner's rationale (Ch. 5 §5.3.3); values none recorded |
-| M18 | Crisis at surplus < 10; distress sale at 0.3 per head | `handle_survival_crisis` | owner's rationale (Ch. 5 §5.3.4); values none recorded |
-| M19 | Failed households are replaced by one seeded with their remnants plus ~900 goats | `create_replacement_agent` | owner's rationale (Ch. 5 §5.3.4) |
+| M18 | Crisis at surplus < 10; distress sale at 0.3 per head; reserve 18 per person capped at 100, as 100 goats is a herd the household "can work with" (Itay, 2026-10-12) | `handle_survival_crisis` | owner's rationale (Ch. 5 §5.3.4); values none recorded |
+| M19 | Failed households are replaced by one seeded with their remnants plus ~900 goats, an abstract successor (Itay, 2026-10-12); population constant in all modes (Itay, 2026-10-12) | `create_replacement_agent` | owner's rationale (Ch. 5 §5.3.4) |
 | M20 | Manpower: 10 people and one herder per 75 head are set aside each step; random drift | `step` L547–549, L600–605 | none recorded |
 
 ## Observation assumptions
