@@ -48,3 +48,8 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - checked: `yearly_data_10_25.h5` and `per_data_10_25.h5` from the repository history (commit `14cb755^`, SHA-256 equal to docs/DATA.md), read with the HDF5 C library: 75 year groups plus `metadata` (`num_groups` = 75); DATA.md's 76 counts `metadata`. Zenodo is blocked from this session.
 - updated: model/overview.md, model/inventory.md (input data, metadata check), model/odd-map.md (rows 1, 3, 5), model/assumptions.md (C7), model/experiments.md (time horizon; new check on the rainfall replay)
 - open in this round: journal wording for the rainfall draw (proposal awaiting approval); deferral of the 150-year rainfall replay to the experiments round (proposed)
+
+## [2026-10-12] readings | model/overview.md round closed; conventions folder | — | Claude (research-wiki)
+- approved: journal wording for the rainfall draw (approved Claude draft, recorded on overview Things to check; carried to assumptions C7 and the ODD map).
+- deferred by agreement: the 150-year rainfall replay, to the experiments round (model/experiments.md, Things to check).
+- AGENTS.md › Local conventions: Itay's `ABMA_Skill` folder (on Itay's computer) named as the reference to confer with when a convention is needed; not reachable from cloud sessions.
