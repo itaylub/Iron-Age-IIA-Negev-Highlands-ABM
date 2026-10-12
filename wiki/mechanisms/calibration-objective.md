@@ -33,14 +33,25 @@ Pattern-oriented modelling (Ch. 5 §5.5.1, citing Grimm et al. 2005 and Gallaghe
 Owner's documentation: Ch. 5 §5.5 and App. 5 §A5.3. Tools cited: Optuna (Akiba et al. 2019), TPE (Watanabe 2023), standard deviational ellipse (Yuill 1971). Ch. 5 §5.6 records a known limitation: "ellipse overlap does not account for the number of sites produced, so the more cells that register activity across the area of the observed ellipse, the greater the overlap and the better the score".
 
 ## My rationale
-**My rationale** · owed
+**My rationale** · Itay, 2026-10-12
 > Q: The ratio error compares enclosure-to-other ratios (obj_func, L1224–1232), while Ch. 5 §5.5.2 defines it on proportions of all sites. Which definition do you intend for the journal version?
+
+Ratio, it ranges always between 0 to 1 as there are always more other sites (value ==1).
 
 ## Things to check
 - Ratio or proportion? Ch. 5 §5.5.2 defines `ratio_error = |p_archaeological − p_simulated|` with p "the site-type proportion", the share of enclosed compounds among all sites, and says it "ranges from 0 … to 1". Ch. 5 §5.5.3 defines the site-type ratio as "the number of enclosed-compound sites relative to the number of other sites", which is what the code computes (L1224–1230). A ratio difference is not bounded by 1.
+  - Itay, 2026-10-12: Ratio (My rationale above). Ch. 5 §5.5.2's formula and App. 5 §A5.7.2's "enclosed compound proportions" are to be reworded.
+  - The bound in the reply holds while simulated other sites outnumber enclosed ones. The code does not guarantee it: Ch. 5 §5.6's threshold test reports an enclosed share of 56% at thresholds 0.8–1.0, a ratio of about 1.3. At the calibration threshold of 0.6 the share is 16.7%.
 - Threads and seeds. `study.optimize(n_jobs=4)` (calibration.ipynb cell 1) runs Optuna trials as threads in one process. `run_model_opt` seeds the shared global `random` and `np.random` (L1250–1252), and every draw in the model uses those generators. Can trials running at the same time disturb each other's random streams? If so, does `seed = t × 100 + i` reproduce a calibration replicate when it is rerun alone? (App. 5 §A5.3: "ensuring full reproducibility".)
+  - Asked whether the 200 reported trials ran with `n_jobs` above 1. Itay, 2026-10-12: No they did not. But I was sure it did not disturb one another.
+  - Checked 2026-10-12 in `optimization_summary.csv` (Optuna trial export, on Drive). Trials 10–19 started together (2026-02-17 17:10:17) and ran side by side for about 19.5 hours. From trial 26 on, trials ran four at a time, a new one starting as one finished (e.g. trials 26–29 started 2026-02-18 17:07:16). App. 5 §A5.3 also says "With four workers running trials in parallel". So trials ran concurrently, 10 and then 4 at a time, as threads sharing the global `random` and `np.random` generators. Reading of the code, not tested by running: each replicate is still a valid stochastic run, but it cannot be reproduced from its seed alone. Open: how to handle this.
 - `objective` sets `CUDA_VISIBLE_DEVICES` per trial (L1348–1350). No GPU code is in the model.
+  - Asked whether this can go in the separate PR. Itay, 2026-10-12: Yes.
 - calibration.ipynb's main block calls `run_optimization(n_trials=13, n_jobs=4)`, while the function default is 200 trials with `n_jobs=10`. The study is loaded with `load_if_exists=True`, so the 200 trials reported (Ch. 5 §5.5.2) may have accumulated over several sessions. Is the notebook state the last of them?
+  - Itay, 2026-10-12: As the 200 runs took very long, I did not run them all at once but, as written did small batches at each time (e.g. 13). The Optuna database contains 200 trials (see exported table "G:\Other computers\My Computer\Drive\01_PROJECTS\MA_thesis\ABM\Results\opt_2_26_v1.csv"; "G:\Other computers\My Computer\Drive\01_PROJECTS\MA_thesis\ABM\Results\run\opt_run.db"; "G:\Other computers\My Computer\Drive\01_PROJECTS\MA_thesis\ABM\Results\run\optimization_summary.csv").
+  - Checked 2026-10-12 in both exports (read through the Drive connector). Trials 0–217: 143 complete, 57 pruned and 18 failed (0–9, 22–25, 56–59), so the 200 are the complete and pruned trials, as App. 5 §A5.3 says. They ran from 2026-02-17 to 2026-03-05. The best is trial 173 (0.2013), whose weights are the best-trial weights in [parameters](../model/parameters.md#calibrated-weights).
 - Target ratio. Ch. 5 §5.5.3 gives "about 1:13.4"; App. 5 §A5.7.3 gives "1:13.3". 32/430 = 1:13.44.
+  - Asked whether App. 5 should read 1:13.4. Itay, 2026-10-12: Yes.
 - docs/objective_function.md describes a different objective (see [inventory](../model/inventory.md), Things to check). Itay (2026-10-12): the file is old; follow the code and the thesis. The code and Ch. 5 §5.5.2 still differ on ratio vs proportion, the owed rationale above; deferred here from the inventory round (agreed 2026-10-12).
 - Ellipse fit. `calculate_ellipse` returns zero axes for fewer than three points (L1162), so the IoU would then be 0 and the spatial error 1.
+  - Asked whether that is the intended scoring for runs with fewer than three simulated sites. Itay, 2026-10-12: It is a guardrail, but it does not happen in full runs of 75 years.

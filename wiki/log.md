@@ -80,3 +80,11 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - new for the write-up: Table A5.4 and Ch. 5 §5.2.4 describe the 3,251.54 km² as bounded by the Negev Highlands and the border, while it also holds the buffer.
 - AGENTS.md: the conventions reference now names <https://github.com/SantaFeInstitute/ABMA> (replacing the organisation link).
 - updated: mechanisms/suitability-surface.md, mechanisms/enclosure-construction.md, model/overview.md, model/parameters.md, model/odd-map.md, AGENTS.md
+
+## [2026-10-12] readings | mechanisms/calibration-objective.md (chat round) | — | Claude (research-wiki)
+- reading written: My rationale (the site-type error is a ratio, enclosed to other sites).
+- answers recorded: GPU leftover goes in the separate PR; the 200 trials were run in small batches; App. 5 should read 1:13.4; the fewer-than-three-sites score is a guardrail that does not occur in full runs; the trials "did not" run with n_jobs above 1.
+- checked through the Drive connector: `opt_2_26_v1.csv` and `optimization_summary.csv` (Itay's Optuna exports). 218 trials (143 complete, 57 pruned, 18 failed), 2026-02-17 to 2026-03-05, best trial 173. The timestamps show trials running concurrently (10, then 4 at a time), as App. 5 §A5.3 also states; this contradicts the n_jobs reply. Ch. 5 §5.6 reports a 56% enclosed share at thresholds 0.8–1.0, so the ratio error's 0–1 bound is not guaranteed.
+- updated: mechanisms/calibration-objective.md, model/odd-map.md (row 1), model/experiments.md (calibration outputs; seed-173)
+- added to the separate-PR list: remove the CUDA_VISIBLE_DEVICES assignment in `objective`. Thesis text: Ch. 5 §5.5.2 and App. 5 §A5.7.2 to describe the ratio; App. 5 §A5.7.3 to read 1:13.4.
+- open in this round: how to handle concurrent trials sharing the global random generators; recording the ratio bound as conditional.

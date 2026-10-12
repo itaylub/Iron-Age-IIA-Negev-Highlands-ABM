@@ -12,7 +12,7 @@ None of the result files are in the repository. `Results/` is untracked, and the
 - **Code**: [`Code/calibration.ipynb`](../../Code/calibration.ipynb) cell 1 → `model.objective` ([calibration objective](../mechanisms/calibration-objective.md)).
 - **Settings**: integer weights 0–7; TPE sampler; MedianPruner(n_startup_trials = 10, n_warmup_steps = 5); 10 replicates × 75 years per trial; seeds `trial × 100 + i`; `n_jobs = 4`. The notebook's main block calls 13 trials, the function default is 200, and Ch. 5 §5.5.2 reports 200.
 - **Outputs**: SQLite study `D:\itay\ABM\Results\run\opt_run.db`; per replicate `Results/run/trial_<n>/iter_<i>/household_data.csv` and `spatial_similarity.png`; `optimization_summary.csv` (cell 8).
-- **Present in repo**: no.
+- **Present in repo**: no. Itay's copies (2026-10-12): `G:\Other computers\My Computer\Drive\01_PROJECTS\MA_thesis\ABM\Results\opt_2_26_v1.csv`, `G:\Other computers\My Computer\Drive\01_PROJECTS\MA_thesis\ABM\Results\run\opt_run.db`, `G:\Other computers\My Computer\Drive\01_PROJECTS\MA_thesis\ABM\Results\run\optimization_summary.csv`, readable through the Drive connector. Trials ran in small batches over 2026-02-17 to 2026-03-05: 218 trials, of which 143 complete, 57 pruned and 18 failed; best trial 173 (checked 2026-10-12).
 - **Reported** (Ch. 5 §5.5.4; App. 5 §A5.3): 200 trials, 143 completed, 57 pruned; best composite 0.2013; four workers, mean ~8.4 h per completed trial (range 3.0–19.8 h), ~12–13 days in total. Leading 19 trials < 0.21 share one weight structure (see [parameters](parameters.md#calibrated-weights)).
 
 ## 2. Best-trial replication (30 runs)
@@ -48,4 +48,5 @@ None of the result files are in the repository. `Results/` is untracked, and the
 - Time horizon is a single run (seed 42), as App. 5 §A5.7.2 states ("given its exploratory diagnostic purpose").
 - Rainfall replay in the time-horizon run. With 75 years and `year % len(inds)` (`sensitivity_model.py` L399, L945), years 75–149 repeat years 0–74 in the same shuffled order, so the second half of the run replays the first half's rainfall exactly. Itay (2026-10-12, overview round) described the longer runs as reusing "some of the years". Raised in the overview round and deferred to this page (agreed 2026-10-12).
 - Which run is "seed-173" (Ch. 5 Fig. 5.11)? Best-trial replicates use seeds `best_trial × 100 + i` with i = 0–29 (calibration.ipynb cell 6), and calibration replicates use i = 0–9. Seed 173 fits neither pattern unless the best trial number is 1 and i = 73.
+  - Checked 2026-10-12 in the Optuna exports: trial 173 is the best trial (0.2013), so "seed-173" may name the trial rather than a seed. Raised in the calibration-objective round; to confirm in the experiments round.
 - calibration.ipynb cell 5 reads `trial_best_params`, which cell 6 creates, so the cells run out of order on a fresh run.
