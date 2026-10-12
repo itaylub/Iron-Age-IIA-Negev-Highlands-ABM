@@ -53,18 +53,14 @@ These were agreed with the owner, and they override the guides.
   - **Locators** are section, figure, table and equation numbers, with the printed page added where it helps: `(Ch. 5 §5.3.1)`, `(Ch. 5 Fig. 5.3, p. 146)`, `(App. 5 Table A5.4)`, `(App. 5 eq. A5.1)`. App. 5 captions call the degradation equations A5.1–A5.3, while the equation objects themselves read "eq 4.1", "eq 4.2" and "eq 4.3 + 2"; cite them as A5.1–A5.3.
   - **Working copies.** The PDF's text matches the owner's working copies word for word: Ch. 5 in `G:\My Drive\MA Thesis\context\thesis_reference\full_thesis.md` (Drive 2026-10-04) and `G:\My Drive\MA Thesis\Thesis_submission\appendices\Appendix 5. ABM.docx` (Drive 2026-07-13). The PDF also carries the equations, which the full_thesis.md export lost. If the working copies change later, ask whether the PDF should be replaced.
   - **Text layer.** `pdftotext` drops hyphens at line breaks, giving "costdistance" for "cost-distance". When checking quotes, `_tools/verify_quotes.py` reports these as LOOSE, which is fine.
-- **Answering in place** (agreed 2026-10-12). Itay answers owed questions by editing the wiki files directly, outside agent sessions:
-  - **A reading or rationale:** write the answer on the lines under the `> Q:` line, as plain text, and leave the `· owed` header as it is.
-  - **A reply to a Things to check item:** add a line under the item starting `Itay:`.
-  - **Other corrections:** Itay may edit anything else, and those edits are the owner's.
+- **Answering in chat** (agreed 2026-10-12; replaces "Answering in place", tried once on 2026-10-12). Agents bring the owed questions to Itay in the conversation, one file at a time, and edit the files from the answers.
+  1. **Presenting.** For one file, list its owed blocks (`My reading`, `My rationale`, …) and its open Things to check items, numbered. Give each item its locator, a link to the file (with the line), and one question that can be answered in a line. Itay answers by number; "skip" leaves an item open.
+  2. **Code snippets.** Whenever an item refers to code, quote the snippet in the message (`file › function, lines` at the recorded commit), so Itay can read it without opening the file.
+  3. **One round at a time.** If an answer opens a new round (a follow-up question, a check to run, wording to approve), resolve it before moving on to the next item or file. A round is deferred only when Itay and the agent agree to defer it. The agent suggests deferring when the gap fits better with a later item (for example, a run-length question deferred to the experiments page), and records the deferral on the page where it will be picked up.
+  4. **Recording.** Replace an owed header with `· Itay, <date of the conversation>`, keep the `> Q:` line, and put the answer under it. Put a reply to a Things to check item on a nested line under the item: `  - Itay, <date>: …`. Keep Itay's words exactly, fixing only obvious typos (spelling, capitals). Carry settled points into the pages they settle, including the assumptions register (`model/assumptions.md`). The reply stays Itay's decision, attributed and dated. When an answer contradicts the code or the documentation, add a Things to check line rather than changing either. Ask about anything ambiguous rather than guessing.
+  5. **Edits outside the wiki** that answers call for (`Code/`, `docs/`, README, notebooks) are not made during reading sessions. They are listed in `log.md` and made later in a separate PR (Itay, 2026-10-12).
+  6. **Direct edits.** Itay may still edit wiki files directly; those edits are the owner's. If an answer was written into a page, integrate it as in step 4, dating it from the commit that added it (`git log -1 --format=%ad --date=short -- <file>`).
 
-  The next agent session integrates the answers before anything else. For each answer:
-  1. Replace the `· owed` header with `· Itay, <date>`. Take the date from the commit that added the answer (`git log -1 --format=%ad --date=short -- <file>`), or ask.
-  2. Keep the words exactly, fixing only obvious typos. Keep the question as a `> Q:` line above the answer.
-  3. For an `Itay:` reply, keep it in place, and update the assumptions register (`model/assumptions.md`) or other pages where the reply settles a status. The reply remains the owner's decision, attributed and dated.
-  4. When an answer contradicts the code or the documentation, add a Things to check line rather than changing either.
-  5. Ask about anything ambiguous rather than guessing.
-
-  Finish with bookkeeping: index, log (operation `readings`), and the status brief.
+  After each file, finish with bookkeeping: index, log (operation `readings`), and the status brief.
 - **Code locators** name the file relative to `Code/`, the class or function, and line numbers at the commit recorded in `model/overview.md`: `(model.py › Household_Agent.step, L544–616)`. `model.py` is the calibrated model; `sensitivity_model.py` is the variant the sensitivity notebook imports. When the commit changes, re-check line numbers (see `_guide/ingest-code.md` › Updates).
 - **Rationale questions** for mechanisms aim at what Chapter 5 and Appendix 5 do not already say (values marked "Assumed" in App. 5 Table A5.4, and places where code and documentation differ), since the documented reasoning is already the owner's own account.

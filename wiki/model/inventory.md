@@ -52,7 +52,7 @@ Apart from comments and docstrings, `diff` shows these behavioural differences (
 
 ## Input data (not in git; Zenodo 10.5281/zenodo.20473345)
 Per docs/DATA.md:
-- `yearly_data_10_25.h5`: `group_0`…`group_75` (76 years), each with `array_0` (float64) and `array_1`, `array_2` (float32), 318 × 280. Lazy-loaded by `LazyYearlyData` (L62–120).
+- `yearly_data_10_25.h5`: `group_0`…`group_75` (76 years), each with `array_0` (float64) and `array_1`, `array_2` (float32), 318 × 280. Lazy-loaded by `LazyYearlyData` (L62–120). The file itself holds 75 years, `group_0`…`group_74`, plus a `metadata` group (checked 2026-10-12; see Things to check).
 - `per_data_10_25.h5`: single `group_1` with six arrays. `model.py` unpacks them as agri, kb, pw, veg_fit, rain, slope (L481–482).
 - `ext_raster.npy`, `place_raster.npy`: `uint8` 0/1 masks.
 - `P_for_calib.shp`: EPSG:2039 points, `value` 1 (other site) or 2 (enclosed compound).
@@ -79,6 +79,7 @@ Per docs/DATA.md:
   - Itay, 2026-10-12: Same as above.
 - docs/DATA.md says the `metadata` group is "not consumed by the model". `LazyYearlyData` reads `f['metadata'].attrs['num_groups']` from the yearly file (L76), and `load_permanent_data` reads `num_groups` and `arrays_per_group` from the permanent file (L129–131). The DATA.md layout for the yearly file shows no `metadata` group.
   - Itay, 2026-10-12: I am not familiar with metadata group, but, as said above, it seems outdated. It may refer to the code I used to generate the different files inside the permanent and yearly data in the h5py files.
+  - Checked 2026-10-12 in the calibration files (from the repository history, commit `14cb755^`; SHA-256 equal to docs/DATA.md). Both have a top-level `metadata` group: `yearly_data_10_25.h5` has `num_groups` = 75 and `arrays_per_group` = 3, and `per_data_10_25.h5` has `num_groups` = 1 and `arrays_per_group` = 6. DATA.md's "76 groups, `group_0`…`group_75`" counts `metadata` as a year; the file has `group_0`…`group_74`.
   - The code depends on the group: both reads are unguarded, so a data file without a `metadata` group would stop the model at loading (L76, L129–131). The part of DATA.md that looks outdated is the "not consumed" note, not the group itself.
 - Stale names. The `model.py` docstring (L1–7) refers to `nomad_abm.model` and a `Code/model_opt.py` shim, and `sensitivity_model.py` to `Code/model_opt_sensitivity.py`. calibration.ipynb cell 0 says it uses "the standalone `model_opt.py` module". These files no longer exist (CHANGELOG [Unreleased]).
   - Itay, 2026-10-12: So correct those. I did some reorganization in the main.

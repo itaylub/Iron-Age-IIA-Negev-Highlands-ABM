@@ -27,7 +27,7 @@ None of the result files are in the repository. `Results/` is untracked, and the
 | Test | Settings in code | Seeds | Reported (Ch. 5 §5.6; App. 5 §A5.7) |
 |---|---|---|---|
 | Null baseline (cell 9) | all weights 1/7; 30 × 75 y | 3000 + i | mean 0.318, 95% CI 0.309–0.328; best calibrated 0.201; "36.7% reduction in error" |
-| Time horizon (cell 3) | one run, 150 y, scored every 10 y; rainfall years recycle in the same shuffled order after the 76 groups (`sensitivity_model.py` L399, L945), as Itay intended (2026-10-12: "for longer runs … I reused some of the years"); App. 5 §A5.7.2 does not mention the reuse | 42 | composite falls to year 75 mainly through ratio error; spatial error 0.27–0.32, drifting up after year 100; near-complete coverage by years 100–150 |
+| Time horizon (cell 3) | one run, 150 y, scored every 10 y; rainfall years recycle in the same shuffled order after the 75 years (`sensitivity_model.py` L399, L945), as Itay intended (2026-10-12: "for longer runs … I reused some of the years"); App. 5 §A5.7.2 does not mention the reuse | 42 | composite falls to year 75 mainly through ratio error; spatial error 0.27–0.32, drifting up after year 100; near-complete coverage by years 100–150 |
 | Number of agents (cell 5) | 5, 15, 20 agents; 5 × 75 y each | 1000 + 100n + i | 5 too few sites; 15–20 score better but cover "practically the entire valid landscape" (App. 5 §A5.7.3) |
 | Territory (cell 7) | fixed vs flexible; 5 × 75 y each | 2000 + 100·fixed + i | mean ~0.25 fixed vs ~0.21 flexible; fixed far more variable, one run 0.41 |
 | Site threshold | 0.1–1.0 on one run's output | — | 245 sites at 0.6; ~6,000 at 0.1–0.2; 73 at 0.8–1.0; enclosure share <1% → 16.7% (0.6) → 56% |
@@ -44,5 +44,6 @@ None of the result files are in the repository. `Results/` is untracked, and the
 - The null-baseline comparison sets the null mean (30 runs) against `study.best_value` (cell 9), which is the lowest mean among 143 completed trials. The 30-replicate re-run of the best trial gave 0.213 (Ch. 5 §5.5.4). Which figure should the comparison use?
 - Fixed-territory runs may gain households when a household fails ([crisis and replacement](../mechanisms/crisis-and-replacement.md), Things to check). That would affect the territory comparison.
 - Time horizon is a single run (seed 42), as App. 5 §A5.7.2 states ("given its exploratory diagnostic purpose").
+- Rainfall replay in the time-horizon run. With 75 years and `year % len(inds)` (`sensitivity_model.py` L399, L945), years 75–149 repeat years 0–74 in the same shuffled order, so the second half of the run replays the first half's rainfall exactly. Itay (2026-10-12, overview round) described the longer runs as reusing "some of the years". Raised in the overview round; deferral to this page proposed 2026-10-12.
 - Which run is "seed-173" (Ch. 5 Fig. 5.11)? Best-trial replicates use seeds `best_trial × 100 + i` with i = 0–29 (calibration.ipynb cell 6), and calibration replicates use i = 0–9. Seed 173 fits neither pattern unless the best trial number is 1 and i = 73.
 - calibration.ipynb cell 5 reads `trial_best_params`, which cell 6 creates, so the cells run out of order on a fresh run.

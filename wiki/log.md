@@ -38,3 +38,13 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - updated: model/overview.md, model/inventory.md, mechanisms/suitability-surface.md (answers and checks); model/assumptions.md (C5, C7, M1, M6), model/odd-map.md (rows 1, 2, 3, 5, 6), model/parameters.md (Year-0 radius), model/experiments.md (time horizon), mechanisms/herd-dynamics.md, mechanisms/calibration-objective.md, index.md
 - not done, needs the owner's go-ahead (outside the wiki): stale module names in `Code/` docstrings and calibration.ipynb; output paths for reproduction; rewriting docs/objective_function.md and docs/DATA.md; the array 0 / array 2 code fix; AGENTS.md equation-label convention
 - readings: 2 written, 10 owed
+
+## [2026-10-12] convention | answering in chat replaces answering in place | — | Claude (research-wiki)
+- AGENTS.md › Local conventions: "Answering in place" replaced by "Answering in chat". Owed items are presented one file at a time with links, code items carry a snippet, a new round opened by an answer is resolved (or deferred by agreement) before moving on, and edits outside the wiki go to a later, separate PR.
+- deferred to a separate PR (Itay, 2026-10-12): stale module names in `Code/` docstrings and calibration.ipynb; output paths for reproduction; docs/objective_function.md and docs/DATA.md (now also the 76 → 75 yearly groups); pasture from yearly array 2 instead of array 0 in both model files.
+
+## [2026-10-12] readings | model/overview.md (chat round) | — | Claude (research-wiki)
+- answers recorded: italics in the Purpose reading are emphasis, not a quote; Year-0 radius 25 confirmed; ODD follows the code's two passes; "simulated data" = processed IMS years plus derived pasture and agriculture; "validation" kept in its technical sense; essence of the rainfall-draw wording.
+- checked: `yearly_data_10_25.h5` and `per_data_10_25.h5` from the repository history (commit `14cb755^`, SHA-256 equal to docs/DATA.md), read with the HDF5 C library: 75 year groups plus `metadata` (`num_groups` = 75); DATA.md's 76 counts `metadata`. Zenodo is blocked from this session.
+- updated: model/overview.md, model/inventory.md (input data, metadata check), model/odd-map.md (rows 1, 3, 5), model/assumptions.md (C7), model/experiments.md (time horizon; new check on the rainfall replay)
+- open in this round: journal wording for the rainfall draw (proposal awaiting approval); deferral of the 150-year rainfall replay to the experiments round (proposed)
