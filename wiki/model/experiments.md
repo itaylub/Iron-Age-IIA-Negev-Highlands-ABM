@@ -19,7 +19,7 @@ None of the result files are in the repository. `Results/` is untracked, and the
 - **Code**: calibration.ipynb cell 6. Best parameters, 30 iterations, `plot=True`, seeds `best_trial × 100 + i`; summary in cell 8 (`best_params_30iter_stats.csv`).
 - **Outputs**: `D:\itay\ABM\Results\trial_best_params\iter_<i>\…`; maps `year_<n>_map.png` at years 10–70 and the last year.
 - **Present in repo**: no.
-- **Reported** (Ch. 5 §5.5.4): mean composite 0.213 ± 0.021; spatial error 0.314 ± 0.039; site-type error 0.111 ± 0.021; IoU 0.68; simulated ellipse 1,602.43 km², axis ratio 1.25:1 against the observed 2.2:1; enclosed compounds ~17.6% of simulated sites against 6.93% observed.
+- **Reported** (Ch. 5 §5.5.4, §5.7, Fig. 5.10–5.11): mean composite 0.213 ± 0.021; spatial error 0.314 ± 0.039; site-type error 0.111 ± 0.021; IoU 0.68; simulated ellipse 1,602.43 km², axis ratio 1.25:1 against the observed 2.2:1; enclosed compounds ~17.6% of simulated sites against 6.93% observed. A sample run had 41 enclosure locations and 519 construction and reuse events, 26 of the locations built in years 0–25 (Fig. 5.10). Fig. 5.11 shows the occupation intensity of the "best-trial seed-173 output".
 
 ## 3. Sensitivity analysis
 [`Code/sensitivity_analysis.ipynb`](../../Code/sensitivity_analysis.ipynb), on `sensitivity_model.py`, with the best weights loaded from the Optuna study (cell 1).
@@ -44,4 +44,5 @@ None of the result files are in the repository. `Results/` is untracked, and the
 - The null-baseline comparison sets the null mean (30 runs) against `study.best_value` (cell 9), which is the lowest mean among 143 completed trials. The 30-replicate re-run of the best trial gave 0.213 (Ch. 5 §5.5.4). Which figure should the comparison use?
 - Fixed-territory runs may gain households when a household fails ([crisis and replacement](../mechanisms/crisis-and-replacement.md), Things to check). That would affect the territory comparison.
 - Time horizon is a single run (seed 42), as App. 5 §A5.7.2 states ("given its exploratory diagnostic purpose").
+- Which run is "seed-173" (Ch. 5 Fig. 5.11)? Best-trial replicates use seeds `best_trial × 100 + i` with i = 0–29 (calibration.ipynb cell 6), and calibration replicates use i = 0–9. Seed 173 fits neither pattern unless the best trial number is 1 and i = 73.
 - calibration.ipynb cell 5 reads `trial_best_params`, which cell 6 creates, so the cells run out of order on a fresh run.

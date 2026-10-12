@@ -19,14 +19,15 @@ The `My rationale` blocks on the mechanism pages will move items from "none reco
 |---|---|---|---|
 | C1 | Nomadic groups characterised the Negev Highlands population and produced the observed pattern | whole model | owner's rationale (Ch. 5 §5.1, from Ch. 3) |
 | C2 | Part of the population moved seasonally between the Arabah and the Highlands; one move per year | annual `move_year` / `year_initiation` | owner's rationale (Ch. 5 §5.1, §5.2.3) |
-| C3 | Multi-resource nomadism: pastoralism, copper and desert trade, opportunistic agriculture | 18 goats/person, agricultural offset | sourced (Ch. 5 §5.2.2: Dahl & Hjort 1976; Rosen & Finkelstein 1992) |
-| C4 | Stone-built structures represent seasonal, not permanent, occupation | site classification | owner's rationale (Ch. 5 §5.1) |
-| C5 | Tell el-Qudeirat was the central site and main destination from the Arabah | `dist_to_kb` layer | sourced (Ch. 5 §5.1: Ch. 3; Ben-Dor Evian 2017) |
-| C6 | Population constant | `Num_agents`, one-for-one replacement | owner's rationale (Ch. 5 §5.1, §5.2.4) |
+| C3 | Multi-resourced nomadism, relying primarily on pastoralism, copper manufacture and trade ("possibly other desert goods"), and opportunistic agriculture | 18 goats/person, agricultural offset | sourced (Ch. 5 §5.1: Rosen 2017; §5.2.2: Dahl & Hjort 1976; Rosen & Finkelstein 1992) |
+| C4 | Stone-built structures of all types, including enclosed compounds, represent seasonal, not permanent, occupation | site classification | owner's rationale (Ch. 5 §5.1) |
+| C5 | Tell el-Qudeirat was the central hub of the system, as the region's primary fresh-water oasis (the older repository copy said "main destination for people and goods coming from the Arabah") | `dist_to_kb` layer (justified in Ch. 5 §5.2.1.2 by the Tell el-Qudeirat–Faynan corridor) | sourced (Ch. 5 §5.1: Ben-Dor Evian 2017) |
+| C6 | Population constant: "while households may die, the populations stays stable by replacing those" | `Num_agents`, one-for-one replacement | owner's rationale (Ch. 5 §5.1, §5.2.4) |
 | C7 | Climate similar to the present; modern rainfall years drawn at random | yearly stack, shuffled `inds` (L1254–1255) | sourced (Ch. 5 §5.1: Goldsmith et al. 2023; Langgut & Finkelstein 2023) |
 | C8 | The system lasted at least 75 years | run length | sourced (Ch. 5 §5.2.3: Boaretto et al. 2010; Finkelstein & Piasetzky 2011) |
 | C9 | The household (about ten nuclear families) is the decision unit | `Household_Agent` | sourced (Ch. 5 §5.2.2: Khazanov 1984; Salzman 2004; Hammer 2025) |
-| C10 | Enclosed compounds are communal, built from surplus by local decision | [enclosure construction](../mechanisms/enclosure-construction.md) | owner's rationale (Ch. 5 §5.1, §5.3.3) |
+| C11 | Behavioural rules are "general, simplified, tentative behaviours" in line with C1–C10, not a full representation of how the population behaved | all mechanisms | owner's rationale (Ch. 5 §5.1) |
+| C10 | Enclosed compounds express household investment of accumulated surplus and function as communal, kin-based, multi-purpose territorial centres (hypothesised uses: seasonal storage, gatherings, perhaps exchange) | [enclosure construction](../mechanisms/enclosure-construction.md) | owner's rationale (Ch. 5 §5.1, §5.3.3; Ch. 6) |
 
 ## Mechanism assumptions
 | # | Assumption | Encoded in | Status |

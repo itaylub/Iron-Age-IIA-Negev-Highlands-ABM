@@ -10,7 +10,7 @@
 - [Overview](model/overview.md): purpose, entities, scales, schedule, initialisation · Purpose reading owed
 - [Inventory](model/inventory.md): files, notebooks, docs, data, outputs; how `model.py` and `sensitivity_model.py` differ
 - [Parameters](model/parameters.md): every value in the code against App. 5 Table A5.4; calibrated weights
-- [Assumptions register](model/assumptions.md): 34 assumptions with where encoded and justification status
+- [Assumptions register](model/assumptions.md): 35 assumptions with where encoded and justification status
 - [Experiments](model/experiments.md): calibration, best-trial replication, four sensitivity tests, smoke test
 - [ODD map](model/odd-map.md): ODD elements → wiki pages and gaps
 - [Literature cited](model/literature-cited.md): works Ch. 5 / App. 5 cite per component; none ingested

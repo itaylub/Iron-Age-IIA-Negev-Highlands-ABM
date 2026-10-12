@@ -37,7 +37,7 @@ The `return_ras` and `yi_hu_stressed_z` terms of the [suitability surface](suita
 Ch. 5 §5.2.1.2: occupation has "a negative effect on its immediate environment", decaying with distance and over time, and also "add[s] to the built infrastructure there, raising its value for future use". At any time "some locations are overexploited while others have already recovered", and this "shifting patchwork of depletion and inherited investment is one of the temporal mechanisms at the core of the palimpsest reading". The 0.5 decay is "the model's stand-in for the slow environmental recovery" (Ch. 5 §5.3.1).
 
 ## Justification
-- Owner's documentation: Ch. 5 §5.2.1.2 and §5.3.1; App. 5 §A5.2 (eq. 4.3: `w(t) = 0.5^(T−t)`).
+- Owner's documentation: Ch. 5 §5.2.1.2 and §5.3.1; App. 5 §A5.2 (eq. A5.3: `w(t) = 0.5^(T−t)`); Ch. 5 Fig. 5.4 (caption: "cross-annual accumulation weighted by temporal decay w(t) = 0.5^(T−t), spatially smoothed over 5 km").
 - App. 5 Table A5.4 marks the decay factor and smoothing radius "Assumed".
 - Ch. 5 §5.3.1 cites Boles et al. 2019 and Meroz et al. 2023 for overgrazing in arid and Negev settings, as context for degradation in general, not for these values.
 

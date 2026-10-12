@@ -29,8 +29,9 @@ Candidates marked ★ carry a model value or rule directly. They are the ones th
 ## Behaviour
 - ★ Avni 1996; Galilee 2013; Hammer 2014; Meraiot et al. 2021: spatial inertia of pastoral camps (Ch. 5 §5.3.1)
 - Khazanov 1984; Salzman 2004; Hammer 2025: household-level decisions (Ch. 5 §5.2.2)
-- Aharoni et al. 1960; Cohen & Cohen Amin 2004: enclosed compound architecture (Ch. 5 §5.1)
-- Ben-Dor Evian 2017: Tell el-Qudeirat as the central site (Ch. 5 §5.1)
+- Aharoni et al. 1960; Cohen & Cohen Amin 2004: enclosed compound architecture (only in the older repository copy of Ch. 5 §5.1; not cited in the canonical version)
+- Ben-Dor Evian 2017: Tell el-Qudeirat as the central hub and fresh-water oasis (Ch. 5 §5.1)
+- Rosen 2017: multi-resourced nomadism (Ch. 5 §5.1)
 
 ## Chronology
 - ★ Boaretto et al. 2010; Finkelstein & Piasetzky 2011: 75-year minimum span on the low chronology (Ch. 5 §5.2.3)
@@ -43,6 +44,7 @@ Candidates marked ★ carry a model value or rule directly. They are the ones th
 - ★ Akiba et al. 2019 (Optuna); Watanabe 2023 (TPE) (Ch. 5 §5.5.2; App. 5 §A5.3)
 - ter Hoeven et al. 2025: Mesa (Ch. 5 §5.2; App. 5 §A5.5)
 - Grimm et al. 2020: ODD protocol (README › Future development)
+- Wachtel et al. 2018; Cortell-Nicolau et al. 2025: evaluation of static methods such as regression and MaxEnt (Ch. 5 §5.1)
 - Lake 2014, 2015, 2020; Romanowska 2015; Romanowska et al. 2019, 2021; Romanowska & Scherjon 2023; Verhagen & Whitley 2020: simulation in archaeology, KISS, calibration (Ch. 5 §5.1, §5.2.3, §5.5, §5.6)
 
 ## Things to check

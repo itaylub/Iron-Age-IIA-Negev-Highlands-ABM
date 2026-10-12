@@ -11,7 +11,7 @@ ODD elements after Grimm et al. (2020), the protocol the README names for the jo
 |---|---|---|---|
 | **1. Purpose and patterns** | [overview › Purpose](overview.md#purpose), [question](../questions/palimpsest-sufficiency.md), [calibration objective](../mechanisms/calibration-objective.md) | Ch. 5 §5.1, §5.5.1–5.5.3 | Purpose reading owed. Ratio vs proportion definition of the site-type pattern. |
 | **2. Entities, state variables, scales** | [overview › Entities](overview.md#entities-and-state-variables), [overview › Scales](overview.md#scales) | Ch. 5 §5.2; App. 5 Tables A5.5–A5.6 | Crisis flag listed but absent in code. `stress_ras` meaning (10 = untouched). Grid orientation (DATA.md says 318 columns). |
-| **3. Process overview and scheduling** | [overview › Process](overview.md#process-overview-and-scheduling) | Ch. 5 §5.2.3, §5.4; Figures 5.3, 5.6 (not read) | Two separate shuffled passes in the code vs one pass in §5.4; enclosure-before-herd order in §5.2.3. |
+| **3. Process overview and scheduling** | [overview › Process](overview.md#process-overview-and-scheduling) | Ch. 5 §5.2.3, §5.4; Fig. 5.3, 5.6 (captions read, images not seen) | Two separate shuffled passes in the code vs one pass in §5.4; enclosure-before-herd order in §5.2.3. |
 | **4. Design concepts** | see rows below | Ch. 5 §5.1, §5.3 | Not yet written as a design-concepts section anywhere. |
 | › Basic principles | [question](../questions/palimpsest-sufficiency.md), [assumptions C1–C10](assumptions.md) | Ch. 5 §5.1 (palimpsest model, carrying capacity) | — |
 | › Emergence | [site classification](../mechanisms/site-classification.md) | Ch. 5 §5.1, §5.2.3, §5.7 | — |

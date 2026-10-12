@@ -17,7 +17,9 @@ An agent-based model in Python on Mesa 3 (`Code/model.py`) in which nine nomadic
 
 What the documentation says, in Itay's words:
 
-> “The model aspires to answer the question: *“Can autochthonous nomadic processes, operating through temporal mobility and environmental feedbacks, sufficiently generate patterns similar to the observed Iron Age IIA archaeological record?”*” (Ch. 5 §5.1)
+> “The current model aspires to answer the following question: **Can autochthonous nomadic processes, operating through temporal mobility and environmental feedbacks, sufficiently generate patterns similar to the observed Iron Age IIA archaeological record?**” (Ch. 5 §5.1)
+
+Ch. 5 §5.1 frames the simulation more cautiously in the canonical version: the palimpsest model "cannot be tested directly in the field", but "it is possible to gain important insights regarding the observed archaeological record and the mechanisms that led to is formation through a series of computerised simulations that model locational decision making of participating social agents" (Ch. 5 §5.1). The behavioural rules "are set this way not because they are thought to truly and fully represent how the population of the Negev Highlands Iron Age IIA behaved, but as general, simplified, tentative behaviours" (Ch. 5 §5.1).
 
 - README: the model "tests whether autochthonous nomadic processes — temporal cycling driven by environmental volatility and degradation feedback — can plausibly generate the spatial palimpsest documented in the Iron Age IIA archaeological record" (README › Overview).
 - The research question has its own page: [palimpsest sufficiency](../questions/palimpsest-sufficiency.md).
@@ -66,6 +68,8 @@ As implemented in `run_model_opt` (L1242–1291), with `model.step` and `model.m
 
 Placement and the economic step are two separate passes over the households, each in its own random order. Ch. 5 §5.4 describes one pass in which each household places and then manages its herd. See Things to check.
 
+Ch. 5 Fig. 5.3 lists "Eight sequential stages" per year: "environmental update; household repositioning in randomised order; territory establishment; resource calculation; prosperity assessment and enclosure decision; crisis check; livestock and demographic adjustment; and end-of-year bookkeeping". Ch. 5 Fig. 5.6 gives the outer loop: "model.move_year() resets household grid positions and updates dynamic environmental layers, followed by model.step() executing the full annual household decision sequence". The captions were read from full_thesis.md; the figure images were not seen.
+
 ## Initialisation
 
 - Number of households: `Num_agents()` returns ⌊(3,251.54 / 18) / 20⌋ = 9 (L283–287). Ch. 5 §5.2.4 derives it from 18 km² per nuclear family (Rosen & Finkelstein 1992 on Seligman et al. 1962), ten families per household (about 180 km²), so about 18 households at carrying capacity, halved "again to be on the conservative side".
@@ -93,7 +97,7 @@ Inputs are fetched from Zenodo into `Data/` (`scripts/download_data.py`; docs/DA
 - [Inventory](inventory.md) · [Parameters](parameters.md) · [Assumptions register](assumptions.md) · [Experiments](experiments.md) · [ODD map](odd-map.md) · [Literature cited](literature-cited.md)
 
 ## Things to check
-- Schedule order. The code runs placement for all households, then the economic step for all, in two separate random orders (L1015, L1043). Ch. 5 §5.4 describes each household placing and then managing its herd in turn. Ch. 5 §5.2.3 gives a third order, enclosure decision before the livestock update, while the code updates the herd first (L545–546, then L564–587). Which order should the ODD describe?
-- Crisis flag. Ch. 5 §5.2.2 lists a "Crisis flag" state variable and App. 5 Table A5.5 names it `in_severe_crisis`. No such attribute exists in `model.py` or `sensitivity_model.py`, where crisis is handled inside `step` (L589–593). Should the tables drop it, or is it meant to be added?
+- Schedule order. The code runs placement for all households, then the economic step for all, in two separate random orders (L1015, L1043). Ch. 5 §5.4 describes each household placing and then managing its herd in turn. Ch. 5 §5.2.3 gives a third order, enclosure decision before the livestock update, while the code updates the herd first (L545–546, then L564–587). Ch. 5 Fig. 5.3 puts "resource calculation" before the enclosure decision and "livestock and demographic adjustment" after the crisis check. That matches the code if the herd update (L545) counts as resource calculation and the purchase and manpower changes (L594–605) as the later adjustment. Which order should the ODD describe?
+- Crisis flag. Ch. 5 §5.2.2 lists a "Crisis flag" state variable, Ch. 5 Fig. 5.2 has a "Crisis Status" node, and App. 5 Table A5.5 names it `in_severe_crisis`. The Table A5.5 caption says "Variable names reflect Python implementation". No such attribute exists in `model.py` or `sensitivity_model.py`, where crisis is handled inside `step` (L589–593). Should the tables drop it, or is it meant to be added?
 - Year-0 territory. At initialisation the territory radius is fixed at 25 and the degradation radius at 25 (L993, L1002). From Year 1, `year_initiation` uses 20/25/30 by local suitability (L632–641). `sensitivity_model.py` uses 20/25/30 at Year 0 too (L895–908). Which is intended?
 - Run length versus data. `model.py` reads `inds[self.year]` with no wrap-around (L486, L1029). A run longer than the number of yearly groups (76 per docs/DATA.md) would fail. `sensitivity_model.py` cycles with a modulo (L399, L945), which is how the 150-year test ran.

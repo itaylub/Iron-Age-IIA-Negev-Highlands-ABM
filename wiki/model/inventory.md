@@ -42,9 +42,11 @@ Apart from comments and docstrings, `diff` shows these behavioural differences (
 | File | Content | Status |
 |---|---|---|
 | [`README.md`](../../README.md) | Overview, layout, install, data, citation. | Current; outputs described as "timestamped folders", see Things to check. |
-| [`thesis/chapter-5-ABM.docx`](../../thesis/chapter-5-ABM.docx) | Ch. 5, the narrative model description (§5.1–5.7). The owner's documentation (AGENTS.md › Local conventions). | Read in full. |
-| [`thesis/appendix-5-ABM.docx`](../../thesis/appendix-5-ABM.docx) | App. 5, the technical specification: Table A5.1 (environmental layers), §A5.2 degradation equations, §A5.3 calibration, Table A5.4 (all parameters), A5.5–A5.6 (state variables), A5.7 (sensitivity results). | Read in full; embedded figures not read. |
-| [`thesis/chapter-5-tables-and-figures.docx`](../../thesis/chapter-5-tables-and-figures.docx) | Table 5.1 (layer classification) and 12 figure images without captions in the export. | Table read; figures not read. |
+| **Ch. 5, canonical**: `G:\My Drive\MA Thesis\context\thesis_reference\full_thesis.md`, section "Chapter 5: Agent-Based Model" (Drive version 2026-10-04) | The narrative model description, §5.1–5.7 (§5.7 now "Summary and Discussion"), with captions for Fig. 5.1–5.11. No equations: the Markdown export left blank lines where they were. | Read in full on 2026-10-12 and compared with the repository copy (below). The owner's documentation (AGENTS.md › Local conventions). |
+| **App. 5, canonical**: `G:\My Drive\MA Thesis\Thesis_submission\appendices\Appendix 5. ABM.docx` (Drive version 2026-07-13, Word revision 14) | The technical specification: Table A5.1 (environmental layers, with notes), §A5.2 degradation equations A5.1–A5.3, §A5.3 calibration, Table A5.4 (all parameters), Tables A5.5–A5.6 (state variables), §A5.7 and Table A5.7 (sensitivity results), Fig. A5.1–A5.6. | Read in full, including the text-box captions; figure images not seen. |
+| [`thesis/chapter-5-ABM.docx`](../../thesis/chapter-5-ABM.docx) | Older repository copy of Ch. 5. | Differs from the canonical text in about 7% of words; substantive changes are listed in log.md (2026-10-12). Still the only source for the Ch. 5 equations. |
+| [`thesis/appendix-5-ABM.docx`](../../thesis/appendix-5-ABM.docx) | Older repository copy of App. 5 (Word revision 13, 2026-07-07). | Same wording as the canonical file; only caption punctuation (":" → ".") and the Table A5.2 caption formatting differ. |
+| [`thesis/chapter-5-tables-and-figures.docx`](../../thesis/chapter-5-tables-and-figures.docx) | Table 5.1 (layer classification) and 12 figure images without captions. | Table read; images not seen. Captions are in the canonical Ch. 5. |
 | [`docs/DATA.md`](../../docs/DATA.md) | Data dictionary, HDF5 layout, checksums. | Read. |
 | [`docs/objective_function.md`](../../docs/objective_function.md) | Code-level walkthrough of the objective. | Read; describes a different formula from `obj_func`, see Things to check. |
 | [`docs/INSTALL.md`](../../docs/INSTALL.md), [`docs/ZENODO_UPLOAD.md`](../../docs/ZENODO_UPLOAD.md) | Install guide; one-time Zenodo upload walkthrough. | Listed only. |
@@ -79,6 +81,6 @@ Per docs/DATA.md:
 - Stale names. The `model.py` docstring (L1–7) refers to `nomad_abm.model` and a `Code/model_opt.py` shim, and `sensitivity_model.py` to `Code/model_opt_sensitivity.py`. calibration.ipynb cell 0 says it uses "the standalone `model_opt.py` module". These files no longer exist (CHANGELOG [Unreleased]).
 - README › Reproducibility says outputs "land in timestamped folders under `Results/`". `run_model_opt` writes `Results/run/trial_<n>/iter_<i>` (L1247, L1297), and the notebooks write to `D:\itay\ABM\Results`.
 - The two model files are diverging copies (see "How the two model files differ"). Calibration used `model.py` and the sensitivity tests used `sensitivity_model.py`.
-- App. 5 numbers its equations "eq 4.1", "eq 4.2" and "eq 4.3 + 2", while its text refers to eq A5.1–A5.3 (App. 5 §A5.2).
-- The Chapter 5 .docx ends with a stray "C" after §5.7.
-- Figures in `thesis/chapter-5-tables-and-figures.docx` and App. 5 were not read (images, no captions in the text export). Ch. 5 cites Figures 5.2–5.7 for the behaviours, the year cycle and the run (§5.2.2–5.4), so they may hold schedule detail worth checking against the code.
+- Equation labels in App. 5. The captions say "Equations A5.1 and A5.2" and "Equation A5.3", but the equation objects themselves read "eq 4.1", "eq 4.2" and "eq 4.3 + 2" (App. 5 §A5.2).
+- The repository copies in `thesis/` are older than the canonical Ch. 5 and App. 5 (see Documentation). Should they be replaced, so the archived software ships the current text?
+- Figure images (Ch. 5 Fig. 5.1–5.11, App. 5 Fig. A5.1–A5.6) were not seen; only their captions were read. Fig. 5.2–5.7 show the behaviours, the year cycle and the run, so the images may hold schedule detail worth checking against the code.

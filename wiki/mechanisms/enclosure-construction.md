@@ -25,11 +25,11 @@ All in App. 5 Table A5.4 and marked "Assumed": prosperity thresholds 0.6 and 0.8
 `surplus`, `manpower`, `model.enclosures`, `enc_memory`, `target_raster`.
 
 ## Assumption it encodes
-Ch. 5 §5.1: enclosed compounds are read "as communal places, plausibly periodic gathering points for otherwise dispersed groups, rather than seats of authority", and "building an enclosed compound reflects infrastructure investment depending on surplus of available resources". "The leading premise is that enclosed compounds arise from local decisions, not from top-down planning." Building is "a non-essential investment" (Ch. 5 §5.3.3).
+Ch. 5 §5.1 (behavioural rules): "Enclosed compounds are taken to express a form of household investment of accumulated surplus from economic activities, that function as communal kin-based, multi-purpose territorial centres. I hypothesize that these centres served purposes such as seasonal storage, social gatherings, and perhaps also exchange (see Chapter 6)." Ch. 5 §5.3.3: the compounds "are read here not as fortresses or seats of authority but as communal infrastructure", so building one "is therefore treated as a non-essential investment".
 
 ## Justification
-- Owner's documentation: Ch. 5 §5.1 and §5.3.3. The thresholds "were set during model construction as plausible working values; they stand in for a process the archaeological record cannot specify and are deliberately kept simple" (Ch. 5 §5.3.3).
-- Archaeological framing: Ch. 5 §5.1 cites Aharoni et al. 1960 and Cohen & Cohen Amin 2004 for the architecture, and Chapter 3's spatial analysis for the communal reading.
+- Owner's documentation: Ch. 5 §5.1 and §5.3.3, with Fig. 5.5 (decision logic). The thresholds "were set during model construction as plausible working values; they stand in for a process the archaeological record cannot specify and are deliberately kept simple" (Ch. 5 §5.3.3).
+- Archaeological framing: Ch. 5 points to Chapter 6 for the functions of the compounds. The earlier repository copy of §5.1 cited Aharoni et al. 1960 and Cohen & Cohen Amin 2004 for the architecture; the canonical version no longer has that paragraph.
 
 ## My rationale
 **My rationale** · owed

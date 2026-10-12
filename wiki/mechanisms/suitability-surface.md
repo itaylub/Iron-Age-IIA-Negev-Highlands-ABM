@@ -28,6 +28,7 @@ Each year the model rebuilds one shared suitability raster as a weighted sum of 
 
 - `per_data` arrays 0 (`agri_raster`) and 3 (`veg_fit`) are loaded but not used in the sum (L481–482), as App. 5 Table A5.1 specifies ("No (collinear with annual rainfall)", "No (used in pasture derivation only)").
 - Fuzzy transformations were done in ArcGIS Pro before the data reached the model (App. 5 §A5.1). Table A5.1 lists: mean and annual rainfall Linear 0–100 mm; slope FuzzySmall, midpoint 15°, spread 3; permanent water FuzzySmall, midpoint 3 h walking, spread 1; Tell el-Qudeirat FuzzySmall, midpoint 4 h walking, spread 1.
+- Table A5.1 notes (App. 5): "FuzzySmall assigns maximum suitability (10) to low input values and minimum suitability (0) to high input values, using a sigmoidal decline; midpoint is the input value at suitability 0.5 and spread controls the steepness of the transition. Linear transformation maps raw values linearly between the specified minimum (suitability 0) and maximum (suitability 10)."
 - The weights are integers 0–7, normalised to sum to 1 (`objective`, L1363–1367; Ch. 5 §5.5.2). Calibrated values are in [parameters](../model/parameters.md#calibrated-weights).
 
 ## What it changes
@@ -50,4 +51,5 @@ Ch. 5 §5.2.1.2: households read "a single weighted suitability score for each c
 - Corridor or point? Ch. 5 §5.2.1.2 describes this layer as cost-distance to the Tell el-Qudeirat–Faynan *corridor* ("only the red parts" of Figure 3.11). App. 5 Table A5.1 says "Distance to Tell el-Qudeirat … Site location", and Table A5.6 says "Cost-distance to Tell el-Qudeirat". The code name is `dist_to_kb`.
 - App. 5 §A5.3 reports that exploratory runs "revealed, for example, that annual rainfall weights required substantial influence to generate appropriate temporal cycling", while the calibrated annual-rainfall weight is 0 across the leading 19 trials (Ch. 5 §5.5.4). Does the A5.3 sentence describe an earlier version of the model?
 - `ext_raster` multiplies the surface (L504–506), but its meaning is not documented beyond "Binary mask" (docs/DATA.md). Ch. 5 §5.2.1.1 describes a buffer zone where environmental processes run and a place raster confining camps. Is `ext_raster` the outer limit of that buffer?
+- The Table A5.1 notes put the FuzzySmall midpoint at "suitability 0.5" on a scale whose maximum is 10. Does this mean membership 0.5, which is suitability 5?
 - The suitability can exceed 10, because reuse potential (accumulator × 5) is unbounded. Ch. 5 §5.3.3 treats Q, the mean suitability around the camp, as running "from 0 … to 1" after division by 10 (code: `env_quality = current_env_value / 10.0`, L553).
