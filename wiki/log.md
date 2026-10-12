@@ -93,3 +93,8 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - correction to the previous entry: Itay's reply was misread. Itay confirms the trials ran in parallel and does not think they interfered; the timestamps agree with that reply rather than contradicting it. Recorded on the page as a clarification.
 - answers recorded: (b) per-run generators under consideration for the separate PR; (c) already done in the validation; the ratio bound recorded as conditional (0–1 while other sites outnumber enclosed ones).
 - proposed: test the no-interference reply by comparing trial 173's ten calibration replicates (seeds 17300–17309) with validation runs 0–9 (same seeds, run one after another); deferral to the experiments round proposed.
+
+## [2026-10-12] readings | calibration objective round closed | — | Claude (research-wiki)
+- correction: the validation (Ch. 5 §5.5.4) re-ran the best combination for 30 additional replicates to test robustness across seeds; it was wrongly described in chat as a re-run of trial 173's seeds. Page reworded.
+- deferred by agreement: the no-interference check (trial 173's calibration seeds vs the validation runs), to the experiments round, with the open question of which seeds the validation used (cell 6 as it stands repeats 17300–17309).
+- updated: mechanisms/calibration-objective.md, model/experiments.md
