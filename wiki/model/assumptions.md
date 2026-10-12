@@ -38,7 +38,7 @@ The `My rationale` blocks on the mechanism pages will move items from "none reco
 | M4 | Spatial inertia: home-range centre and territory bonus | L917–937 | sourced (Ch. 5 §5.3.1: Avni 1996; Galilee 2013; Hammer 2014; Meraiot et al. 2021); values none recorded |
 | M5 | Camp memory: good camps attract, poor ones repel, fading as 1/√years; pruned after ~15 years | L938–949, L620 | owner's rationale (Ch. 5 §5.3.1); values none recorded |
 | M6 | Territories widen on poor ground (20/25/30); at Year 0 the radius is fixed at 25, which is intended (Itay, 2026-10-12) | L631–641; Year 0 L993 | owner's rationale (Ch. 5 §5.3.1); values none recorded |
-| M7 | Territories should not overlap by more than 25% | `overlap_territory` | none recorded ("cooperative coexistence"); see camp page on whether it fires |
+| M7 | Territories should not overlap by more than 25% | `overlap_territory` | none recorded ("cooperative coexistence"); the rule never fires in `model.py`, a bug (Itay, 2026-10-12; camp page) |
 | M8 | Occupation degrades its surroundings at once, decaying with distance | `env_degrade` | sourced in general (Ch. 5 §5.3.1: Boles et al. 2019; Meroz et al. 2023); magnitudes none recorded |
 | M9 | Degradation persists with half-life of one year, spread over ~5 km | `Yi_params` | owner's rationale (Ch. 5 §5.3.1); values none recorded |
 | M10 | Past occupation raises reuse potential (built infrastructure) | `Yi_params` L465 | owner's rationale (Ch. 5 §5.2.1.2); ×5 none recorded |

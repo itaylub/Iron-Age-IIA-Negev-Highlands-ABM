@@ -53,3 +53,11 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - approved: journal wording for the rainfall draw (approved Claude draft, recorded on overview Things to check; carried to assumptions C7 and the ODD map).
 - deferred by agreement: the 150-year rainfall replay, to the experiments round (model/experiments.md, Things to check).
 - AGENTS.md › Local conventions: Itay's `ABMA_Skill` folder (on Itay's computer) named as the reference to confer with when a convention is needed; not reachable from cloud sessions.
+
+## [2026-10-12] readings | model/inventory.md (chat round) | — | Claude (research-wiki)
+- answers recorded: ratio vs proportion deferred to calibration objective; docs/DATA.md to be treated with suspicion; the sensitivity file's Year-0 rule is a mistake; the overlap rule never firing in `model.py` is a bug; differences 1, 4 and 6 deferred to the camp and crisis pages; App. 5 equations should be numbered A5.x; figure images need no comparison.
+- checked: Year-0 territory radius under the sensitivity file's rule, with the calibration data and best-trial weights (numpy rebuild of the year-0 surface): first camp gets radius 20 ≈ 52%, 25 ≈ 43%, 30 ≈ 6%.
+- AGENTS.md › Local conventions: equation numbering A5.x confirmed; docs/objective_function.md outdated, docs/DATA.md to be treated with suspicion.
+- updated: model/inventory.md, model/assumptions.md (M7), model/odd-map.md (interaction), model/experiments.md, mechanisms/camp-and-territory-placement.md, mechanisms/crisis-and-replacement.md, mechanisms/calibration-objective.md, AGENTS.md
+- added to the separate-PR list: align `sensitivity_model.py`'s Year-0 territory with `model.py`; the overlap-rule bug in `model.py` (fix to be decided, it changes calibrated behaviour). Thesis text (owner's PDF, not the repository): renumber the App. 5 equation objects to A5.1–A5.3.
+- open in this round: deferral of the Year-0 effect on §5.6 to the experiments round (proposed)

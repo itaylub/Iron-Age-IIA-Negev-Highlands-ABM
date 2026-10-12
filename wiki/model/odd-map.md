@@ -20,7 +20,7 @@ ODD elements after Grimm et al. (2020), the protocol the README names for the jo
 | › Learning | [memory and attachment](../mechanisms/memory-and-territorial-attachment.md) | Ch. 5 §5.3.1 | Whether the home-range bonus applies (Mesa `pos` reset). |
 | › Prediction | — | — | None in the model (no forecasting by agents); state explicitly. |
 | › Sensing | [suitability](../mechanisms/suitability-surface.md), [degradation](../mechanisms/within-year-degradation.md) | Ch. 5 §5.3.1 | Households sense the whole map (no sensing radius for camp choice). Local radii: 20 (prosperity, territory size), 25/30 (pasture). |
-| › Interaction | [degradation](../mechanisms/within-year-degradation.md), [history layers](../mechanisms/occupation-history-layers.md), [enclosures](../mechanisms/enclosure-construction.md) | Ch. 5 §5.3.1 ("modelled implicitly") | Overlap rule inactive in `model.py`. |
+| › Interaction | [degradation](../mechanisms/within-year-degradation.md), [history layers](../mechanisms/occupation-history-layers.md), [enclosures](../mechanisms/enclosure-construction.md) | Ch. 5 §5.3.1 ("modelled implicitly") | Overlap rule inactive in `model.py`, a bug (Itay, 2026-10-12). |
 | › Stochasticity | all mechanism pages | Ch. 5 §5.1 | List of random draws (rain-year order, camp draws, herd noise, manpower drift, memory pruning, enclosure choice, initial herds). Thread-shared RNG in calibration. |
 | › Collectives | [enclosures](../mechanisms/enclosure-construction.md) | Ch. 5 §5.1 (households of ~10 families) | Families are not agents; say so. |
 | › Observation | [site classification](../mechanisms/site-classification.md), [calibration objective](../mechanisms/calibration-objective.md), [inventory › Outputs](inventory.md#outputs-not-in-git) | Ch. 5 §5.5.3 | — |

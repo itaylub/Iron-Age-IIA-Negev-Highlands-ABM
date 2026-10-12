@@ -42,5 +42,5 @@ Owner's documentation: Ch. 5 §5.5 and App. 5 §A5.3. Tools cited: Optuna (Akiba
 - `objective` sets `CUDA_VISIBLE_DEVICES` per trial (L1348–1350). No GPU code is in the model.
 - calibration.ipynb's main block calls `run_optimization(n_trials=13, n_jobs=4)`, while the function default is 200 trials with `n_jobs=10`. The study is loaded with `load_if_exists=True`, so the 200 trials reported (Ch. 5 §5.5.2) may have accumulated over several sessions. Is the notebook state the last of them?
 - Target ratio. Ch. 5 §5.5.3 gives "about 1:13.4"; App. 5 §A5.7.3 gives "1:13.3". 32/430 = 1:13.44.
-- docs/objective_function.md describes a different objective (see [inventory](../model/inventory.md), Things to check). Itay (2026-10-12): the file is old; follow the code and the thesis.
+- docs/objective_function.md describes a different objective (see [inventory](../model/inventory.md), Things to check). Itay (2026-10-12): the file is old; follow the code and the thesis. The code and Ch. 5 §5.5.2 still differ on ratio vs proportion, the owed rationale above; deferred here from the inventory round (agreed 2026-10-12).
 - Ellipse fit. `calculate_ellipse` returns zero axes for fewer than three points (L1162), so the IoU would then be 0 and the spatial error 1.

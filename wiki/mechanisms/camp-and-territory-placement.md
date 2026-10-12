@@ -46,6 +46,8 @@ Ch. 5 §5.3.1: "The choice itself is probabilistic: more suitable cells are like
 
 ## Things to check
 - Does the overlap rule ever fire in `model.py`? `overlap_territory` adds 1 per *household* whose territory touches the candidate neighbourhood, then divides by the number of *cells* in that neighbourhood, 1,680 at radius 20 (L322–328). With nine households the share cannot exceed 8/1,680, about 0.005, so the `> 0.25` test (L328) is never true and the re-draw loop (L361–364) never runs. `sensitivity_model.py` measures the share of shared cells instead (L264–272). App. 5 Table A5.4 lists the threshold as "Maximum acceptable territory overlap before location rejected".
+  - Itay, 2026-10-12 (inventory round): On the overlap rule never firing - yes this is a bug I didn't notice at the time.
+  - The two files' different overlap tests (inventory, difference 1) were deferred to this page (agreed 2026-10-12).
 - `model.territories` is appended every year and never cleared in either file (L642; `sensitivity_model.py` L561–563). `sensitivity_model.py` tests overlap against this whole history, so territories from past years count. App. 5 Table A5.6 describes it as the "Registry of all active household territories for the current year".
 - The re-draw needs both conditions (`and`, L361–362): a crowded but rich location is accepted. App. 5 Table A5.4 describes overlap alone as grounds for rejection.
 - Fixed-territory mode (`sensitivity_model.py`, L528–539) keeps the main camp on the same cell every year (`set_camp` at the unchanged `pos`); only family camps move. Ch. 5 §5.6 says households "could move freely only within" their territory.
