@@ -67,7 +67,7 @@ Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which c
 ## Placement and territory ([page](../mechanisms/camp-and-territory-placement.md))
 | Parameter | Code | Where | Documented |
 |---|---|---|---|
-| Selection exponent | 3 | L336, L379 | Ch. 5 §5.3.1 |
+| Selection exponent | 3 | L336, L379 | Ch. 5 §5.3.1; face validation in the initial runs (Itay, 2026-10-12) |
 | Territory radius | 20 / 25 / 30 at suitability ≥ 5.0 / 3.5–5.0 / < 3.5 | L632–638 | same, Assumed |
 | Overlap threshold | 0.25 | L328 | 25%, Assumed (≠ in effect, see page) |
 | Capacity test | `n` starts at 35; re-draw if < 1 | L362, L297–316 | — |

@@ -41,15 +41,27 @@ Ch. 5 §5.3.1: "The choice itself is probabilistic: more suitable cells are like
 - Sensitivity: fixed versus flexible territory (Ch. 5 §5.6; App. 5 §A5.7.4) is reported as showing region-wide repositioning to be "a stabilising one".
 
 ## My rationale
-**My rationale** · owed
+**My rationale** · Itay, 2026-10-12
 > Q: Camp cells are drawn with probability proportional to personalised suitability cubed (place_household, L336; Ch. 5 §5.3.1). Where does the exponent 3 come from?
+
+The 3 exponent is coming from face validation in the initial experimental runs.
 
 ## Things to check
 - Does the overlap rule ever fire in `model.py`? `overlap_territory` adds 1 per *household* whose territory touches the candidate neighbourhood, then divides by the number of *cells* in that neighbourhood, 1,680 at radius 20 (L322–328). With nine households the share cannot exceed 8/1,680, about 0.005, so the `> 0.25` test (L328) is never true and the re-draw loop (L361–364) never runs. `sensitivity_model.py` measures the share of shared cells instead (L264–272). App. 5 Table A5.4 lists the threshold as "Maximum acceptable territory overlap before location rejected".
   - Itay, 2026-10-12 (inventory round): On the overlap rule never firing - yes this is a bug I didn't notice at the time.
   - The two files' different overlap tests (inventory, difference 1) were deferred to this page (agreed 2026-10-12).
+  - Asked whether `sensitivity_model.py`'s measure (each territory's share of the candidate area's cells) is the intended one. Itay, 2026-10-12: If I understood correctly the sensitivity one is correct. The idea is that if a given territory overlaps 25% or more with other households territories, it is not valid.
+  - As coded, the sensitivity test checks each other territory separately (`> 0.25` with any one of them, L268–270), always over a radius-20 candidate area, whatever radius the territory then gets. Open: per territory, or in total?
 - `model.territories` is appended every year and never cleared in either file (L642; `sensitivity_model.py` L561–563). `sensitivity_model.py` tests overlap against this whole history, so territories from past years count. App. 5 Table A5.6 describes it as the "Registry of all active household territories for the current year".
+  - Asked which territories the overlap test should count. Itay, 2026-10-12: Only this year.
+  - Neither file does that now: `model.territories` is never cleared, and `reset_pos` takes households off the grid but leaves each household's `territory` from last year until it places again (L1045–1047; `territory` reset only in `__init__`, L536). For the separate PR.
 - The re-draw needs both conditions (`and`, L361–362): a crowded but rich location is accepted. App. 5 Table A5.4 describes overlap alone as grounds for rejection.
+  - Asked which rule is intended. Itay, 2026-10-12: Both, so a crowded but rich env is rejected and also a free and very poor env is rejected.
+  - So the code's `and` should be `or` (L361). For the separate PR: with `or`, the re-draw loop has no exit if no cell passes both tests, so it needs a guard. Because the `model.py` overlap test never fires, the calibration ran with no re-draws at all.
 - Fixed-territory mode (`sensitivity_model.py`, L528–539) keeps the main camp on the same cell every year (`set_camp` at the unchanged `pos`); only family camps move. Ch. 5 §5.6 says households "could move freely only within" their territory.
+  - Asked whether the main camp should also move within the territory in that mode. Itay, 2026-10-12: No, leave as is.
+  - For the write-up: Ch. 5 §5.6's "could move freely only within" their territory fits the family camps, while the main camp stays on one cell.
 - The territory radius depends on mean suitability within 20 cells *after* earlier households have degraded the surface this year (L631), so placement order affects territory size.
+  - Asked whether that is intended. Itay, 2026-10-12: Not intended, the main idea behind the adaptable size of the territory was to reflect an adaptive behavior in cases of stress. So it is not necessarily bad.
 - In `model.py` a failed household calls `self.remove()` (L592). In Mesa 3, `Agent.remove` deregisters the agent from the model, but whether it also leaves the grid depends on the Mesa version (not checked here). If it stays, it would count as an occupied cell in `eval_neighborhood` (L299–301). `sensitivity_model.py` removes it from the grid explicitly (L500).
+  - Deferred to [crisis and replacement](crisis-and-replacement.md) with differences 4 and 6, to be tested in the separate PR (agreed 2026-10-12).

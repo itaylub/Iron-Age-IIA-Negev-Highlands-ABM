@@ -98,3 +98,10 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - correction: the validation (Ch. 5 §5.5.4) re-ran the best combination for 30 additional replicates to test robustness across seeds; it was wrongly described in chat as a re-run of trial 173's seeds. Page reworded.
 - deferred by agreement: the no-interference check (trial 173's calibration seeds vs the validation runs), to the experiments round, with the open question of which seeds the validation used (cell 6 as it stands repeats 17300–17309).
 - updated: mechanisms/calibration-objective.md, model/experiments.md
+
+## [2026-10-12] readings | mechanisms/camp-and-territory-placement.md (chat round) | — | Claude (research-wiki)
+- reading written: My rationale (exponent 3 from face validation in the initial runs).
+- answers recorded: the sensitivity file's overlap measure is the intended one; only this year's territories count; reject when crowded or very poor (the code's `and` should be `or`); fixed-territory mode stays as is; the order effect on territory size is not intended but acceptable; Mesa `remove()` question deferred to the crisis page.
+- updated: mechanisms/camp-and-territory-placement.md, mechanisms/crisis-and-replacement.md, model/assumptions.md (M3, M6, M7), model/parameters.md (exponent)
+- added to the separate-PR list: overlap test as in `sensitivity_model.py`, counting this year's territories only (clear `model.territories` and stale `territory` attributes each year); `and` → `or` in the re-draw loop, with a guard against endless re-draws; test whether `Agent.remove()` leaves the grid. Write-up: Ch. 5 §5.6 wording on fixed territories.
+- open in this round: overlap counted per territory or in total.
