@@ -88,3 +88,8 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - updated: mechanisms/calibration-objective.md, model/odd-map.md (row 1), model/experiments.md (calibration outputs; seed-173)
 - added to the separate-PR list: remove the CUDA_VISIBLE_DEVICES assignment in `objective`. Thesis text: Ch. 5 §5.5.2 and App. 5 §A5.7.2 to describe the ratio; App. 5 §A5.7.3 to read 1:13.4.
 - open in this round: how to handle concurrent trials sharing the global random generators; recording the ratio bound as conditional.
+
+## [2026-10-12] readings | calibration objective: correction | — | Claude (research-wiki)
+- correction to the previous entry: Itay's reply was misread. Itay confirms the trials ran in parallel and does not think they interfered; the timestamps agree with that reply rather than contradicting it. Recorded on the page as a clarification.
+- answers recorded: (b) per-run generators under consideration for the separate PR; (c) already done in the validation; the ratio bound recorded as conditional (0–1 while other sites outnumber enclosed ones).
+- proposed: test the no-interference reply by comparing trial 173's ten calibration replicates (seeds 17300–17309) with validation runs 0–9 (same seeds, run one after another); deferral to the experiments round proposed.
