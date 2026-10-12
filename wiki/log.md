@@ -117,3 +117,7 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - updated: mechanisms/crisis-and-replacement.md, model/assumptions.md (M18, M19), model/experiments.md (fixed-territory households)
 - added to the separate-PR list: `surplus <= 0` in the failure test; no replacement queued when a fixed-territory household is reset (or no reset); replacements in `sensitivity_model.py` placed once with the others. Write-up: Ch. 5 §5.3.4 reserve cap.
 - open in this round: the replacement's starting manpower.
+
+## [2026-10-12] readings | crisis and replacement round closed | — | Claude (research-wiki)
+- answer recorded: a successor starts with manpower as a new household does, max(35, herd / 20).
+- separate-PR list: replacements no longer inherit the failed household's manpower (both files).
