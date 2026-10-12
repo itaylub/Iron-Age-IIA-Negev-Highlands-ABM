@@ -121,3 +121,33 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 ## [2026-10-12] readings | crisis and replacement round closed | — | Claude (research-wiki)
 - answer recorded: a successor starts with manpower as a new household does, max(35, herd / 20).
 - separate-PR list: replacements no longer inherit the failed household's manpower (both files).
+
+## [2026-10-12] readings | mechanisms/enclosure-construction.md (chat round); session close | — | Claude (research-wiki)
+- reading written: My rationale (0.6 marks "better than average conditions", set by face validation in the preliminary runs).
+- answers recorded: manpower minima apply to free manpower; eligibility from the fifth year (`year >= 4`); reuse should require an unoccupied compound; a new build on a compound older than 15 years counts as new construction; ages run from last use; enclosure memory holds compounds the household has used; the +1 margin on the new-site criterion is intended.
+- updated: mechanisms/enclosure-construction.md, model/assumptions.md (M16, M17), index.md (four rationales written)
+- open for the next session: (1) range of Q: "yes" did not say whether to cap Q at 1 or log it first; (2) new-site criterion: mean within 20 cells of the camp or over the territory; (3) what counts as an occupied compound (deferral to the separate PR proposed).
+- readings: 6 owed (herd dynamics, household economy, memory and territorial attachment, occupation history layers, site classification, within-year degradation).
+
+### Separate-PR list as of 2026-10-12 (code and repository docs; agreed to be done later in one separate PR)
+1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
+2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
+3. Overlap rule: share of the radius-20 candidate area in the union of this year's other territories, rejected at ≥ 25%; clear `model.territories` and stale `territory` attributes each year; re-draw when crowded *or* very poor (`and` → `or`), with a guard against endless re-draws.
+4. Failure test: `surplus <= 0`.
+5. Fixed-territory mode: keep the population constant (no replacement queued when a household is reset).
+6. Replacements in `sensitivity_model.py`: placed once, with everyone else.
+7. Successors start with manpower like a new household, `max(35, herd / 20)`.
+8. Test whether Mesa `Agent.remove()` leaves the grid; check the sensitivity file's temporary centre placement.
+9. Enclosure eligibility `year >= 4`; reuse only of unoccupied compounds (definition open); range of Q (open).
+10. Remove `CUDA_VISIBLE_DEVICES` from `objective`. Consider per-run random generators (under consideration).
+11. Stale module names in `Code/` docstrings and calibration.ipynb; output paths for reproduction; docs/objective_function.md from the code and Ch. 5; docs/DATA.md (75 yearly groups plus `metadata`, grid orientation, metadata use).
+Several of these change calibrated behaviour (1, 3, 4, 9); the calibration ran with the current code.
+
+### Write-up list as of 2026-10-12 (thesis / journal text, Itay's)
+- Ch. 5 §5.2.2, Fig. 5.2, App. 5 Table A5.5: drop the crisis flag. Ch. 5 §5.2.2: enclosure memory = compounds the household has used.
+- Ch. 5 §5.4: two passes (placement, then economic step). State the Year-0 territory radius of 25.
+- Ch. 5 §5.2.1.2: approved rainfall-draw wording (overview, Things to check).
+- App. 5: equation objects A5.1–A5.3; Tables A5.1 and A5.6 describe the corridor; Table A5.1 note "membership 0.5 (suitability 5)"; §A5.3 rainfall sentence may go; §A5.3 reproducibility statement vs parallel trials; §A5.7.3 1:13.4.
+- Table A5.4 and Ch. 5 §5.2.4: the 3,251.54 km² extent includes the buffer.
+- Ch. 5 §5.5.2 and App. 5 §A5.7.2: ratio, not proportion; the 0–1 bound holds while other sites outnumber enclosed ones.
+- Ch. 5 §5.6: in fixed-territory mode the main camp stays on one cell. Ch. 5 §5.3.4: reserve capped at 100. Ch. 5 §5.3.3: ages count from last use.
