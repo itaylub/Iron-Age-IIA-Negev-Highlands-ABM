@@ -177,6 +177,10 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - separate-PR list: new item 14. Write-up list: Ch. 5 §5.2.2 and §5.3.1.
 - open in this round: the rule for once-per-draw bonuses with refreshed degradation; the penalty cap.
 
+## [2026-10-13] readings | memory and territorial attachment round closed | — | Claude (research-wiki)
+- approved: per-draw rebuild with each bonus once (later family camps see earlier camps' degradation), implemented efficiently (bonus arrays once a year; family draws look up only the territory's cells; −0.5 update per new family camp); penalty cap at 5 × w with negative values clipped in `place_members`.
+- updated: mechanisms/memory-and-territorial-attachment.md; separate-PR list item 14 complete.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
@@ -191,7 +195,7 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 11. Stale module names in `Code/` docstrings and calibration.ipynb; output paths for reproduction; docs/objective_function.md from the code and Ch. 5; docs/DATA.md (75 yearly groups plus `metadata`, grid orientation, metadata use).
 12. Herd growth (`update_flock_size`, both files): capacity and mean pasture over the territory's cells instead of the radius-30 window; cap the realised growth rate at 0.2 after all multipliers; invert the stress terms so heavily used ground (low `stress_ras`) slows growth and speeds decline.
 13. Household economy (`calc_surplus`, `step`, both files): `productive_herd = flock_head − cull_amount`; capacity in `calc_surplus` over the territory's cells; 5% extra consumption only when the available surplus (0.7 × previous + this year's products and culling) is above 100, as 5% of it (approved); manpower drift with equal odds of gain and loss (⌈5U⌉, probability 0.3 each, at any size; drop the `> 55` condition), keeping +1 with probability 0.3 when surplus > 100.
-14. Memory and territorial attachment: keep each household's last camp through `reset_pos` so the home-range bonus applies (centre starts at the Year-0 camp; P = last year's camp); for each draw, the personalised surface = the current shared surface (with this year's earlier degradation) + each bonus once (approved; efficient implementation open); cap the penalty for very poor remembered camps at 5 × w (q no lower than 0.1) and clip negative values to 0 in `place_members` before cubing (approved).
+14. Memory and territorial attachment: keep each household's last camp through `reset_pos` so the home-range bonus applies (centre starts at the Year-0 camp; P = last year's camp); for each draw, the personalised surface = the current shared surface (with this year's earlier degradation) + each bonus once (approved), implemented as: HM (home-range + capped memory) and T (last year's territory) built once a year at the main draw; family draws read the shared surface for the new territory's cells only, with + HM + 2.5; −0.5 in HM at each new family camp (approved); cap the penalty for very poor remembered camps at 5 × w (q no lower than 0.1) and clip negative values to 0 in `place_members` before cubing (approved).
 Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13, 14); the calibration ran with the current code.
 
 ### Write-up list as of 2026-10-13 (thesis / journal text, Itay's)
