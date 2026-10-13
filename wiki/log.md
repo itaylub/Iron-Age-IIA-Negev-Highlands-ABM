@@ -172,7 +172,7 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 10. Remove `CUDA_VISIBLE_DEVICES` from `objective`. Consider per-run random generators (under consideration).
 11. Stale module names in `Code/` docstrings and calibration.ipynb; output paths for reproduction; docs/objective_function.md from the code and Ch. 5; docs/DATA.md (75 yearly groups plus `metadata`, grid orientation, metadata use).
 12. Herd growth (`update_flock_size`, both files): capacity and mean pasture over the territory's cells instead of the radius-30 window; cap the realised growth rate at 0.2 after all multipliers; invert the stress terms so heavily used ground (low `stress_ras`) slows growth and speeds decline.
-13. Household economy (`calc_surplus`, `step`, both files): `productive_herd = flock_head − cull_amount`; capacity in `calc_surplus` over the territory's cells; 5% extra consumption only when surplus is above 100 (exact rule open); manpower more or less stable, growing slightly in good years (rule open).
+13. Household economy (`calc_surplus`, `step`, both files): `productive_herd = flock_head − cull_amount`; capacity in `calc_surplus` over the territory's cells; 5% extra consumption only when the available surplus (0.7 × previous + this year's products and culling) is above 100, as 5% of it (approved); manpower more or less stable, growing slightly in good years (rule open).
 Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13); the calibration ran with the current code.
 
 ### Write-up list as of 2026-10-13 (thesis / journal text, Itay's)

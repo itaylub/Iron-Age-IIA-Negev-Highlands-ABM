@@ -63,7 +63,9 @@ To the sum of all liquid economic resources (i.e. not livestock) that a househol
   - The code and Ch. 5 match. For the write-up: App. 5 Table A5.4 should read 30% × stress ratio.
 - Consumption. Ch. 5 §5.3.2 writes Consumption = 1.2 × M. The code adds 5% of the year's available surplus as `luxury_consumption` (L701–702).
   - Asked whether the 5% should stay or go. Itay, 2026-10-13: I don't see if it gets deducted even when there is scarce of surplus, but it should be deducted (and computed) only when surplus is abundant (above 100).
-  - As coded it is deducted at every level: with 30 units available it takes 1.5 (L701–702). Open: the exact rule (which amount the 100 test applies to).
+  - As coded it is deducted at every level: with 30 units available it takes 1.5 (L701–702).
+  - Proposed rule: if the available surplus (0.7 × previous + this year's products and culling) is above 100, deduct 5% of it; otherwise nothing. Itay, 2026-10-13: Approve.
+  - For the separate PR: that rule (L701–702). For the write-up: Ch. 5 §5.3.2 consumption should include it.
 - Decay happens twice a year: 30% at the start of `calc_surplus` (L696–697) and 1–25% at the end of `step` (L607–616). Ch. 5 §5.3.2 describes both ("drawn down by consumption and by loss … above 100 units a household loses an additional 5–25%"). The 1% below 100 is not described.
   - Asked whether the 1% is intended. Itay, 2026-10-13: Yes.
   - For the write-up: Ch. 5 §5.3.2 and App. 5 Table A5.4 should describe the 1% a year at or below 100.
@@ -72,5 +74,9 @@ To the sum of all liquid economic resources (i.e. not livestock) that a househol
   - To validate before writing: one herder per 75 head against Günther et al. 2021 (cited in Ch. 5 §5.3.2 for the agricultural offset; not ingested). For the write-up: Ch. 5 §5.3.2 or §5.3.3 and App. 5 Table A5.4 should describe both set-asides.
 - Manpower drift. The random gains and losses (L600–605) push manpower upward on average: about +0.9 a year up to 55 (gain of ⌈5U⌉, mean 3, with probability 0.3) and about +0.3 a year above 55 (loss of ⌈5U⌉ with probability 0.2), plus 0.3 a year when surplus > 100, so there is no ceiling (corrected 2026-10-13; the earlier wording said the drift stops at 55). This affects the manpower thresholds for enclosure building, and Need and consumption grow with M. They are not described in Ch. 5 or App. 5.
   - Asked what process they stand for. Itay, 2026-10-13: It should reflect a more or less stable population, reacting to the household economic situation (good economic situation = a slight more population growth).
-  - The code drifts upward at every level, and only the +1 when surplus > 100 reacts to the economy. Open: the rule for the separate PR.
+  - The code drifts upward at every level, and only the +1 when surplus > 100 reacts to the economy. Simulated 2026-10-13 (75 years, start 52, without the surplus bonus): the current rule ends at about 81 ± 15; equal odds of gain and loss (0.3 each, any size) at about 52 ± 19.
+  - Asked whether the PR should make gains and losses equally likely or pull each household back toward its starting manpower, keeping the surplus bonus either way. Itay, 2026-10-13: Yes.
+  - Open: the reply does not say which of the two; asked again.
 - Liquid assets (raised 2026-10-13 by the My rationale answer). Itay's reading defines surplus as the liquid resources other than livestock. Ch. 5 §5.3.4 says: “The herd is the household's only liquid asset in the model; thus, it can be converted into surplus and back at a fixed rate of 0.3 units per animal.” Open: how §5.3.4 should read.
+  - Asked how that sentence should read. Itay, 2026-10-13: Surplus is the translation of livestock to economic value (like money) but nothing specific.
+  - Open: whether §5.3.4's sentence then stands as it is; asked.
