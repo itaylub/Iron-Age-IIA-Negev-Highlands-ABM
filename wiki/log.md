@@ -165,6 +165,11 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - updated: mechanisms/household-economy.md, model/assumptions.md (M20), model/parameters.md
 - separate-PR list: item 13 complete. Write-up list: describe the manpower drift.
 
+## [2026-10-13] check | Mesa grid behaviour | — | Claude (research-wiki)
+- read the Mesa source at v3.0.0 and v3.3.0 (shallow clone of github.com/projectmesa/mesa; PyPI unreachable from this session): `MultiGrid.remove_agent` sets `agent.pos = None`; `Agent.remove()` only deregisters the agent from the model and leaves it on the grid.
+- consequences recorded: the home-range bonus never applies in `model.py` (memory page); failed households stay on the grid as occupied cells, without effect until the re-draw loop is fixed (crisis and camp pages).
+- updated: mechanisms/memory-and-territorial-attachment.md, mechanisms/crisis-and-replacement.md, mechanisms/camp-and-territory-placement.md; separate-PR list item 8.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
@@ -173,7 +178,7 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 5. Fixed-territory mode: keep the population constant (no replacement queued when a household is reset).
 6. Replacements in `sensitivity_model.py`: placed once, with everyone else.
 7. Successors start with manpower like a new household, `max(35, herd / 20)`.
-8. Test whether Mesa `Agent.remove()` leaves the grid; check the sensitivity file's temporary centre placement.
+8. Mesa `Agent.remove()` does not take a failed household off the grid (checked in the Mesa 3.0.0 and 3.3.0 source, 2026-10-13): remove it from the grid before `self.remove()` in `model.py`, as `sensitivity_model.py` does (proposed); check the sensitivity file's temporary centre placement.
 9. Enclosure eligibility `year >= 4`; reuse only of unoccupied compounds (what counts as occupied to be settled in the PR); log Q (`env_quality`) in a test run, then decide whether to cap it at 1.
 10. Remove `CUDA_VISIBLE_DEVICES` from `objective`. Consider per-run random generators (under consideration).
 11. Stale module names in `Code/` docstrings and calibration.ipynb; output paths for reproduction; docs/objective_function.md from the code and Ch. 5; docs/DATA.md (75 yearly groups plus `metadata`, grid orientation, metadata use).
