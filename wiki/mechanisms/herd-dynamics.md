@@ -33,7 +33,8 @@ Ch. 5 §5.3.2: the model "evaluates the pasture across the territory and convert
 
 ## Justification
 - Owner's documentation: Ch. 5 §5.3.2 and §5.2.4. The 1.125 goats per cell follows from Seligman et al. 1962 by way of Rosen & Finkelstein 1992 (about 5.5 head/km² at the marginal end; Ch. 5 §5.2.4). The growth and decline rates are "Literature-based" in App. 5 Table A5.4, without a named source.
-- Owner's rationale (Itay, 2026-10-13, My rationale below): the growth values come from the Dahl and Hjort book, which Ch. 5 §5.2.2 cites as Dahl & Hjort 1976 for goats per person ([literature cited](../model/literature-cited.md)). Not ingested.
+- Owner's rationale (Itay, 2026-10-13, My rationale below): the growth values come from the Dahl and Hjort book, which Ch. 5 §5.2.2 cites as Dahl & Hjort 1976 for goats per person ([literature cited](../model/literature-cited.md)). Asked whether the 1,500 taper and the 10–30% decline also come from it. Itay, 2026-10-13: Yes, but mark it as needed to be validated before writing.
+- **To validate before writing:** the 20% growth, the 1,500 taper and the 10–30% decline against Dahl & Hjort 1976, with pages. The book is not ingested; when it is, its source page should carry these values with their scope.
 
 ## My rationale
 **My rationale** · Itay, 2026-10-13

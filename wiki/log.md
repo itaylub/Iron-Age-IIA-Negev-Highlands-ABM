@@ -142,6 +142,11 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - separate-PR list: new item 12 (herd growth: territory capacity, realised-rate cap, inverted stress terms). Write-up list: Table A5.4 and Ch. 5 §5.3.2 herd ceiling and evaluation radius; decline "typically".
 - open in this round: whether the 1,500 and the 10–30% decline also come from Dahl & Hjort; deferral of `calc_surplus`'s radius-25 capacity to the household-economy round (proposed).
 
+## [2026-10-13] readings | herd dynamics round closed | — | Claude (research-wiki)
+- answers recorded: the 1,500 taper and the 10–30% decline also come from Dahl & Hjort 1976, to be validated against the book before writing; `calc_surplus`'s radius-25 capacity deferred to the household-economy round (agreed).
+- updated: mechanisms/herd-dynamics.md, mechanisms/household-economy.md (deferred item), model/assumptions.md (M12), model/literature-cited.md, model/parameters.md
+- write-up list: validate the herd values against Dahl & Hjort 1976 before writing.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
@@ -164,5 +169,5 @@ Several of these change calibrated behaviour (1, 3, 4, 9, 12); the calibration r
 - App. 5: equation objects A5.1–A5.3; Tables A5.1 and A5.6 describe the corridor; Table A5.1 note "membership 0.5 (suitability 5)"; §A5.3 rainfall sentence may go; §A5.3 reproducibility statement vs parallel trials; §A5.7.3 1:13.4.
 - Table A5.4 and Ch. 5 §5.2.4: the 3,251.54 km² extent includes the buffer.
 - Ch. 5 §5.5.2 and App. 5 §A5.7.2: ratio, not proportion; the 0–1 bound holds while other sites outnumber enclosed ones.
-- App. 5 Table A5.4 and Ch. 5 §5.3.2: herd growth tapers to zero at 1,500 (no cap at 1,000); capacity over the territory (not radius 25); decline "typically" 10–30%.
+- App. 5 Table A5.4 and Ch. 5 §5.3.2: herd growth tapers to zero at 1,500 (no cap at 1,000); capacity over the territory (not radius 25); decline "typically" 10–30%. Validate the 20%, the 1,500 and the 10–30% against Dahl & Hjort 1976 (pages) before writing.
 - Ch. 5 §5.6: in fixed-territory mode the main camp stays on one cell. Ch. 5 §5.3.4: reserve capped at 100. Ch. 5 §5.3.3: ages count from last use; the new-site criterion compares with the average within 20 cells of the camp, plus a margin, not the territory's average.

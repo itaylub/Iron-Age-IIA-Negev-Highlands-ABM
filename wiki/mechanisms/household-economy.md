@@ -50,6 +50,7 @@ Ch. 5 §5.3.2: surplus is "stored wealth … held as an abstract quantity rather
 
 ## Things to check
 - Productive herd. Ch. 5 §5.3.2 defines H_productive as "the milk- and wool-yielding part of the herd (those beyond the subsistence core)". The code subtracts `Need × non_cull_fraction` (L681–685). When the herd is at or below the working herd, `non_cull_fraction` = 0 and the whole herd counts as productive. Which is intended?
+- Capacity area. `calc_surplus` computes its own capacity over a fixed radius-25 window around the camp (L667–674), and from it the stress ratio `s` (L675). For herd growth Itay wants capacity over the territory's cells ([herd dynamics](herd-dynamics.md), 2026-10-13). Deferred here from the herd-dynamics round (agreed, Itay, 2026-10-13): should this capacity also use the territory?
 - Stress cost. Ch. 5 §5.3.2 and the code use `1 + 0.3 s` (L678). App. 5 Table A5.4 lists the stress maintenance cost as 15% × stress ratio.
 - Consumption. Ch. 5 §5.3.2 writes Consumption = 1.2 × M. The code adds 5% of the year's available surplus as `luxury_consumption` (L701–702).
 - Decay happens twice a year: 30% at the start of `calc_surplus` (L696–697) and 1–25% at the end of `step` (L607–616). Ch. 5 §5.3.2 describes both ("drawn down by consumption and by loss … above 100 units a household loses an additional 5–25%"). The 1% below 100 is not described.
