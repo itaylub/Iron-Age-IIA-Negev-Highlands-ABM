@@ -17,7 +17,7 @@
 ## Mechanisms
 - [Suitability surface](mechanisms/suitability-surface.md): seven weighted 0–10 layers, slope cut, mask · rationale written
 - [Occupation history layers](mechanisms/occupation-history-layers.md): reuse potential (×5) and resource exhaustion (fuzzy, 0.5 decay) · rationale owed
-- [Memory and territorial attachment](mechanisms/memory-and-territorial-attachment.md): home-range centre, territory bonus, camp memory · rationale owed
+- [Memory and territorial attachment](mechanisms/memory-and-territorial-attachment.md): home-range centre, territory bonus, camp memory · rationale written
 - [Camp and territory placement](mechanisms/camp-and-territory-placement.md): suitability³ draw, territory 20/25/30, family camps, overlap rule · rationale written
 - [Within-year degradation](mechanisms/within-year-degradation.md): D/distance kernel, floor 0.0001 · rationale owed
 - [Herd dynamics](mechanisms/herd-dynamics.md): capacity 1.125 goats/cell, growth and decline · rationale written
