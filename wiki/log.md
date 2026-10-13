@@ -224,6 +224,10 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - updated: model/experiments.md; separate-PR list items 17 and 18; write-up list.
 - open in this round: the null-baseline seed wording (Itay asked which notebook; answered: `sensitivity_analysis.ipynb` cell 9).
 
+## [2026-10-13] readings | experiments round closed | — | Claude (research-wiki)
+- answer recorded: App. 5 §A5.7.1's seed formula refers to the calibration; the null baseline is a separate experiment (read as: the sentence stands).
+- updated: model/experiments.md
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
