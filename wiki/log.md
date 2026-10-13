@@ -236,6 +236,9 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - checks this session: Mesa 3.0.0 / 3.3.0 source (grid removal, unseeded model generator); `distac_pw.tif` georeferencing; Itay's results on Drive (household data sizes, null-baseline scores).
 - next: the separate PR, from the consolidated list below (18 items), in a new session. Environment note: this session had numpy and pandas but not scipy, mesa, geopandas or optuna, and pypi.org did not resolve, so the model could not be run here.
 
+## [2026-10-13] convention | no running code | — | Claude (research-wiki)
+- AGENTS.md › Local conventions: agents do not run the model or parts of its code, and do not install packages to do so (Itay, 2026-10-13). The environment note in the session-close entry above no longer applies.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
