@@ -147,6 +147,10 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - updated: mechanisms/herd-dynamics.md, mechanisms/household-economy.md (deferred item), model/assumptions.md (M12), model/literature-cited.md, model/parameters.md
 - write-up list: validate the herd values against Dahl & Hjort 1976 before writing.
 
+## [2026-10-13] readings | mechanisms/household-economy.md (chat round opened) | — | Claude (research-wiki)
+- correction: the manpower-drift item said the random drift pushes manpower upward "until 55"; it rises about +0.9 a year up to 55 and +0.3 a year above (+0.3 more when surplus > 100), with no ceiling. Page corrected.
+- presented: 8 items (My rationale; productive herd; capacity area, deferred from herds; stress cost; luxury consumption; 1% decay below 100; manpower deductions; manpower drift). Awaiting answers.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
