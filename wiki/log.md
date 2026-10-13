@@ -135,6 +135,13 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - separate-PR list (item 9): occupied-compound definition settled in the PR; log Q before deciding on a cap. Write-up list: Ch. 5 §5.3.3 new-site criterion = average within 20 cells of the camp, plus a margin.
 - log.md: from this session, new entries go above the two consolidated lists, which stay at the end and are updated in place (dated).
 
+## [2026-10-13] readings | mechanisms/herd-dynamics.md (chat round) | — | Claude (research-wiki)
+- reading written: My rationale (the growth values come from the Dahl and Hjort book; Dahl & Hjort 1976 in Ch. 5 §5.2.2).
+- answers recorded: capacity over the territory's cells; "up to 20%" should cap the realised rate (the code applies it before the multipliers); the taper to zero at 1,500 is intended and the text needs fixing; 10–30% decline is a typical range; heavily used ground should slow growth and speed decline (the code reverses it; settled here for both pages).
+- updated: mechanisms/herd-dynamics.md, mechanisms/occupation-history-layers.md (stress direction settled), model/parameters.md, model/assumptions.md (M12), model/literature-cited.md, index.md
+- separate-PR list: new item 12 (herd growth: territory capacity, realised-rate cap, inverted stress terms). Write-up list: Table A5.4 and Ch. 5 §5.3.2 herd ceiling and evaluation radius; decline "typically".
+- open in this round: whether the 1,500 and the 10–30% decline also come from Dahl & Hjort; deferral of `calc_surplus`'s radius-25 capacity to the household-economy round (proposed).
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
@@ -147,7 +154,8 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 9. Enclosure eligibility `year >= 4`; reuse only of unoccupied compounds (what counts as occupied to be settled in the PR); log Q (`env_quality`) in a test run, then decide whether to cap it at 1.
 10. Remove `CUDA_VISIBLE_DEVICES` from `objective`. Consider per-run random generators (under consideration).
 11. Stale module names in `Code/` docstrings and calibration.ipynb; output paths for reproduction; docs/objective_function.md from the code and Ch. 5; docs/DATA.md (75 yearly groups plus `metadata`, grid orientation, metadata use).
-Several of these change calibrated behaviour (1, 3, 4, 9); the calibration ran with the current code.
+12. Herd growth (`update_flock_size`, both files): capacity and mean pasture over the territory's cells instead of the radius-30 window; cap the realised growth rate at 0.2 after all multipliers; invert the stress terms so heavily used ground (low `stress_ras`) slows growth and speeds decline.
+Several of these change calibrated behaviour (1, 3, 4, 9, 12); the calibration ran with the current code.
 
 ### Write-up list as of 2026-10-13 (thesis / journal text, Itay's)
 - Ch. 5 §5.2.2, Fig. 5.2, App. 5 Table A5.5: drop the crisis flag. Ch. 5 §5.2.2: enclosure memory = compounds the household has used.
@@ -156,4 +164,5 @@ Several of these change calibrated behaviour (1, 3, 4, 9); the calibration ran w
 - App. 5: equation objects A5.1–A5.3; Tables A5.1 and A5.6 describe the corridor; Table A5.1 note "membership 0.5 (suitability 5)"; §A5.3 rainfall sentence may go; §A5.3 reproducibility statement vs parallel trials; §A5.7.3 1:13.4.
 - Table A5.4 and Ch. 5 §5.2.4: the 3,251.54 km² extent includes the buffer.
 - Ch. 5 §5.5.2 and App. 5 §A5.7.2: ratio, not proportion; the 0–1 bound holds while other sites outnumber enclosed ones.
+- App. 5 Table A5.4 and Ch. 5 §5.3.2: herd growth tapers to zero at 1,500 (no cap at 1,000); capacity over the territory (not radius 25); decline "typically" 10–30%.
 - Ch. 5 §5.6: in fixed-territory mode the main camp stays on one cell. Ch. 5 §5.3.4: reserve capped at 100. Ch. 5 §5.3.3: ages count from last use; the new-site criterion compares with the average within 20 cells of the camp, plus a margin, not the territory's average.

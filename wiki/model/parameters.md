@@ -87,12 +87,12 @@ Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which c
 | Parameter | Code | Where | Documented |
 |---|---|---|---|
 | Goats per cell at PV 5 | 1.125 | L743 | 1.125, Rosen & Finkelstein 1992 |
-| Evaluation radius | 30 | L736–738 | 25, Assumed **≠** |
+| Evaluation radius | 30 | L736–738 | 25, Assumed **≠**; intended: the territory (Itay, 2026-10-13) |
 | Growth / decline thresholds | ratio > 1.1 / < 0.9 | L761, L769 | Ch. 5 §5.3.2 |
-| Max growth rate | 0.2 × multipliers | L762–764 | up to 20%, Literature-based **≠** |
-| Diminishing returns | 1 − herd/1500 | L763 | 1,000 cap, Assumed **≠** |
+| Max growth rate | 0.2 × multipliers | L762–764 | up to 20%, Literature-based (Dahl & Hjort, Itay, 2026-10-13) **≠**; intended: cap the realised rate at 20% |
+| Diminishing returns | 1 − herd/1500 | L763 | 1,000 cap, Assumed **≠**; the taper to 1,500 is intended, the text to be fixed (Itay, 2026-10-13) |
 | Small-herd factor | 2 − herd/500 below 500 | L758–759 | Ch. 5 §5.3.2 |
-| Decline rate | (0.05 + 0.5·gap)(1 + stress/20)·U(0.8,1.2), ≤ 0.3 | L770–776 | 10–30%, Literature-based **≠** |
+| Decline rate | (0.05 + 0.5·gap)(1 + stress/20)·U(0.8,1.2), ≤ 0.3 | L770–776 | 10–30%, Literature-based; a typical range, not a floor (Itay, 2026-10-13) |
 | Growth cap | 1.2 × capacity | L765 | — |
 
 ## Household economy ([page](../mechanisms/household-economy.md))

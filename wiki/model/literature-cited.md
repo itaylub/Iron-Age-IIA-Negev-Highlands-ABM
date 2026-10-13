@@ -12,7 +12,7 @@ Candidates marked ★ carry a model value or rule directly. They are the ones th
 ## Herd, subsistence and population
 - ★ Rosen & Finkelstein 1992: goats per person, capacity per km², agricultural offset, initial herd (Ch. 5 §5.2.2, §5.2.4, §5.3.2; App. 5 Table A5.4)
 - ★ Seligman et al. 1962: rangeland capacity of 5–10 head of sheep per km² (Ch. 5 §5.2.4)
-- ★ Dahl & Hjort 1976: 223 goats per six-person family, about 37 per person (Ch. 5 §5.2.2, §5.2.4)
+- ★ Dahl & Hjort 1976: 223 goats per six-person family, about 37 per person (Ch. 5 §5.2.2, §5.2.4); also named by Itay (2026-10-13) as the source of the herd growth values ([herd dynamics](../mechanisms/herd-dynamics.md))
 - ★ Günther et al. 2021: agricultural offset, "who modelled similar systems" (Ch. 5 §5.3.2; App. 5 Table A5.4)
 - Hartvigsen 2013; Glassow 1978; Caple & Løvschal 2025: carrying capacity as a concept (Ch. 5 §5.1)
 

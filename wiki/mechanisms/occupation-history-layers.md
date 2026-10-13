@@ -47,6 +47,7 @@ Ch. 5 §5.2.1.2: occupation has "a negative effect on its immediate environment"
 
 ## Things to check
 - Direction of `stress_ras` in herd growth. `stress_ras` holds `yi_hu_stressed_z`, which is 10 where there has been no recent occupation and near 0 where occupation was heaviest (L452–464). `update_flock_size` treats higher values as more stress: growth falls (`stress_factor = 1 − min(0.5, avg_stress/20)`, L755) and decline rises (`stress_impact = 1 + avg_stress/20`, L772). The `veg_map` update in `move_year` uses the opposite reading, where low values reduce pasture (L1034–1037). Which direction is intended for the herd terms? App. 5 Table A5.6 describes `stress_ras` as "Cumulative human degradation pressure".
+  - Settled on [herd dynamics](herd-dynamics.md), Things to check. Itay, 2026-10-13: Heavily used ground should slow herd growth and speed decline. The herd terms are to be inverted in the separate PR; the layer itself is unchanged. App. 5 Table A5.6's "degradation pressure" describes the layer's meaning, while its values are 10 where pressure is lowest.
 - The ×1.5 weight for cells ≥ 2 (L433–434) is not in Ch. 5 or App. 5. In practice it mostly picks out enclosure cells and heavily reused camps.
 - The smoothing window is a ±20-cell square, so its corners reach about 28 cells (7 km). App. 5 gives "spatial radius = 5 km".
 - Ch. 5 §5.3.1 says the stress record is "smoothed" before rescaling, which matches the code. Reuse potential, however, uses the unsmoothed accumulator (L465), so it acts on single cells.
