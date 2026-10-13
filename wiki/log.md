@@ -191,6 +191,10 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - updated: mechanisms/occupation-history-layers.md, model/assumptions.md (M9, M10), model/parameters.md, index.md
 - separate-PR list: new item 15 (circular kernel). Write-up list: × 1.5 and the pasture curve.
 
+## [2026-10-13] readings | mechanisms/site-classification.md (chat round opened) | — | Claude (research-wiki)
+- checked: `Data/distac_pw.tif` and `.tfw` from the repository history (281 × 319 cells, pixel-is-area): the `to_gdf` origin lies within 3 m and 9 m of its lower-left corner, so it reads as a corner; simulated sites would then sit 125 m south-west of cell centres.
+- presented: My rationale (0.5 / 0.25 increments), threshold test without code (deferral to experiments proposed), enclosure overwrite, 0.75 combination, origin.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
