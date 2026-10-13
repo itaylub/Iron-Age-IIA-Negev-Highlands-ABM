@@ -52,17 +52,19 @@ It is just straight common sense logic, that if the env value was above 5 (the m
 - Do adjustments pile up within a year? `update_own_suitability_raster` adds its bonuses to the existing personalised raster each time it is called (L918–949), and the raster is reset only once a year (L619). `place_members` calls it once per family camp (L370), so the territory bonus, the home-range bonus and the memory terms are added up to ten times per year. Inside the new territory every cell gains +2.5 per call, which flattens the cubic preference among family-camp cells. Is that intended?
   - Asked whether the bonuses should be added once a year. Itay, 2026-10-13: Yes, they should, but don't each family adds a smaller bonus (both spatially and value wise)?
   - Answered in chat: no. Every call adds the same bonuses; `update_own_suitability_raster` has no family-specific values (L917–949). Family camps are smaller elsewhere: degradation (radius 11 with 0.3 / 0.5, against the territory radius with 0.5 / 0.9; L647, L651) and the site signal (0.25 against 0.5; L649, L280).
-  - Open, with the item on the household's own degradation below: the rule for the separate PR.
+  - Proposed with the item on the household's own degradation below: for each draw (main camp and each family camp), rebuild the personalised surface from the current shared surface, which already holds this year's earlier degradation, then add each bonus once. Itay, 2026-10-13: Approve, but think of how to make it efficient, maybe update rather than recalculate the personalized copy?
+  - Open: an efficient implementation (proposal in chat, 2026-10-13).
 - Remembered quality is measured after the camp's own degradation (family: `env_degrade` at L647, then `env_mean_val` at L648; main camp: L651 then L652). Is the remembered quality meant to be what the camp offered on arrival, as Ch. 5 §5.2.2 puts it ("the quality its close environs offered")?
   - Itay, 2026-10-13: Quality after occupation (as this is the point of the memory start).
   - The code matches. For the write-up: Ch. 5 §5.2.2's "the quality its close environs offered" should say the quality after the stay.
 - For very low q the penalty −(1/q) × w × 0.5 becomes large. Degraded cells sit at the 0.0001 floor ([within-year degradation](within-year-degradation.md)), so q can be close to 0 and the penalty in the thousands.
   - Noted 2026-10-13: `place_household` clips negative values to 0 (L335), but `place_members` cubes the values without clipping (L379), so a large penalty on a territory cell would give a negative weight, which `np.random.choice` rejects with an error. Whether q gets that low in runs is not checked.
   - Asked whether the penalty should be capped. Itay, 2026-10-13: Yes.
-  - Open: the cap.
+  - Proposed: cap the penalty at 5 × w, the largest bonus (q = 10), i.e. compute it with q no lower than 0.1; and clip negative values to 0 in `place_members` before cubing (L379), as `place_household` does (L335). Itay, 2026-10-13: Approve.
+  - For the separate PR (item 14).
 - Ch. 5 §5.3.1 defines P in the centre update as "the current year's territorial centre". The code uses the position held before this year's placement, which is last year's camp if `pos` survives `reset_pos`.
   - Asked whether P should be this year's new camp or last year's. Itay, 2026-10-13: P is last year's camp - the idea is that the general territory center shifts a bit towards the most recent camp.
   - The code reads last year's camp once the home-range fix above keeps it. For the write-up: Ch. 5 §5.3.1's "the current year's territorial centre" should say last year's camp.
 - The personalised copy is taken before the household's own family camps degrade the shared surface, so a household's family camps do not see each other's degradation except through the −0.5 current-year memory penalty.
   - Asked whether later family camps should see the degradation the earlier ones caused. Itay, 2026-10-13: Yes.
-  - Open, with the pile-up item above: the rule for the separate PR.
+  - Settled with the pile-up item above (approved 2026-10-13).
