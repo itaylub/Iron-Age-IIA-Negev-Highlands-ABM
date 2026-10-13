@@ -45,7 +45,7 @@ A better than average conditions. The value is stemming from face validation in 
   - For the separate PR: `self.model.year >= 4` (L564; same in `sensitivity_model.py`).
 - Unoccupied? Ch. 5 §5.3.3 speaks of reusing "an existing, unoccupied enclosed compound". The code does not check whether another household is at or near the compound this year.
   - Asked whether reuse should require that. Itay, 2026-10-12: Yes, it should.
-  - Open, for the separate PR: what counts as occupied (another household's main camp on the cell, a family camp, or the compound lying inside another territory this year). Deferral to the PR proposed 2026-10-12.
+  - For the separate PR: what counts as occupied (another household's main camp on the cell, a family camp, or the compound lying inside another territory this year). Deferred to the PR (agreed, Itay, 2026-10-13: confirmed).
 - A "new build" can land on an existing compound's cell: own enclosures of any age, or others' older than 15 years, are candidates in `build_enclosure` (L842–875). The event is recorded as new construction with the larger signal (L577–586).
   - Asked whether that is intended. Itay, 2026-10-12: Yes, as it is hypothesized that reuse after such long time requires more resources.
 - "Built within the previous 35 years" (Ch. 5 §5.3.3). Each reuse appends a fresh entry with the current year to `model.enclosures` and `enc_memory` (L573–574), so the age windows run from the last use, not from construction.
@@ -56,8 +56,11 @@ A better than average conditions. The value is stemming from face validation in 
   - The code matches. For the write-up: Ch. 5 §5.2.2's "others' it has come across" should say compounds the household has used.
 - New-site criterion. Ch. 5 §5.3.3 says the household "selects a location above the average environmental quality of its territory". The code compares with `mean_val + 1`, where `mean_val` is the mean suitability within 20 cells of the camp, not over the territory (L577, L896–897).
   - Itay, 2026-10-12: Above the average by a significant margin (hence +1).
-  - Open: the reply settles the margin. The area is still to confirm: the mean is taken within 20 cells of the camp, while the territory may be 25 or 30.
+  - The reply settles the margin. The mean is taken within 20 cells of the camp (`env_mean_val`, a 41 × 41 Moore window, L255–263), while the territory may be 25 or 30.
+  - Asked whether the average should be the one within 20 cells of the camp or over the territory. Itay, 2026-10-13: Average within 20 cells.
+  - The code matches. For the write-up: Ch. 5 §5.3.3's "average environmental quality of its territory" should say the average within 20 cells of the camp, plus a margin.
 - Ch. 5 §5.5.4 and §5.7 report about 2.4 times the observed share of enclosed compounds. The bullets above are the places in the code where enclosure frequency is set.
 - Range of Q. Q (`env_quality`) is the mean of the shared surface within 20 cells, divided by 10 (L552–553); "base suitability" means the shared surface, without each household's own perception (Itay, 2026-10-12). That surface can exceed 10 where reuse potential is high, so Q can exceed 1 in principle, while Ch. 5 §5.3.3 gives it as running "from 0 … to 1". Not checked in runs. Raised in the suitability round and deferred here (agreed 2026-10-12).
   - Asked whether Q should be capped at 1, or the separate PR should first log Q in a test run and decide from that. Itay, 2026-10-12: Yes.
-  - Open: the reply does not say which of the two options. To confirm in the next session.
+  - The reply did not say which of the two options; asked again. Itay, 2026-10-13: Log Q.
+  - For the separate PR: log Q (`env_quality`, L552–553) in a test run, then decide whether to cap it at 1. Until then Ch. 5 §5.3.3's "from 0 … to 1" stands unchecked.

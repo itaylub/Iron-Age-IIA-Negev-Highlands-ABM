@@ -129,7 +129,13 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - open for the next session: (1) range of Q: "yes" did not say whether to cap Q at 1 or log it first; (2) new-site criterion: mean within 20 cells of the camp or over the territory; (3) what counts as an occupied compound (deferral to the separate PR proposed).
 - readings: 6 owed (herd dynamics, household economy, memory and territorial attachment, occupation history layers, site classification, within-year degradation).
 
-### Separate-PR list as of 2026-10-12 (code and repository docs; agreed to be done later in one separate PR)
+## [2026-10-13] readings | enclosure construction round closed | — | Claude (research-wiki)
+- answers recorded: range of Q: log Q in a test run first, then decide on a cap; new-site criterion: the average within 20 cells of the camp (the code matches); what counts as an occupied compound deferred to the separate PR (confirmed).
+- updated: mechanisms/enclosure-construction.md, model/assumptions.md (M16, M17)
+- separate-PR list (item 9): occupied-compound definition settled in the PR; log Q before deciding on a cap. Write-up list: Ch. 5 §5.3.3 new-site criterion = average within 20 cells of the camp, plus a margin.
+- log.md: from this session, new entries go above the two consolidated lists, which stay at the end and are updated in place (dated).
+
+### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
 3. Overlap rule: share of the radius-20 candidate area in the union of this year's other territories, rejected at ≥ 25%; clear `model.territories` and stale `territory` attributes each year; re-draw when crowded *or* very poor (`and` → `or`), with a guard against endless re-draws.
@@ -138,16 +144,16 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 6. Replacements in `sensitivity_model.py`: placed once, with everyone else.
 7. Successors start with manpower like a new household, `max(35, herd / 20)`.
 8. Test whether Mesa `Agent.remove()` leaves the grid; check the sensitivity file's temporary centre placement.
-9. Enclosure eligibility `year >= 4`; reuse only of unoccupied compounds (definition open); range of Q (open).
+9. Enclosure eligibility `year >= 4`; reuse only of unoccupied compounds (what counts as occupied to be settled in the PR); log Q (`env_quality`) in a test run, then decide whether to cap it at 1.
 10. Remove `CUDA_VISIBLE_DEVICES` from `objective`. Consider per-run random generators (under consideration).
 11. Stale module names in `Code/` docstrings and calibration.ipynb; output paths for reproduction; docs/objective_function.md from the code and Ch. 5; docs/DATA.md (75 yearly groups plus `metadata`, grid orientation, metadata use).
 Several of these change calibrated behaviour (1, 3, 4, 9); the calibration ran with the current code.
 
-### Write-up list as of 2026-10-12 (thesis / journal text, Itay's)
+### Write-up list as of 2026-10-13 (thesis / journal text, Itay's)
 - Ch. 5 §5.2.2, Fig. 5.2, App. 5 Table A5.5: drop the crisis flag. Ch. 5 §5.2.2: enclosure memory = compounds the household has used.
 - Ch. 5 §5.4: two passes (placement, then economic step). State the Year-0 territory radius of 25.
 - Ch. 5 §5.2.1.2: approved rainfall-draw wording (overview, Things to check).
 - App. 5: equation objects A5.1–A5.3; Tables A5.1 and A5.6 describe the corridor; Table A5.1 note "membership 0.5 (suitability 5)"; §A5.3 rainfall sentence may go; §A5.3 reproducibility statement vs parallel trials; §A5.7.3 1:13.4.
 - Table A5.4 and Ch. 5 §5.2.4: the 3,251.54 km² extent includes the buffer.
 - Ch. 5 §5.5.2 and App. 5 §A5.7.2: ratio, not proportion; the 0–1 bound holds while other sites outnumber enclosed ones.
-- Ch. 5 §5.6: in fixed-territory mode the main camp stays on one cell. Ch. 5 §5.3.4: reserve capped at 100. Ch. 5 §5.3.3: ages count from last use.
+- Ch. 5 §5.6: in fixed-territory mode the main camp stays on one cell. Ch. 5 §5.3.4: reserve capped at 100. Ch. 5 §5.3.3: ages count from last use; the new-site criterion compares with the average within 20 cells of the camp, plus a margin, not the territory's average.
