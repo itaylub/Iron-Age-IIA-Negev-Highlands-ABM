@@ -21,7 +21,7 @@
 - [Camp and territory placement](mechanisms/camp-and-territory-placement.md): suitability³ draw, territory 20/25/30, family camps, overlap rule · rationale written
 - [Within-year degradation](mechanisms/within-year-degradation.md): D/distance kernel, floor 0.0001 · rationale owed
 - [Herd dynamics](mechanisms/herd-dynamics.md): capacity 1.125 goats/cell, growth and decline · rationale written
-- [Household economy](mechanisms/household-economy.md): subsistence 18/person, surplus, consumption, manpower · rationale owed
+- [Household economy](mechanisms/household-economy.md): subsistence 18/person, surplus, consumption, manpower · rationale written
 - [Enclosure construction](mechanisms/enclosure-construction.md): prosperity index, reuse vs new build · rationale written
 - [Crisis and replacement](mechanisms/crisis-and-replacement.md): distress sales, failure, one-for-one replacement · rationale written
 - [Site classification](mechanisms/site-classification.md): 0.6 threshold, enclosure sites · rationale owed

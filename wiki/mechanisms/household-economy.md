@@ -45,14 +45,32 @@ Ch. 5 §5.3.2: surplus is "stored wealth … held as an abstract quantity rather
 - App. 5 Table A5.4 marks consumption, decay, acquisition and the 0.15 yield ("adopted for simplicity", Ch. 5 §5.3.2) as assumed.
 
 ## My rationale
-**My rationale** · owed
+**My rationale** · Itay, 2026-10-13
 > Q: Each household eats 1.2 surplus units per person a year and loses 30% of its stored surplus (calc_surplus, L696–704). What do 'surplus units' correspond to in the Iron Age IIA economy?
+
+To the sum of all liquid economic resources (i.e. not livestock) that a household possesses.
 
 ## Things to check
 - Productive herd. Ch. 5 §5.3.2 defines H_productive as "the milk- and wool-yielding part of the herd (those beyond the subsistence core)". The code subtracts `Need × non_cull_fraction` (L681–685). When the herd is at or below the working herd, `non_cull_fraction` = 0 and the whole herd counts as productive. Which is intended?
+  - Example (M = 52, no farming: Need 936, working herd 1,404): with 1,050 head the code counts all 1,050 as productive (157 units a year), while H − Need would be 114 head (17 units).
+  - Itay, 2026-10-13: The productive herd is the livestock that did not get culled, hence all the herd if it is below the culling threshold.
+  - At or below the working herd the code matches. Above it the code subtracts `Need × non_cull_fraction`, not the culled animals: with 2,000 head in the example the code counts 1,721 productive head, the herd left after culling is 1,523 (2,000 − 0.8 × 596). For the separate PR: `productive_herd = flock_head − cull_amount`. For the write-up: Ch. 5 §5.3.2's "those beyond the subsistence core" should say the herd left after culling.
 - Capacity area. `calc_surplus` computes its own capacity over a fixed radius-25 window around the camp (L667–674), and from it the stress ratio `s` (L675). For herd growth Itay wants capacity over the territory's cells ([herd dynamics](herd-dynamics.md), 2026-10-13). Deferred here from the herd-dynamics round (agreed, Itay, 2026-10-13): should this capacity also use the territory?
+  - Itay, 2026-10-13: Yes.
+  - For the separate PR, with the herd change: capacity in `calc_surplus` over the territory's cells (L667–674). For the write-up: App. 5 Table A5.4's evaluation radius 25 goes (see [herd dynamics](herd-dynamics.md)).
 - Stress cost. Ch. 5 §5.3.2 and the code use `1 + 0.3 s` (L678). App. 5 Table A5.4 lists the stress maintenance cost as 15% × stress ratio.
+  - Asked which coefficient is intended. Itay, 2026-10-13: 0.3.
+  - The code and Ch. 5 match. For the write-up: App. 5 Table A5.4 should read 30% × stress ratio.
 - Consumption. Ch. 5 §5.3.2 writes Consumption = 1.2 × M. The code adds 5% of the year's available surplus as `luxury_consumption` (L701–702).
+  - Asked whether the 5% should stay or go. Itay, 2026-10-13: I don't see if it gets deducted even when there is scarce of surplus, but it should be deducted (and computed) only when surplus is abundant (above 100).
+  - As coded it is deducted at every level: with 30 units available it takes 1.5 (L701–702). Open: the exact rule (which amount the 100 test applies to).
 - Decay happens twice a year: 30% at the start of `calc_surplus` (L696–697) and 1–25% at the end of `step` (L607–616). Ch. 5 §5.3.2 describes both ("drawn down by consumption and by loss … above 100 units a household loses an additional 5–25%"). The 1% below 100 is not described.
+  - Asked whether the 1% is intended. Itay, 2026-10-13: Yes.
+  - For the write-up: Ch. 5 §5.3.2 and App. 5 Table A5.4 should describe the 1% a year at or below 100.
 - Manpower deductions. `step` subtracts 10 and one herder per 75 animals before the enclosure tests and the failure test, and adds them back afterwards (L547–549, L598–599). The 10 and the 75 are not documented. What do they stand for?
+  - Itay, 2026-10-13: 10 is for the yearly migration, 1:75 is from literature, I guess Günther et al. 2021 but it needs to be checked.
+  - To validate before writing: one herder per 75 head against Günther et al. 2021 (cited in Ch. 5 §5.3.2 for the agricultural offset; not ingested). For the write-up: Ch. 5 §5.3.2 or §5.3.3 and App. 5 Table A5.4 should describe both set-asides.
 - Manpower drift. The random gains and losses (L600–605) push manpower upward on average: about +0.9 a year up to 55 (gain of ⌈5U⌉, mean 3, with probability 0.3) and about +0.3 a year above 55 (loss of ⌈5U⌉ with probability 0.2), plus 0.3 a year when surplus > 100, so there is no ceiling (corrected 2026-10-13; the earlier wording said the drift stops at 55). This affects the manpower thresholds for enclosure building, and Need and consumption grow with M. They are not described in Ch. 5 or App. 5.
+  - Asked what process they stand for. Itay, 2026-10-13: It should reflect a more or less stable population, reacting to the household economic situation (good economic situation = a slight more population growth).
+  - The code drifts upward at every level, and only the +1 when surplus > 100 reacts to the economy. Open: the rule for the separate PR.
+- Liquid assets (raised 2026-10-13 by the My rationale answer). Itay's reading defines surplus as the liquid resources other than livestock. Ch. 5 §5.3.4 says: “The herd is the household's only liquid asset in the model; thus, it can be converted into surplus and back at a fixed rate of 0.3 units per animal.” Open: how §5.3.4 should read.

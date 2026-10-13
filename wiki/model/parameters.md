@@ -100,17 +100,17 @@ Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which c
 |---|---|---|---|
 | Goats per person | 18 | L664, L711 | 18, modified from Rosen & Finkelstein 1992 |
 | Agricultural offset | min(0.4, 0.04 × mean ag) | L663 | up to 40%, Rosen & Finkelstein 1992; Günther et al. 2021 |
-| Surplus capacity radius | 25 | L667–669 | 25 (A5.4) |
+| Surplus capacity radius | 25 | L667–669 | 25 (A5.4); intended: the territory (Itay, 2026-10-13) |
 | Working-herd buffer | 1.5 | L677 | Ch. 5 §5.3.2 |
-| Stress multiplier | 1 + 0.3 s | L678 | 15% × s (A5.4) **≠**; 0.3 (Ch. 5) |
+| Stress multiplier | 1 + 0.3 s | L678 | 15% × s (A5.4) **≠**; 0.3 (Ch. 5); 0.3 intended (Itay, 2026-10-13) |
 | Products yield | 0.15 | L686 | Ch. 5 §5.3.2 ("adopted for simplicity") |
 | Culling share, value | 0.8, 0.35 | L690–691 | Ch. 5 §5.3.2 |
 | Carry-over | 0.7 (30% loss) | L696–697 | 30%, Assumed |
-| Consumption | 1.2 × M + 5% luxury | L699–702 | 1.2, Assumed (luxury —) |
+| Consumption | 1.2 × M + 5% luxury | L699–702 | 1.2, Assumed (luxury —); 5% only when surplus > 100 (Itay, 2026-10-13) |
 | Surplus cap | 200 + 2.5 × M | L705 | Ch. 5 §5.3.2 |
-| Large-surplus decay | min(0.25, 0.05 + 0.001(S − 100)) above 100; 1% below | L607–616 | 5–25%, Assumed (1% —) |
+| Large-surplus decay | min(0.25, 0.05 + 0.001(S − 100)) above 100; 1% below | L607–616 | 5–25%, Assumed (1% —; intended, Itay, 2026-10-13) |
 | Livestock purchase | S > 80 and herd < 600; min(0.2 S, 40); 0.3 per head | L594–596, L724 | same, Assumed |
-| Manpower deductions | −10, −herd//75 | L547–549 | — |
+| Manpower deductions | −10, −herd//75 | L547–549 | — (migration; 1:75 from literature, to check: Itay, 2026-10-13) |
 | Manpower drift | +⌈5U⌉ p 0.3; −⌈5U⌉ p 0.2 if > 55; +1 p 0.3 if S > 100 | L600–605 | — |
 
 ## Enclosures ([page](../mechanisms/enclosure-construction.md))

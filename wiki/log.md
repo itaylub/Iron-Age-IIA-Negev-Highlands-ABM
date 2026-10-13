@@ -151,6 +151,14 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - correction: the manpower-drift item said the random drift pushes manpower upward "until 55"; it rises about +0.9 a year up to 55 and +0.3 a year above (+0.3 more when surplus > 100), with no ceiling. Page corrected.
 - presented: 8 items (My rationale; productive herd; capacity area, deferred from herds; stress cost; luxury consumption; 1% decay below 100; manpower deductions; manpower drift). Awaiting answers.
 
+## [2026-10-13] readings | mechanisms/household-economy.md (chat round answers) | — | Claude (research-wiki)
+- reading written: My rationale (surplus units = the sum of all liquid economic resources, not livestock).
+- answers recorded: productive herd = the herd left after culling (the code matches only at or below the working herd); `calc_surplus` capacity over the territory; stress coefficient 0.3; 5% extra consumption only when surplus is abundant (above 100); 1% decay below 100 intended; 10 people set aside for the yearly migration, 1 herder per 75 head from literature (perhaps Günther et al. 2021, to check); manpower should stay more or less stable, growing slightly in good years.
+- checked: Ch. 5 §5.3.4 calls the herd "the household's only liquid asset in the model", which sits uneasily with the reading; new Things to check line.
+- updated: mechanisms/household-economy.md, model/assumptions.md (M15, M20), model/parameters.md, model/literature-cited.md, index.md
+- separate-PR list: new item 13. Write-up list: household-economy items.
+- open in this round: the extra-consumption rule (which amount the 100 test applies to); the manpower rule; how Ch. 5 §5.3.4's "only liquid asset" should read.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
@@ -164,7 +172,8 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 10. Remove `CUDA_VISIBLE_DEVICES` from `objective`. Consider per-run random generators (under consideration).
 11. Stale module names in `Code/` docstrings and calibration.ipynb; output paths for reproduction; docs/objective_function.md from the code and Ch. 5; docs/DATA.md (75 yearly groups plus `metadata`, grid orientation, metadata use).
 12. Herd growth (`update_flock_size`, both files): capacity and mean pasture over the territory's cells instead of the radius-30 window; cap the realised growth rate at 0.2 after all multipliers; invert the stress terms so heavily used ground (low `stress_ras`) slows growth and speeds decline.
-Several of these change calibrated behaviour (1, 3, 4, 9, 12); the calibration ran with the current code.
+13. Household economy (`calc_surplus`, `step`, both files): `productive_herd = flock_head − cull_amount`; capacity in `calc_surplus` over the territory's cells; 5% extra consumption only when surplus is above 100 (exact rule open); manpower more or less stable, growing slightly in good years (rule open).
+Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13); the calibration ran with the current code.
 
 ### Write-up list as of 2026-10-13 (thesis / journal text, Itay's)
 - Ch. 5 §5.2.2, Fig. 5.2, App. 5 Table A5.5: drop the crisis flag. Ch. 5 §5.2.2: enclosure memory = compounds the household has used.
@@ -174,4 +183,5 @@ Several of these change calibrated behaviour (1, 3, 4, 9, 12); the calibration r
 - Table A5.4 and Ch. 5 §5.2.4: the 3,251.54 km² extent includes the buffer.
 - Ch. 5 §5.5.2 and App. 5 §A5.7.2: ratio, not proportion; the 0–1 bound holds while other sites outnumber enclosed ones.
 - App. 5 Table A5.4 and Ch. 5 §5.3.2: herd growth tapers to zero at 1,500 (no cap at 1,000); capacity over the territory (not radius 25); decline "typically" 10–30%. Validate the 20%, the 1,500 and the 10–30% against Dahl & Hjort 1976 (pages) before writing.
+- Ch. 5 §5.3.2 and App. 5 Table A5.4 (household economy): productive herd = the herd left after culling; stress cost 30% × s (A5.4 says 15%); 1% decay at or below 100; extra consumption above 100; the 10-person migration set-aside and 1 herder per 75 head (validate against Günther et al. 2021 before writing). Ch. 5 §5.3.4 "only liquid asset" (open).
 - Ch. 5 §5.6: in fixed-territory mode the main camp stays on one cell. Ch. 5 §5.3.4: reserve capped at 100. Ch. 5 §5.3.3: ages count from last use; the new-site criterion compares with the average within 20 cells of the camp, plus a margin, not the territory's average.
