@@ -111,7 +111,7 @@ Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which c
 | Large-surplus decay | min(0.25, 0.05 + 0.001(S − 100)) above 100; 1% below | L607–616 | 5–25%, Assumed (1% —; intended, Itay, 2026-10-13) |
 | Livestock purchase | S > 80 and herd < 600; min(0.2 S, 40); 0.3 per head | L594–596, L724 | same, Assumed |
 | Manpower deductions | −10, −herd//75 | L547–549 | — (migration; 1:75 from literature, to check: Itay, 2026-10-13) |
-| Manpower drift | +⌈5U⌉ p 0.3; −⌈5U⌉ p 0.2 if > 55; +1 p 0.3 if S > 100 | L600–605 | — |
+| Manpower drift | +⌈5U⌉ p 0.3; −⌈5U⌉ p 0.2 if > 55; +1 p 0.3 if S > 100 | L600–605 | — (intended: −⌈5U⌉ p 0.3 at any size, Itay, 2026-10-13) |
 
 ## Enclosures ([page](../mechanisms/enclosure-construction.md))
 | Parameter | Code | Where | Documented |

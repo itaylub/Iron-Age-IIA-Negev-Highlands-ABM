@@ -76,7 +76,8 @@ To the sum of all liquid economic resources (i.e. not livestock) that a househol
   - Asked what process they stand for. Itay, 2026-10-13: It should reflect a more or less stable population, reacting to the household economic situation (good economic situation = a slight more population growth).
   - The code drifts upward at every level, and only the +1 when surplus > 100 reacts to the economy. Simulated 2026-10-13 (75 years, start 52, without the surplus bonus): the current rule ends at about 81 ± 15; equal odds of gain and loss (0.3 each, any size) at about 52 ± 19.
   - Asked whether the PR should make gains and losses equally likely or pull each household back toward its starting manpower, keeping the surplus bonus either way. Itay, 2026-10-13: Yes.
-  - Open: the reply does not say which of the two; asked again.
+  - The reply did not say which of the two; asked again (A: equal odds; B: pull back toward the starting manpower). Itay, 2026-10-13: A.
+  - For the separate PR: gain ⌈5U⌉ with probability 0.3 and lose ⌈5U⌉ with probability 0.3 at any size (drop the `> 55` condition, L602), keeping +1 with probability 0.3 when surplus > 100 (L605). For the write-up: Ch. 5 and App. 5 should describe the drift.
 - Liquid assets (raised 2026-10-13 by the My rationale answer). Itay's reading defines surplus as the liquid resources other than livestock. Ch. 5 §5.3.4 says: “The herd is the household's only liquid asset in the model; thus, it can be converted into surplus and back at a fixed rate of 0.3 units per animal.” Open: how §5.3.4 should read.
   - Asked how that sentence should read. Itay, 2026-10-13: Surplus is the translation of livestock to economic value (like money) but nothing specific.
-  - Open: whether §5.3.4's sentence then stands as it is; asked.
+  - Asked whether §5.3.4's sentence then stays as written or is reworded. Itay, 2026-10-13: Stay.
