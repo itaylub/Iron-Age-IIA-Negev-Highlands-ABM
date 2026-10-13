@@ -46,11 +46,11 @@ Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which c
 |---|---|---|---|
 | Slope cut-off | slope suitability < 1 → 0 | L505 | Ch. 5 §5.7 (mentioned) |
 | Accumulator decay | 0.5 | `Yi_params` L437 | 0.5, Assumed (A5.4) |
-| Weight for cells ≥ 2 | × 1.5 | L433–434 | — |
-| Smoothing window | ±20 cells, 1/(d+1)² | L442–446 | 5 km, Assumed (A5.4) |
-| Exhaustion fuzzy range | 0 → 10, 2 → 0 | L458–463 | — (value 2) |
-| Reuse multiplier | × 5 | L465 | — |
-| Pasture reduction by exhaustion | `1 − 0.1 × min(10/stress − 1, 9)` | `move_year` L1034–1037 | — |
+| Weight for cells ≥ 2 | × 1.5 | L433–434 | — (heavily invested cells; Itay, 2026-10-13) |
+| Smoothing window | ±20 cells, 1/(d+1)² | L442–446 | 5 km, Assumed (A5.4); a circle intended (Itay, 2026-10-13) |
+| Exhaustion fuzzy range | 0 → 10, 2 → 0 | L458–463 | — (value 2: face validation, Itay, 2026-10-13) |
+| Reuse multiplier | × 5 | L465 | — (face validation, Itay, 2026-10-13) |
+| Pasture reduction by exhaustion | `1 − 0.1 × min(10/stress − 1, 9)` | `move_year` L1034–1037 | — (owner's abstract understanding, Itay, 2026-10-13) |
 
 ## Memory and territorial attachment
 ([page](../mechanisms/memory-and-territorial-attachment.md))

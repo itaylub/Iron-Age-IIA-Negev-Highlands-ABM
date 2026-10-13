@@ -185,6 +185,12 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - added to Things to check: the pasture-reduction formula in `move_year` (L1034–1037), undocumented, with a 10% floor.
 - presented: My rationale (× 5 and 2), ×1.5 weight, smoothing window shape, unsmoothed reuse potential, pasture reduction. The stress-direction item was settled in the herd round.
 
+## [2026-10-13] readings | occupation history layers round closed | — | Claude (research-wiki)
+- reading written: My rationale (× 5 and 2 from face validation in the preliminary runs).
+- answers recorded: × 1.5 for very attractive, heavily invested cells; a circular smoothing window is better (a one-line change, so it goes to the PR); per-cell reuse potential intended (attractiveness grows with occupation on the cell, negative effects spread to the surroundings); pasture curve "nothing empirical, just my abstract understanding".
+- updated: mechanisms/occupation-history-layers.md, model/assumptions.md (M9, M10), model/parameters.md, index.md
+- separate-PR list: new item 15 (circular kernel). Write-up list: × 1.5 and the pasture curve.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
@@ -200,7 +206,8 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 12. Herd growth (`update_flock_size`, both files): capacity and mean pasture over the territory's cells instead of the radius-30 window; cap the realised growth rate at 0.2 after all multipliers; invert the stress terms so heavily used ground (low `stress_ras`) slows growth and speeds decline.
 13. Household economy (`calc_surplus`, `step`, both files): `productive_herd = flock_head − cull_amount`; capacity in `calc_surplus` over the territory's cells; 5% extra consumption only when the available surplus (0.7 × previous + this year's products and culling) is above 100, as 5% of it (approved); manpower drift with equal odds of gain and loss (⌈5U⌉, probability 0.3 each, at any size; drop the `> 55` condition), keeping +1 with probability 0.3 when surplus > 100.
 14. Memory and territorial attachment: keep each household's last camp through `reset_pos` so the home-range bonus applies (centre starts at the Year-0 camp; P = last year's camp); for each draw, the personalised surface = the current shared surface (with this year's earlier degradation) + each bonus once (approved), implemented as: HM (home-range + capped memory) and T (last year's territory) built once a year at the main draw; family draws read the shared surface for the new territory's cells only, with + HM + 2.5; −0.5 in HM at each new family camp (approved); cap the penalty for very poor remembered camps at 5 × w (q no lower than 0.1) and clip negative values to 0 in `place_members` before cubing (approved).
-Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13, 14); the calibration ran with the current code.
+15. Occupation history: circular smoothing kernel (weights 0 where d > 20, before normalising; `Yi_params` L442–446).
+Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13, 14, 15); the calibration ran with the current code.
 
 ### Write-up list as of 2026-10-13 (thesis / journal text, Itay's)
 - Ch. 5 §5.2.2, Fig. 5.2, App. 5 Table A5.5: drop the crisis flag. Ch. 5 §5.2.2: enclosure memory = compounds the household has used.
@@ -212,4 +219,5 @@ Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13, 14); the calib
 - App. 5 Table A5.4 and Ch. 5 §5.3.2: herd growth tapers to zero at 1,500 (no cap at 1,000); capacity over the territory (not radius 25); decline "typically" 10–30%. Validate the 20%, the 1,500 and the 10–30% against Dahl & Hjort 1976 (pages) before writing.
 - Ch. 5 §5.3.2 and App. 5 Table A5.4 (household economy): productive herd = the herd left after culling; stress cost 30% × s (A5.4 says 15%); 1% decay at or below 100; extra consumption above 100; the 10-person migration set-aside and 1 herder per 75 head (validate against Günther et al. 2021 before writing). Ch. 5 and App. 5: describe the manpower drift.
 - Ch. 5 §5.2.2: camp memory holds the quality after the stay. Ch. 5 §5.3.1: P is last year's camp.
+- App. 5 (Table A5.4 or §A5.2) and Ch. 5 §5.3.2: the × 1.5 for cells at 2 or more; the pasture-reduction curve and its 10% floor.
 - Ch. 5 §5.6: in fixed-territory mode the main camp stays on one cell. Ch. 5 §5.3.4: reserve capped at 100. Ch. 5 §5.3.3: ages count from last use; the new-site criterion compares with the average within 20 cells of the camp, plus a margin, not the territory's average.
