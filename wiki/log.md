@@ -200,6 +200,11 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - answers recorded: threshold test deferred to experiments (agreed); enclosure asymmetry intended; no need to name the 0.75 combination in Ch. 5 §5.5.3; sites stay at the cell corner (no change to `to_gdf`).
 - updated: mechanisms/site-classification.md, model/experiments.md, model/assumptions.md (O1, O2), index.md
 
+## [2026-10-13] readings | mechanisms/within-year-degradation.md (chat round opened) | — | Claude (research-wiki)
+- My rationale question reworded before it was answered: Ch. 5 §5.3.1 already names the processes, so it now asks where D = 0.5 and 0.3 come from (AGENTS.md › Rationale questions).
+- noted: the main camp's degradation (L651) comes after the family camps are placed (L645–649).
+- presented: My rationale, P, distance metric, radius, family camps and the order of degradation.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.

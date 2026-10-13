@@ -45,7 +45,7 @@ Ch. 5 §5.3.1: "Grazing, trampling, and the gathering of wood and water deplete 
 
 ## My rationale
 **My rationale** · owed
-> Q: Each camp lowers suitability by D/distance (D = 0.5 household, 0.3 family; L235–243, L393–420), and the drop lasts only until next year's rebuild. What real process does it stand for?
+> Q: Each camp lowers suitability by D/distance (D = 0.5 household, 0.3 family; L235–243, L393–420). Ch. 5 §5.3.1 names the processes, and App. 5 Table A5.4 marks both values "Assumed". Where do the 0.5 and the 0.3 come from?
 
 ## Things to check
 - Does P have any effect? At the centre the kernel term is D/0.001, so 500 for D = 0.5 and 300 for D = 0.3 (L240–241). That already takes the centre cell to the 0.0001 floor before the centre penalty P is applied (L418–420), so P = 0.9 and P = 0.5 change nothing. App. 5 Table A5.2 describes D as "fixed at 0.5, weight 0.9", and Table A5.4 lists P as a separate parameter.
@@ -53,3 +53,5 @@ Ch. 5 §5.3.1: "Grazing, trampling, and the gathering of wood and water deplete 
 - Radius. Ch. 5 Fig. 5.4 gives the household reduction a "~5 km radius" (20 cells). The code uses the territory radius, 20, 25 or 30 cells (L651).
 - The degradation window for the main camp equals the territory radius, so it is larger on poor ground. Ch. 5 §5.3.1 says the reduction extends "across the household's territory", which matches. App. 5 Table A5.2 gives no radius for households.
 - The household's own family camps are drawn from its personalised copy taken before its own degradation ([memory and territorial attachment](memory-and-territorial-attachment.md)), so the coordination effect works between households but not among one household's family camps.
+  - Settled on [memory and territorial attachment](memory-and-territorial-attachment.md) (Itay, 2026-10-13): later family camps should see the degradation earlier ones caused; for the separate PR (item 14).
+  - Noted 2026-10-13: the main camp degrades its surroundings only after all nine family camps are placed (family loop L645–649, main camp L651; Year 0: L997–1002). Even after that fix, family camps would not see their own main camp's degradation.
