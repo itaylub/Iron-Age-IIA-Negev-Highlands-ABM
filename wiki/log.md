@@ -212,6 +212,12 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - separate-PR list: new item 16. Write-up list: A5.1–A5.2 caption, Fig. 5.4, Table A5.2.
 - all eleven mechanism rationales are now written.
 
+## [2026-10-13] check | reproducibility of runs; null baseline | — | Claude (research-wiki)
+- read through the Drive connector (read-only): sizes of `household_data.csv` in trial 173's calibration replicates and the 30 validation runs; `null_baseline_scores.csv`; `best_params_30iter_stats.csv` (household summaries only, no scores).
+- found: all ten seed-matched pairs differ. `NomadModel` calls `super().__init__()` without a seed (L955), so Mesa's own generator (used by `shuffle_do`, L1015, L1043) is seeded from OS entropy in Mesa 3.0.0 and 3.3.0: no run reproduces from its seed, and the no-interference check cannot be done with these runs.
+- null baseline: mean 0.318, 95% CI 0.309–0.328, as reported; 36.7% uses 0.2013, 33.1% against 0.213.
+- updated: model/experiments.md
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
