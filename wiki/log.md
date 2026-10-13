@@ -218,6 +218,12 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - null baseline: mean 0.318, 95% CI 0.309–0.328, as reported; 36.7% uses 0.2013, 33.1% against 0.213.
 - updated: model/experiments.md
 
+## [2026-10-13] readings | model/experiments.md (chat round answers) | — | Claude (research-wiki)
+- answers recorded: results may be re-run after the separate PR; §5.6 need not describe `sensitivity_model.py`'s differences (closes the Year-0 item); the threshold sweep was run manually; compare the null baseline with 0.213 (33.1%); seed Mesa's generator in the PR and close the no-interference check, but leave App. 5 §A5.3's statement for now; the exact rainfall replay is not intended but not critical; "seed-173" is trial 173 (replicate not remembered); swap calibration.ipynb cells 5 and 6.
+- Itay's correction on the chat summary: the validation runs were never meant to repeat the calibration replicates (settled 2026-10-12); recorded on the page, with the note that the unseeded Mesa generator keeps them distinct in any case.
+- updated: model/experiments.md; separate-PR list items 17 and 18; write-up list.
+- open in this round: the null-baseline seed wording (Itay asked which notebook; answered: `sensitivity_analysis.ipynb` cell 9).
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
