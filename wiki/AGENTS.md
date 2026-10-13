@@ -1,0 +1,69 @@
+<!-- research-wiki v1 -->
+# AGENTS.md — Nomad ABM wiki
+
+This folder is a research wiki that AI agents maintain for Itay. Read this file fully before doing anything here, and read the relevant file in `_guide/` before each operation.
+
+## Profile
+- Purpose: Keep a traceable account of the Nomad ABM (Iron Age IIA Negev Highlands Human-Environment Dynamics Model) in this repository: what each mechanism does, where it lives in the code, what assumption it encodes and what justifies it, so the model can be written up as an ODD / journal paper and its mechanisms reused elsewhere.
+- Kind: model
+- Owner: Itay (Itay Lubel) (signs reading blocks)
+- Aims (setup interview, 2026-10-08): write the ODD / journal paper; reuse mechanisms elsewhere.
+- Research questions: see `questions/`
+- Parent wiki: none
+- Working language: English. Quotes are kept in the original language with a translation.
+- Bibliography: `references.bib`, citekeys generated: firstauthor + year + first title word
+- Ingest mode default: ask
+- Drafted readings: only when the owner asks
+- Style: none stated
+
+## The rule this wiki runs on
+Agents extract, link and keep the books. Itay interprets.
+- Write what sources say, attributed, with locators (printed pages, figures, tables; `file › function, lines` for code), keeping the authors' hedges and their scope conditions.
+- Never write a `My reading`, `My rationale`, `My understanding` or `My position` block in the owner's name. Ask for them, one pointed question per part, and record the answers in the owner's words. Unanswered questions stay as `· owed` blocks.
+- Draft readings only on request, marked `Claude's draft … · unreviewed`.
+- Quotes stay verbatim in the original language. Translations are marked `*Translation (Claude, unreviewed):*`.
+- Record disagreements on debate pages and never resolve them. Only the owner settles a debate.
+- Agent-written interpretation (drafts, syntheses, translations, Things to check) is never cited as evidence on another page.
+- Never invent metadata, DOIs, page numbers or quotes. Write `unknown` and ask.
+- Create new pages sparingly (they must bear on the research questions, or a second source must discuss the topic, or the owner must ask). Otherwise list the topic under Mentions.
+- Never copy source files into the wiki. Link them.
+
+## Every session
+1. Run `python _tools/wiki_status.py . --brief` and show the result to the owner.
+2. Do the task, following the guide for it.
+3. Update `index.md`, append to `log.md` (naming yourself as the agent), update `references.bib`, and re-run the status script. Tell the owner what changed in a few lines.
+
+## Guides
+- `_guide/readings.md` covers reading interviews, drafts and reading sessions.
+- `_guide/page-formats.md` covers frontmatter, page templates, reading-block syntax, index and log formats.
+- `_guide/ingest-sources.md` covers papers, books, theses, reports, datasets, web pages and the owner's notes.
+- `_guide/ingest-code.md` covers repositories and models (NetLogo, Python).
+- `_guide/queries-and-maintenance.md` covers answering questions, filing answers and health checks.
+
+The guides come from the research-wiki skill and may be refreshed. Wiki-specific changes go below, never into the guides.
+
+## Local conventions
+These were agreed with the owner, and they override the guides.
+- **The wiki lives inside the model repository** (`wiki/` at the repo root), at the owner's choice, rather than in a sibling `<repo>-wiki` folder. Paths to repository files are written relative to the repo root (`Code/model.py`, `thesis/Lubel_Itay_MA_Thesis_ABM.pdf`); links from wiki pages to them are relative (`../../Code/model.py`).
+- **Thesis Chapter 5 and Appendix 5 are the owner's own model documentation.** Treat them like a NetLogo Info tab or README: quote and cite them as the owner's words, compare them with the code, and record where they disagree under Things to check. They get no source pages and no reading interviews. The literature they cite gets source pages only when a source is ingested from the original (see `model/literature-cited.md`).
+  - **Canonical version: `thesis/Lubel_Itay_MA_Thesis_ABM.pdf`** (in the repository since 2026-10-12, the owner's final text). Its 67 PDF pages hold:
+    - Ch. 5 on printed pp. 131–176 (PDF pp. 1–46);
+    - a tables page, printed p. 229 (PDF p. 47), with the end of Table 4.3 and Table 5.1;
+    - the Appendices note and App. 5 on printed pp. 235–254 (PDF pp. 48–67).
+  - **Locators** are section, figure, table and equation numbers, with the printed page added where it helps: `(Ch. 5 §5.3.1)`, `(Ch. 5 Fig. 5.3, p. 146)`, `(App. 5 Table A5.4)`, `(App. 5 eq. A5.1)`. App. 5 captions call the degradation equations A5.1–A5.3, while the equation objects themselves read "eq 4.1", "eq 4.2" and "eq 4.3 + 2"; cite them as A5.1–A5.3, the intended numbering (Itay, 2026-10-12).
+  - **Working copies.** The PDF's text matches the owner's working copies word for word: Ch. 5 in `G:\My Drive\MA Thesis\context\thesis_reference\full_thesis.md` (Drive 2026-10-04) and `G:\My Drive\MA Thesis\Thesis_submission\appendices\Appendix 5. ABM.docx` (Drive 2026-07-13). The PDF also carries the equations, which the full_thesis.md export lost. If the working copies change later, ask whether the PDF should be replaced.
+  - **Other repository docs** (Itay, 2026-10-12). `docs/objective_function.md` is old: follow the code and Ch. 5 instead. Treat `docs/DATA.md` with suspicion and check its statements against the code and the data files.
+  - **Text layer.** `pdftotext` drops hyphens at line breaks, giving "costdistance" for "cost-distance". When checking quotes, `_tools/verify_quotes.py` reports these as LOOSE, which is fine.
+- **Answering in chat** (agreed 2026-10-12; replaces "Answering in place", tried once on 2026-10-12). Agents bring the owed questions to Itay in the conversation, one file at a time, and edit the files from the answers.
+  1. **Presenting.** For one file, list its owed blocks (`My reading`, `My rationale`, …) and its open Things to check items, numbered. Give each item its locator, a link to the file (with the line), and one question that can be answered in a line. Itay answers by number; "skip" leaves an item open.
+  2. **Code snippets.** Whenever an item refers to code, quote the snippet in the message (`file › function, lines` at the recorded commit), so Itay can read it without opening the file.
+  3. **One round at a time.** If an answer opens a new round (a follow-up question, a check to run, wording to approve), resolve it before moving on to the next item or file. A round is deferred only when Itay and the agent agree to defer it. The agent suggests deferring when the gap fits better with a later item (for example, a run-length question deferred to the experiments page), and records the deferral on the page where it will be picked up.
+  4. **Recording.** Replace an owed header with `· Itay, <date of the conversation>`, keep the `> Q:` line, and put the answer under it. Put a reply to a Things to check item on a nested line under the item: `  - Itay, <date>: …`. Keep Itay's words exactly, fixing only obvious typos (spelling, capitals). Carry settled points into the pages they settle, including the assumptions register (`model/assumptions.md`). The reply stays Itay's decision, attributed and dated. When an answer contradicts the code or the documentation, add a Things to check line rather than changing either. Ask about anything ambiguous rather than guessing.
+  5. **Edits outside the wiki** that answers call for (`Code/`, `docs/`, README, notebooks) are not made during reading sessions. They are listed in `log.md` and made later in a separate PR (Itay, 2026-10-12).
+  6. **Direct edits.** Itay may still edit wiki files directly; those edits are the owner's. If an answer was written into a page, integrate it as in step 4, dating it from the commit that added it (`git log -1 --format=%ad --date=short -- <file>`).
+
+  After each file, finish with bookkeeping: index, log (operation `readings`), and the status brief.
+- **Reference for conventions** (Itay, 2026-10-12): the `ABMA_Skill` folder, `G:\My Drive\skills\ABMA_Skill` (Google Drive folder id `1cWw-YEhk_sSrfp9cjB0AExQAX9Oh_yWa`, readable through the Drive connector; a local copy is at `C:\Users\itayl\Documents\University\ABM course\ABMA_Skill`). It is a reference distilled from Romanowska, Wren & Crabtree (2021), *Agent-Based Modeling for Archaeology* (SKILL.md, glossary.md, methods.md, cheatsheet.md, references.md, chapters/). Itay also named the repository <https://github.com/SantaFeInstitute/ABMA> as part of this reference (2026-10-12). When a convention is needed (ODD writing, terms such as validation or calibration, model documentation), confer with it before proposing one, and name the chapter it points to. It is a distilled summary, not the book, so it is never cited as evidence on a wiki page; a claim taken from the book enters through a source page for the book.
+- **Code locators** name the file relative to `Code/`, the class or function, and line numbers at the commit recorded in `model/overview.md`: `(model.py › Household_Agent.step, L544–616)`. `model.py` is the calibrated model; `sensitivity_model.py` is the variant the sensitivity notebook imports. When the commit changes, re-check line numbers (see `_guide/ingest-code.md` › Updates).
+- **No running code** (Itay, 2026-10-13). Agents do not run the model or parts of its code (`Code/`, the notebooks), and do not install packages or set up environments to do so. Changes and claims are checked by reading the code, the diffs, the documentation and the data files.
+- **Rationale questions** for mechanisms aim at what Chapter 5 and Appendix 5 do not already say (values marked "Assumed" in App. 5 Table A5.4, and places where code and documentation differ), since the documented reasoning is already the owner's own account.

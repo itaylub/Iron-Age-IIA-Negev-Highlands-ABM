@@ -27,7 +27,13 @@ actually is (Jupyter notebooks + the plain Python modules they import).
 ### Added
 
 - `thesis/` now holds the current Chapter 5, its tables and figures, and
-  the Appendix 5 technical specification.
+  the Appendix 5 technical specification, as a single PDF
+  (`thesis/Lubel_Itay_MA_Thesis_ABM.pdf`, final text). It replaces the
+  earlier `chapter-5-ABM.docx`, `chapter-5-tables-and-figures.docx` and
+  `appendix-5-ABM.docx`.
+- `wiki/`: a research wiki of the model (mechanisms, parameters,
+  assumptions, experiments, ODD map) kept in step with the code and the
+  thesis; see `wiki/index.md` and `wiki/AGENTS.md`.
 
 ### Removed
 

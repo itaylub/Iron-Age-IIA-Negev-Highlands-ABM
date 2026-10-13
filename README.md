@@ -25,11 +25,10 @@ with [Optuna](https://optuna.org/) for parameter calibration and standard
 geospatial / scientific libraries (geopandas, shapely, numpy, scipy,
 h5py).
 
-For the full conceptual description of the model, see the accompanying
-thesis chapter ([`thesis/chapter-5-ABM.docx`](thesis/chapter-5-ABM.docx));
-the exact parameters, units, equations, and sources are given in the
-technical appendix
-([`thesis/appendix-5-ABM.docx`](thesis/appendix-5-ABM.docx)). A formal
+For the full conceptual description of the model, see Chapter 5 of the
+thesis; the exact parameters, units, equations, and sources are given in
+its technical appendix (Appendix 5). Both are in
+[`thesis/Lubel_Itay_MA_Thesis_ABM.pdf`](thesis/Lubel_Itay_MA_Thesis_ABM.pdf). A formal
 ODD-protocol description
 (Grimm et al. 2020) is planned as part of preparing the model for
 journal publication (see [Future development](#future-development)).
@@ -54,10 +53,9 @@ with the plain Python module it imports, plus the data and documentation.
 │   └── objective_function.md      # code-level walkthrough of the objective
 ├── scripts/
 │   └── download_data.py           # fetch the input-data bundle from Zenodo
-├── thesis/              # model description (the appendix material)
-│   ├── chapter-5-ABM.docx                 # ABM chapter (narrative description)
-│   ├── chapter-5-tables-and-figures.docx  # its tables and figures
-│   └── appendix-5-ABM.docx                # technical appendix (parameters, equations)
+├── thesis/              # model description from the MA thesis
+│   └── Lubel_Itay_MA_Thesis_ABM.pdf       # Chapter 5 (ABM) + Appendix 5 (technical specification)
+├── wiki/                # research wiki of the model (start at wiki/index.md)
 ├── environment.yml      # conda environment
 ├── requirements.txt     # pip-equivalent dependency list
 ├── CITATION.cff

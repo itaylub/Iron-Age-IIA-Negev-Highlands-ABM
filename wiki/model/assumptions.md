@@ -1,0 +1,62 @@
+---
+type: model
+created: 2026-10-08
+---
+
+# Assumptions register
+
+Each assumption the model encodes, where it is encoded, and what justifies it so far. This is the list the ODD and the methods section will need.
+
+Status:
+- **sourced**: the owner's documentation cites literature for it. The literature is not yet ingested in this wiki.
+- **owner's rationale**: Ch. 5 or App. 5 gives reasoning without a citation.
+- **none recorded**: only "Assumed" in App. 5 Table A5.4, or not documented at all (the guide's "unjustified").
+
+The `My rationale` blocks on the mechanism pages will move items from "none recorded" to "owner's rationale" as they are answered.
+
+## Conceptual assumptions (Ch. 5 §5.1)
+| # | Assumption | Encoded in | Status |
+|---|---|---|---|
+| C1 | Nomadic groups characterised the Negev Highlands population and produced the observed pattern | whole model | owner's rationale (Ch. 5 §5.1, from Ch. 3) |
+| C2 | Part of the population moved seasonally between the Arabah and the Highlands; one move per year | annual `move_year` / `year_initiation` | owner's rationale (Ch. 5 §5.1, §5.2.3) |
+| C3 | Multi-resourced nomadism, relying primarily on pastoralism, copper manufacture and trade ("possibly other desert goods"), and opportunistic agriculture | 18 goats/person, agricultural offset | sourced (Ch. 5 §5.1: Rosen 2017; §5.2.2: Dahl & Hjort 1976; Rosen & Finkelstein 1992) |
+| C4 | Stone-built structures of all types, including enclosed compounds, represent seasonal, not permanent, occupation | site classification | owner's rationale (Ch. 5 §5.1) |
+| C5 | Tell el-Qudeirat was the central hub of the system, as the region's primary fresh-water oasis (an earlier draft, formerly in `thesis/`, said "main destination for people and goods coming from the Arabah") | `dist_to_kb` layer (justified in Ch. 5 §5.2.1.2 by the Tell el-Qudeirat–Faynan corridor). The layer is the corridor; it was a point earlier and the code name was kept (Itay, 2026-10-12) | sourced (Ch. 5 §5.1: Ben-Dor Evian 2017) |
+| C6 | Population constant: "while households may die, the populations stays stable by replacing those" | `Num_agents`, one-for-one replacement | owner's rationale (Ch. 5 §5.1, §5.2.4) |
+| C7 | Climate similar to the present; modern rainfall years drawn at random, without replacement (journal wording approved 2026-10-12, [overview](overview.md), Things to check). Itay (2026-10-12): 75 years prepared so each year of a run differs (75 in the file, checked); only the longer sensitivity runs reuse years. The year's pasture and agriculture arrays derive from the same rainfall year (Itay, 2026-10-12) | yearly stack, shuffled `inds` (L1254–1255) | sourced (Ch. 5 §5.1: Goldsmith et al. 2023; Langgut & Finkelstein 2023) |
+| C8 | The system lasted at least 75 years | run length | sourced (Ch. 5 §5.2.3: Boaretto et al. 2010; Finkelstein & Piasetzky 2011) |
+| C9 | The household (about ten nuclear families) is the decision unit | `Household_Agent` | sourced (Ch. 5 §5.2.2: Khazanov 1984; Salzman 2004; Hammer 2025) |
+| C11 | Behavioural rules are "general, simplified, tentative behaviours" in line with C1–C10, not a full representation of how the population behaved | all mechanisms | owner's rationale (Ch. 5 §5.1) |
+| C10 | Enclosed compounds express household investment of accumulated surplus and function as communal, kin-based, multi-purpose territorial centres (hypothesised uses: seasonal storage, gatherings, perhaps exchange) | [enclosure construction](../mechanisms/enclosure-construction.md) | owner's rationale (Ch. 5 §5.1, §5.3.3; Ch. 6) |
+
+## Mechanism assumptions
+| # | Assumption | Encoded in | Status |
+|---|---|---|---|
+| M1 | Households read one weighted, additive suitability score | `get_suitability_raster` L501–506 | owner's rationale (Ch. 5 §5.2.1.2; [My rationale](../mechanisms/suitability-surface.md#my-rationale), Itay 2026-10-12: weights calibrated as the balance is unknown; addition as the simplest form, KISS) |
+| M2 | Very steep cells (slope suitability < 1) are unusable | L505 | owner's rationale (Itay, 2026-10-12: values ≤ 1 from the fuzzy transformation are very steep, uninhabitable slopes such as cliffs; ≈ 31° by Table A5.1's parameters, [suitability](../mechanisms/suitability-surface.md#justification)) |
+| M3 | Camp choice is probabilistic, ∝ suitability³ | `place_household` L336 | owner's rationale (Ch. 5 §5.3.1); exponent from face validation in the initial runs (Itay, 2026-10-12) |
+| M4 | Spatial inertia: home-range centre and territory bonus; the centre moves a tenth of the way toward last year's camp (Itay, 2026-10-13). The home-range bonus never applies in the code (Mesa sets `pos` to `None` in `reset_pos`); to be fixed (Itay, 2026-10-13) | L917–937 | sourced (Ch. 5 §5.3.1: Avni 1996; Galilee 2013; Hammer 2014; Meraiot et al. 2021); values none recorded |
+| M5 | Camp memory: good camps attract, poor ones repel, fading as 1/√years; pruned after ~15 years. Threshold 5, the midpoint of the 0–10 scale, separates good from bad experience; quality is measured after occupation; the penalty for very poor camps to be capped (Itay, 2026-10-13) | L938–949, L620 | owner's rationale (Ch. 5 §5.3.1; threshold: Itay, 2026-10-13); other values none recorded |
+| M6 | Territories widen on poor ground (20/25/30), an adaptive response to stress; at Year 0 the radius is fixed at 25 (both Itay, 2026-10-12). Order effect (later households on degraded ground get wider territories) not intended but acceptable (Itay, 2026-10-12) | L631–641; Year 0 L993 | owner's rationale (Ch. 5 §5.3.1); values none recorded |
+| M7 | Territories should not overlap by more than 25% | `overlap_territory` | none recorded ("cooperative coexistence"). Intended (Itay, 2026-10-12): the share of the radius-20 candidate area already in this year's other territories, all combined, rejected at 25% or more, or when the area is very poor. In `model.py` the rule never fires, a bug ([camp page](../mechanisms/camp-and-territory-placement.md)) |
+| M8 | Occupation degrades its surroundings at once, decaying with half the Manhattan distance across the territory; households have a greater effect, over a bigger area, than a nuclear family; the camp cell loses only P (the code takes it to the floor); the main camp degrades after its family camps are placed (all Itay, 2026-10-13) | `env_degrade` | sourced in general (Ch. 5 §5.3.1: Boles et al. 2019; Meroz et al. 2023); magnitudes assumed by Itay from the preliminary runs (2026-10-13) |
+| M9 | Degradation persists with half-life of one year, spread over ~5 km (a circle intended; Itay, 2026-10-13); exhaustion reaches 0 at a smoothed value of 2; pasture falls with exhaustion to a floor of 10% | `Yi_params`; `move_year` L1034–1037 | owner's rationale (Ch. 5 §5.3.1); the 2 from face validation in the preliminary runs, the pasture curve "nothing empirical, just my abstract understanding" (Itay, 2026-10-13) |
+| M10 | Past occupation raises reuse potential (built infrastructure), per cell, while its negative effects spread to the surroundings; cells at 2 or more, "very attractive cells which have been already invested heavily", weigh × 1.5 (Itay, 2026-10-13) | `Yi_params` L433–434, L465 | owner's rationale (Ch. 5 §5.2.1.2; Itay, 2026-10-13); × 5 from face validation in the preliminary runs (Itay, 2026-10-13) |
+| M11 | Herd capacity 1.125 goats per 250 m cell at medium pasture. The code's pasture input is yearly array 0 (rainfall) instead of array 2 (pasture), a bug (Itay, 2026-10-12) | `update_flock_size`, `calc_surplus` | sourced (Seligman et al. 1962 via Rosen & Finkelstein 1992; Ch. 5 §5.2.4) |
+| M12 | Herd growth up to 20%/yr, as a ceiling on the realised rate (the code applies it before the multipliers); decline typically 10–30%; faster for small herds; growth tapers to zero at 1,500 head; capacity over the territory's cells; heavily used ground slows growth and speeds decline (the code reverses this) (all Itay, 2026-10-13) | `update_flock_size` | "Literature-based" (A5.4); source named by Itay (2026-10-13) for the 20%, the 1,500 and the 10–30%: Dahl and Hjort (Dahl & Hjort 1976 in Ch. 5), to be validated against the book before writing; not ingested |
+| M13 | 18 goats/person subsistence (half of pastoral-only 37) | `calc_surplus` L664 | sourced (Dahl & Hjort 1976; Rosen & Finkelstein 1992) plus owner's rationale for halving |
+| M14 | Cultivation offsets up to 40% of livestock need | L663 | sourced (Rosen & Finkelstein 1992; Günther et al. 2021) |
+| M15 | Surplus is abstract wealth, "the sum of all liquid economic resources (i.e. not livestock)" (Itay, 2026-10-13): 30% yearly loss, 1.2/person consumption, extra consumption only when surplus is abundant (above 100), 1% decay at or below 100, progressive decay above 100, cap 200 + 2.5M; products come from the herd left after culling; stress raises the working herd by 0.3 s (Itay, 2026-10-13) | `calc_surplus`, `step` | owner's rationale (Ch. 5 §5.3.2); values none recorded |
+| M16 | Enclosures need prosperity (surplus per worker × local suitability) > 0.6, "better than average conditions", set by face validation in the preliminary runs, or > 0.8 to build new; manpower minima apply to the free manpower (Itay, 2026-10-12). Q's 0–1 range to be checked by logging Q in a test run before deciding on a cap (Itay, 2026-10-13) | `step` L552–587 | owner's rationale (Ch. 5 §5.3.3: "plausible working values"); values none recorded |
+| M17 | Households prefer reusing their own enclosures, then others'; ages run from last use; reuse after more than 15 years counts as new construction, as it is hypothesised to need more resources; enclosure memory holds compounds the household has used (Itay, 2026-10-12); a new site must beat the mean suitability within 20 cells of the camp by a margin of 1 (Itay, 2026-10-12, 2026-10-13) | `find_recent_enclosure`, `build_enclosure` | owner's rationale (Ch. 5 §5.3.3); values none recorded |
+| M18 | Crisis at surplus < 10; distress sale at 0.3 per head; reserve 18 per person capped at 100, as 100 goats is a herd the household "can work with" (Itay, 2026-10-12) | `handle_survival_crisis` | owner's rationale (Ch. 5 §5.3.4); values none recorded |
+| M19 | Failed households are replaced by one seeded with their remnants plus ~900 goats, an abstract successor (Itay, 2026-10-12); population constant in all modes (Itay, 2026-10-12) | `create_replacement_agent` | owner's rationale (Ch. 5 §5.3.4) |
+| M20 | Manpower: 10 people set aside for the yearly migration and one herder per 75 head each step; population more or less stable, growing slightly in good economic years: equal odds of gaining and losing people, plus a small gain when surplus > 100 (Itay, 2026-10-13; the code drifts upward) | `step` L547–549, L600–605 | owner's rationale (Itay, 2026-10-13); 1:75 from literature, perhaps Günther et al. 2021, to be checked |
+
+## Observation assumptions
+| # | Assumption | Encoded in | Status |
+|---|---|---|---|
+| O1 | A cell is a site once its summed signal reaches 0.6 (camp 0.5, family 0.25): a seasonal camp leaves traces, a main camp more, but a single visit is almost unidentifiable; only a few repeated visits make a site (Itay, 2026-10-13) | `to_gdf` | owner's rationale (Ch. 5 §5.5.3, face validation; Itay, 2026-10-13) |
+| O2 | Any enclosure event makes an enclosed-compound site; the asymmetry with ordinary camps is intended (Itay, 2026-10-13) | `to_gdf` L1136–1139 | owner's rationale (Ch. 5 §5.5.3) |
+| O3 | Spatial similarity is judged by 2-SD ellipse IoU, not point locations | `obj_func` | sourced (Ch. 5 §5.5.1–5.5.2: Grimm et al. 2005; Gallagher et al. 2021; Yuill 1971) |
+| O4 | The survey record is representative despite preservation and coverage | calibration targets | owner's rationale (Ch. 5 §5.5.3) |

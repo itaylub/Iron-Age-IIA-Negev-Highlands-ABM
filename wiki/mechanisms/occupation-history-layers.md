@@ -1,0 +1,67 @@
+---
+type: mechanism
+created: 2026-10-08
+code: "model.py › Yi_params, L427–466; get_suitability_raster, L491; NomadModel.move_year, L1023–1037"
+odd: "Submodels; Design concepts › adaptation, interaction"
+---
+
+# Occupation history layers: reuse potential and resource exhaustion
+
+## What it does
+One accumulator records past occupation. Each year it is halved, and last year's occupation signal (`target_raster`) is added to it, with cells at 2 or more multiplied by 1.5. Two suitability layers are derived from it, pulling in opposite directions:
+- **Reuse potential** (`return_ras`) = accumulator × 5, unsmoothed, so it attracts households back to the exact cells used.
+- **Resource exhaustion** (`yi_hu_stressed_z`) is the accumulator convolved with a normalised 1/(d+1)² kernel over a ±20-cell window, then rescaled by a decreasing fuzzy-linear function: 10 where the smoothed value is 0, falling to 0 where it reaches 2. Heavily used surroundings therefore score low.
+
+The exhaustion layer also scales pasture for herds: `veg_map = veg_ras × (1 − 0.1 × min(10/stress − 1, 9))` (L1034–1037). It is passed to herd growth as `stress_ras` ([herd dynamics](herd-dynamics.md)).
+
+## Where it lives
+- `model.py › Yi_params`, L427–466: update (L431–437), convolution kernel built once into the global `CONV_KERNEL` (L440–448), fuzzy rescaling (L452–464), reuse output (L465).
+- Year 0 (`year == 0`): smoothed field all zeros, so exhaustion = 10 everywhere and reuse = 0 (L449–454).
+- The accumulator is stored on the model as `return_raster` (`move_year`, L1023–1025). `get_suitability_raster` returns `new_accumulator` in that slot, not `return_arr`.
+- `eval_neighborhood` also reads `return_raster` and adds raw accumulator values ≥ 2 to suitability when testing a candidate camp's capacity (L309–313).
+
+## Inputs and parameters
+| Parameter | Value | Where | Documented |
+|---|---|---|---|
+| Temporal decay of accumulator | 0.5 per year | L437 | App. 5 Table A5.1 ("Temporal decay factor = 0.5") and Table A5.4 (0.5, Assumed); Ch. 5 §5.3.1 (`Sₜ = 0.5 × Sₜ₋₁ + Oₜ`) |
+| Extra weight for cells ≥ 2 | × 1.5 | L433–434 | not documented |
+| Smoothing window | ±20 cells (square, 41 × 41), weights 1/(d+1)², normalised | L442–446 | App. 5: "spatial radius = 5 km", "inverse-distance weighting" |
+| Fuzzy exhaustion range | 0 → 10, 2 → 0 (linear, clipped) | L458–463 | Ch. 5 §5.3.1 ("cells far from any occupation score 10 and heavily occupied ones approach 0"); the value 2 is not documented |
+| Reuse multiplier | × 5 | L465 | not documented; App. 5 Table A5.1: "Recent constructions weighted higher than older ones" |
+| Occupation increments feeding the accumulator | camp 0.5, family camp 0.25, enclosure reuse +1, new enclosure +(1 + 2 × prosperity) | L280, L649, L572, L581–584 | Ch. 5 §5.5.3 (0.5 and 0.25); Ch. 5 §5.3.3 ("far more weight … than an ordinary camp") |
+
+## What it changes
+The `return_ras` and `yi_hu_stressed_z` terms of the [suitability surface](suitability-surface.md), the `stress_ras` used in [herd dynamics](herd-dynamics.md), and pasture `veg_map` used in herd growth and surplus.
+
+## Assumption it encodes
+Ch. 5 §5.2.1.2: occupation has "a negative effect on its immediate environment", decaying with distance and over time, and also "add[s] to the built infrastructure there, raising its value for future use". At any time "some locations are overexploited while others have already recovered", and this "shifting patchwork of depletion and inherited investment is one of the temporal mechanisms at the core of the palimpsest reading". The 0.5 decay is "the model's stand-in for the slow environmental recovery" (Ch. 5 §5.3.1).
+
+## Justification
+- Owner's documentation: Ch. 5 §5.2.1.2 and §5.3.1; App. 5 §A5.2 (eq. A5.3: `w(t) = 0.5^(T−t)`); Ch. 5 Fig. 5.4 (caption: "cross-annual accumulation weighted by temporal decay w(t) = 0.5^(T−t), spatially smoothed over 5 km").
+- App. 5 Table A5.4 marks the decay factor and smoothing radius "Assumed".
+- Ch. 5 §5.3.1 cites Boles et al. 2019 and Meroz et al. 2023 for overgrazing in arid and Negev settings, as context for degradation in general, not for these values.
+
+## My rationale
+**My rationale** · Itay, 2026-10-13
+> Q: The same occupation record drives reuse potential (accumulator × 5) and exhaustion (fuzzy scale reaching 0 at a smoothed value of 2) (Yi_params, L437–465). What fixes the × 5 and the 2?
+
+My face validation, from the preliminary runs.
+
+## Things to check
+- Direction of `stress_ras` in herd growth. `stress_ras` holds `yi_hu_stressed_z`, which is 10 where there has been no recent occupation and near 0 where occupation was heaviest (L452–464). `update_flock_size` treats higher values as more stress: growth falls (`stress_factor = 1 − min(0.5, avg_stress/20)`, L755) and decline rises (`stress_impact = 1 + avg_stress/20`, L772). The `veg_map` update in `move_year` uses the opposite reading, where low values reduce pasture (L1034–1037). Which direction is intended for the herd terms? App. 5 Table A5.6 describes `stress_ras` as "Cumulative human degradation pressure".
+  - Settled on [herd dynamics](herd-dynamics.md), Things to check. Itay, 2026-10-13: Heavily used ground should slow herd growth and speed decline. The herd terms are to be inverted in the separate PR; the layer itself is unchanged. App. 5 Table A5.6's "degradation pressure" describes the layer's meaning, while its values are 10 where pressure is lowest.
+- The ×1.5 weight for cells ≥ 2 (L433–434) is not in Ch. 5 or App. 5. In practice it mostly picks out enclosure cells and heavily reused camps.
+  - A new enclosure always adds at least 2.6 (1 + 2 × prosperity, prosperity > 0.8), so every new build gets the weight; other cells reach 2 when several events stack in one year.
+  - Asked what the extra × 1.5 stands for. Itay, 2026-10-13: For very attractive cells which have been already invested heavily.
+  - For the write-up: App. 5 Table A5.4 (or §A5.2) should list the × 1.5 for cells at 2 or more.
+- The smoothing window is a ±20-cell square, so its corners reach about 28 cells (7 km). App. 5 gives "spatial radius = 5 km".
+  - Ch. 5 §5.3.1: "within about 20 cells (5 km)". At 28 cells the weight 1/(d+1)² is about 0.1% of the centre weight.
+  - Asked whether the square is fine or should be a circle. Itay, 2026-10-13: Better to be a circle, but if it is complicated leave as is.
+  - It is a one-line change: set the kernel weights to 0 where d > 20 before normalising (L442–446). For the separate PR. It shifts the smoothed values slightly, so it changes calibrated behaviour, though only a little.
+- Ch. 5 §5.3.1 says the stress record is "smoothed" before rescaling, which matches the code. Reuse potential, however, uses the unsmoothed accumulator (L465), so it acts on single cells.
+  - Ch. 5 §5.3.1 reads the same way: "Each occupied cell is rewarded in proportion to how intensely it was occupied".
+  - Asked whether per-cell reuse potential, with no spread to neighbours, is intended. Itay, 2026-10-13: Yes it is. The rationale is that the attractivity of a certain cell is growing by the occupation time (e.g. many repeated occupation = investment in buildings) but negative effects degrade the surrounding cells as well.
+  - The code matches.
+- Pasture reduction (added 2026-10-13). `veg_map = veg_ras × (1 − 0.1 × min(10/stress − 1, 9))` (L1034–1037) is not in Ch. 5 or App. 5; Ch. 5 §5.3.2 says only that PV is "affected by previous occupations". By the formula pasture keeps 100% at exhaustion 10, 90% at 5, 60% at 2, and 10% at 1 or below, so it never falls under 10% of the year's value.
+  - Asked where the curve and its 10% floor come from. Itay, 2026-10-13: Nothing empirical, just my abstract understanding.
+  - For the write-up: Ch. 5 §5.3.2 or App. 5 should give the formula and its floor.
