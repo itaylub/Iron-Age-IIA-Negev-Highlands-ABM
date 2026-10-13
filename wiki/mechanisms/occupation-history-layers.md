@@ -51,3 +51,4 @@ Ch. 5 §5.2.1.2: occupation has "a negative effect on its immediate environment"
 - The ×1.5 weight for cells ≥ 2 (L433–434) is not in Ch. 5 or App. 5. In practice it mostly picks out enclosure cells and heavily reused camps.
 - The smoothing window is a ±20-cell square, so its corners reach about 28 cells (7 km). App. 5 gives "spatial radius = 5 km".
 - Ch. 5 §5.3.1 says the stress record is "smoothed" before rescaling, which matches the code. Reuse potential, however, uses the unsmoothed accumulator (L465), so it acts on single cells.
+- Pasture reduction (added 2026-10-13). `veg_map = veg_ras × (1 − 0.1 × min(10/stress − 1, 9))` (L1034–1037) is not in Ch. 5 or App. 5; Ch. 5 §5.3.2 says only that PV is "affected by previous occupations". By the formula pasture keeps 100% at exhaustion 10, 90% at 5, 60% at 2, and 10% at 1 or below, so it never falls under 10% of the year's value.

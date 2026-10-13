@@ -181,6 +181,10 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - approved: per-draw rebuild with each bonus once (later family camps see earlier camps' degradation), implemented efficiently (bonus arrays once a year; family draws look up only the territory's cells; −0.5 update per new family camp); penalty cap at 5 × w with negative values clipped in `place_members`.
 - updated: mechanisms/memory-and-territorial-attachment.md; separate-PR list item 14 complete.
 
+## [2026-10-13] readings | mechanisms/occupation-history-layers.md (chat round opened) | — | Claude (research-wiki)
+- added to Things to check: the pasture-reduction formula in `move_year` (L1034–1037), undocumented, with a 10% floor.
+- presented: My rationale (× 5 and 2), ×1.5 weight, smoothing window shape, unsmoothed reuse potential, pasture reduction. The stress-direction item was settled in the herd round.
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.
