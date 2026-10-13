@@ -24,6 +24,6 @@
 - [Household economy](mechanisms/household-economy.md): subsistence 18/person, surplus, consumption, manpower · rationale written
 - [Enclosure construction](mechanisms/enclosure-construction.md): prosperity index, reuse vs new build · rationale written
 - [Crisis and replacement](mechanisms/crisis-and-replacement.md): distress sales, failure, one-for-one replacement · rationale written
-- [Site classification](mechanisms/site-classification.md): 0.6 threshold, enclosure sites · rationale owed
+- [Site classification](mechanisms/site-classification.md): 0.6 threshold, enclosure sites · rationale written
 - [Calibration objective](mechanisms/calibration-objective.md): ellipse IoU + site-type ratio, Optuna · rationale written
 ## Syntheses

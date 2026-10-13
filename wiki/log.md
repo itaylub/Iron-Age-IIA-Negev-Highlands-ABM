@@ -195,6 +195,11 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - checked: `Data/distac_pw.tif` and `.tfw` from the repository history (281 × 319 cells, pixel-is-area): the `to_gdf` origin lies within 3 m and 9 m of its lower-left corner, so it reads as a corner; simulated sites would then sit 125 m south-west of cell centres.
 - presented: My rationale (0.5 / 0.25 increments), threshold test without code (deferral to experiments proposed), enclosure overwrite, 0.75 combination, origin.
 
+## [2026-10-13] readings | site classification round closed | — | Claude (research-wiki)
+- reading written: My rationale (seasonal camps leave traces, main camps more; a single visit is almost unidentifiable, only a few repeated visits make a site).
+- answers recorded: threshold test deferred to experiments (agreed); enclosure asymmetry intended; no need to name the 0.75 combination in Ch. 5 §5.5.3; sites stay at the cell corner (no change to `to_gdf`).
+- updated: mechanisms/site-classification.md, model/experiments.md, model/assumptions.md (O1, O2), index.md
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.

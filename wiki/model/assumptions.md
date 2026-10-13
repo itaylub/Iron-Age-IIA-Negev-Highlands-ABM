@@ -56,7 +56,7 @@ The `My rationale` blocks on the mechanism pages will move items from "none reco
 ## Observation assumptions
 | # | Assumption | Encoded in | Status |
 |---|---|---|---|
-| O1 | A cell is a site once its summed signal reaches 0.6 (camp 0.5, family 0.25) | `to_gdf` | owner's rationale (Ch. 5 §5.5.3, face validation) |
-| O2 | Any enclosure event makes an enclosed-compound site | `to_gdf` L1136–1139 | owner's rationale (Ch. 5 §5.5.3) |
+| O1 | A cell is a site once its summed signal reaches 0.6 (camp 0.5, family 0.25): a seasonal camp leaves traces, a main camp more, but a single visit is almost unidentifiable; only a few repeated visits make a site (Itay, 2026-10-13) | `to_gdf` | owner's rationale (Ch. 5 §5.5.3, face validation; Itay, 2026-10-13) |
+| O2 | Any enclosure event makes an enclosed-compound site; the asymmetry with ordinary camps is intended (Itay, 2026-10-13) | `to_gdf` L1136–1139 | owner's rationale (Ch. 5 §5.5.3) |
 | O3 | Spatial similarity is judged by 2-SD ellipse IoU, not point locations | `obj_func` | sourced (Ch. 5 §5.5.1–5.5.2: Grimm et al. 2005; Gallagher et al. 2021; Yuill 1971) |
 | O4 | The survey record is representative despite preservation and coverage | calibration targets | owner's rationale (Ch. 5 §5.5.3) |
