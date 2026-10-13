@@ -228,6 +228,9 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 - answer recorded: App. 5 §A5.7.1's seed formula refers to the calibration; the null baseline is a separate experiment (read as: the sentence stands).
 - updated: model/experiments.md
 
+## [2026-10-13] lint | model/odd-map.md, model/parameters.md, model/assumptions.md | — | Claude (research-wiki)
+- none of the three pages has open Things to check items. Refreshed stale gap notes from this session's answers and checks: ODD map rows Entities (stress direction), Learning (home-range bonus never applies), Sensing (pasture over the territory), Interaction (family camps see earlier degradation), Stochasticity (unseeded Mesa generator), Submodels (all rationales written; values to validate); parameters row Start (`year >= 4` intended).
+
 ### Separate-PR list as of 2026-10-13 (code and repository docs; agreed to be done later in one separate PR)
 1. Pasture: read yearly array 2 instead of array 0 in both model files; handle year 74's no-data cells ("a big red flag").
 2. `sensitivity_model.py` Year-0 territory: fixed radius 25, as in `model.py`.

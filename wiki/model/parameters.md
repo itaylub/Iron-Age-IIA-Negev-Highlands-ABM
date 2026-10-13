@@ -117,7 +117,7 @@ Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which c
 | Parameter | Code | Where | Documented |
 |---|---|---|---|
 | Prosperity thresholds | 0.6 (eligible), 0.8 (new) | L563, L576 | 0.6, 0.8, Assumed |
-| Start | `year > 5` | L564 | "from the fifth year onward" (Ch. 5 §5.3.3) **≠** |
+| Start | `year > 5` | L564 | "from the fifth year onward" (Ch. 5 §5.3.3) **≠**; intended: `year >= 4` (Itay, 2026-10-12) |
 | Reuse minima, cost | M ≥ 15, S ≥ 10; 10 M, 6 S | L565, L568–569 | same, Assumed |
 | New-build minima, cost | M ≥ 30, S ≥ 30; 20 M, 25 S | L576, L579–580 | same, Assumed |
 | Manpower recovery | 90% | L575, L587 | 90%, Assumed |
