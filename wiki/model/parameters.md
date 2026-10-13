@@ -78,9 +78,9 @@ Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which c
 ## Within-year degradation ([page](../mechanisms/within-year-degradation.md))
 | Parameter | Code | Where | Documented |
 |---|---|---|---|
-| Household D, P, radius | 0.5, 0.9, territory radius | L651 | D 0.5, P 0.9, Assumed |
+| Household D, P, radius | 0.5, 0.9, territory radius | L651 | D 0.5, P 0.9, Assumed (preliminary runs, Itay, 2026-10-13); P has no effect until the kernel centre is 0 (PR) |
 | Family D, P, radius | 0.3, 0.5, 11 | L647 | 0.3, 0.5, 11, Assumed |
-| Distance | (\|dx\|+\|dy\|)/2 + 0.001 | L240–241 | — |
+| Distance | (\|dx\|+\|dy\|)/2 + 0.001 | L240–241 | Manhattan (A5.1–A5.2 caption) **≠**; the code is intended (Itay, 2026-10-13) |
 | Floor | 0.0001 | L418–420 | 0.0001, Assumed |
 
 ## Herd dynamics ([page](../mechanisms/herd-dynamics.md))

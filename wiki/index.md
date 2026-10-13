@@ -19,7 +19,7 @@
 - [Occupation history layers](mechanisms/occupation-history-layers.md): reuse potential (×5) and resource exhaustion (fuzzy, 0.5 decay) · rationale written
 - [Memory and territorial attachment](mechanisms/memory-and-territorial-attachment.md): home-range centre, territory bonus, camp memory · rationale written
 - [Camp and territory placement](mechanisms/camp-and-territory-placement.md): suitability³ draw, territory 20/25/30, family camps, overlap rule · rationale written
-- [Within-year degradation](mechanisms/within-year-degradation.md): D/distance kernel, floor 0.0001 · rationale owed
+- [Within-year degradation](mechanisms/within-year-degradation.md): D/distance kernel, floor 0.0001 · rationale written
 - [Herd dynamics](mechanisms/herd-dynamics.md): capacity 1.125 goats/cell, growth and decline · rationale written
 - [Household economy](mechanisms/household-economy.md): subsistence 18/person, surplus, consumption, manpower · rationale written
 - [Enclosure construction](mechanisms/enclosure-construction.md): prosperity index, reuse vs new build · rationale written
