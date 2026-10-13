@@ -235,6 +235,8 @@ Append-only record of operations on this wiki. Format: `## [YYYY-MM-DD] operatio
 14. Memory and territorial attachment: keep each household's last camp through `reset_pos` so the home-range bonus applies (centre starts at the Year-0 camp; P = last year's camp); for each draw, the personalised surface = the current shared surface (with this year's earlier degradation) + each bonus once (approved), implemented as: HM (home-range + capped memory) and T (last year's territory) built once a year at the main draw; family draws read the shared surface for the new territory's cells only, with + HM + 2.5; −0.5 in HM at each new family camp (approved); cap the penalty for very poor remembered camps at 5 × w (q no lower than 0.1) and clip negative values to 0 in `place_members` before cubing (approved).
 15. Occupation history: circular smoothing kernel (weights 0 where d > 20, before normalising; `Yi_params` L442–446).
 16. Within-year degradation: kernel centre 0 (`get_degrade_kernel` L241), so the camp cell loses only P.
+17. Reproducibility: pass each run's seed to Mesa (`NomadModel` → `super().__init__(seed=seed)`; L955), so `shuffle_do` is seeded.
+18. Notebooks: swap `calibration.ipynb` cells 5 and 6; `sensitivity_analysis.ipynb` cell 9 compares the null baseline with the 30-replicate mean (0.213) rather than `study.best_value`; (low priority) a new shuffle of the rainfall years for each further 75-year cycle (`sensitivity_model.py` L399, L945).
 Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13, 14, 15, 16); the calibration ran with the current code.
 
 ### Write-up list as of 2026-10-13 (thesis / journal text, Itay's)
@@ -249,4 +251,5 @@ Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13, 14, 15, 16); t
 - Ch. 5 §5.2.2: camp memory holds the quality after the stay. Ch. 5 §5.3.1: P is last year's camp.
 - App. 5 (Table A5.4 or §A5.2) and Ch. 5 §5.3.2: the × 1.5 for cells at 2 or more; the pasture-reduction curve and its 10% floor.
 - App. 5 eq. A5.1–A5.2 caption: half the Manhattan distance. Ch. 5 Fig. 5.4 caption and App. 5 Table A5.2: household degradation across the territory (20–30 cells), not ~5 km.
+- Ch. 5 §5.6 and App. 5 Table A5.7: compare the null baseline with 0.213 (33.1% reduction), not 0.201 (36.7%). App. 5 §A5.7: no section on the manual site-threshold sweep, though §5.6 points there. Fig. 5.11 caption: trial 173, not "seed-173". App. 5 §A5.3 reproducibility statement: left for now (Itay, 2026-10-13).
 - Ch. 5 §5.6: in fixed-territory mode the main camp stays on one cell. Ch. 5 §5.3.4: reserve capped at 100. Ch. 5 §5.3.3: ages count from last use; the new-site criterion compares with the average within 20 cells of the camp, plus a margin, not the territory's average.
