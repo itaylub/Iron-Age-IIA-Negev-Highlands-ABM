@@ -1342,13 +1342,9 @@ def objective_function(permanent_weights, yearly_weights, trial_n, trial, n_iter
 def objective(trial, sim_y=75, n_iter=10):
     """
     Optuna objective function.
-    Handles GPU assignment and parameter sampling.
+    Handles parameter sampling.
     """
     ensure_data_loaded()
-    # GPU Assignment based on trial number
-    gpu_id = trial.number % 3
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
-    #print(f"DEBUG: Trial {trial.number} (PID {os.getpid()}) assigned to GPU {gpu_id}")
 
     params = {
         "dist_to_kb": trial.suggest_int("dist_to_kb", 0, 7),
