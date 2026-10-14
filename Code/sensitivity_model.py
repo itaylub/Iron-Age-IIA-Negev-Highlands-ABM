@@ -757,7 +757,10 @@ class Household_Agent(mesa.Agent):
             }
             if not hasattr(self.model, 'scheduled_new_agents'):
                 self.model.scheduled_new_agents = []
-            self.model.scheduled_new_agents.append(leftover_resources)
+            # In fixed-territory mode the household is reset in place (step),
+            # so no replacement is queued and the population stays constant.
+            if not self.model.fixed_territory:
+                self.model.scheduled_new_agents.append(leftover_resources)
             return False
         return True
 
