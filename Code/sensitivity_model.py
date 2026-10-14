@@ -1,9 +1,8 @@
-"""nomad_abm.sensitivity
+"""sensitivity_model
 
-Variant of :mod:`nomad_abm.model` used for sensitivity analysis.
+Variant of ``Code/model.py`` used for the sensitivity analysis.
 Supports variable agent counts and fixed-territory modes.
-``Code/model_opt_sensitivity.py`` is a backwards-compatibility shim that
-re-exports the symbols defined here.
+``Code/sensitivity_analysis.ipynb`` imports it as ``sensitivity_model``.
 """
 
 import os

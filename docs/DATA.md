@@ -26,10 +26,18 @@ EPSG:2039)**. Cell side length is **250 m**.
 
 ## Spatial extent
 
-Common grid for all rasters: **318 columns × 280 rows = 89 040 cells**,
-covering approximately **3 251.54 km²** of the Negev Highlands. The
-binary `place_raster.npy` further restricts valid agent activity to
-the Israeli portion of the highlands.
+Common grid for all rasters: **318 rows × 280 columns = 89 040 cells**.
+Arrays are indexed `[row, column]`, with row 0 at the northern edge.
+The model builds its Mesa grid 280 cells wide and 318 high, with
+Mesa's `y` running northward, and converts between the two with
+`to_numpy_y` (`numpy_row = 317 − y`).
+
+The binary `ext_raster.npy` mask marks the model extent, 52 012 cells
+(about 3 251 km²): the Negev Highlands and the buffer around them. The
+household count uses this area (3 251.54 km², `Num_agents`). The binary
+`place_raster.npy` (37 555 cells, about 2 347 km²) restricts camps to
+the Israeli part of the Negev Highlands; the band between the two masks
+is the buffer.
 
 ## Files
 
@@ -75,16 +83,24 @@ below.
 ### `yearly_data.h5` and `yearly_data_10_25.h5`
 
 ```
-/group_<i>                  # one group per year, i = 0 .. 75 (76 groups)
+/group_<i>                  # one group per year, i = 0 .. 74 (75 years)
   /array_0   : float64 [318, 280]
   /array_1   : float32 [318, 280]
   /array_2   : float32 [318, 280]
   /array_3   : float32 [318, 280]    # legacy file only
+/metadata                   # current file: num_groups = 75, arrays_per_group = 3
 ```
 
 Notes:
 
-- Groups are **0-indexed** (`group_0` through `group_75`).
+- `yearly_data_10_25.h5` holds **75 years**, `group_0` through
+  `group_74`, plus a top-level `metadata` group. An earlier version
+  of this document listed 76 groups (`group_0` … `group_75`), counting
+  `metadata` as a year. The group count of the legacy `yearly_data.h5`
+  has not been re-checked.
+- The model takes the number of years from
+  `metadata.attrs['num_groups']` (`LazyYearlyData`), so a 75-year run
+  uses every year once.
 - Each group's datasets are named `array_<j>`. The model reads them
   positionally via `sorted(group.keys(), key=lambda x:
   int(x.split('_')[1]))` — so the order matters, not the names.
@@ -100,15 +116,19 @@ Notes:
   /array_0 .. /array_5      # 6 arrays in the current per_data_10_25.h5
                             #  (8 arrays in the legacy per_data.h5)
                             # all float32 [318, 280] except one float64
-/metadata                   # sibling group; not consumed by the model
+/metadata                   # current file: num_groups = 1, arrays_per_group = 6
 ```
 
 Notes:
 
-- The single permanent group is `group_1` (1-indexed), accessed in
-  code as `f['group_1']`.
-- `metadata` is a sibling top-level group present in the file but not
-  read by the model.
+- The single permanent group is `group_1` (1-indexed). The model
+  reaches it through `metadata`: `load_permanent_data` reads
+  `group_<i + 1>` for `i` in `range(num_groups)`, and
+  `Code/calibration.ipynb` (cell 1) reads `group_<num_groups>`.
+- `metadata` is **read by the model**: `num_groups` and
+  `arrays_per_group` here, and `num_groups` in the yearly file. The
+  reads are unguarded, so a data file without a `metadata` group stops
+  the model at loading.
 
 ## .npy and .tif files
 

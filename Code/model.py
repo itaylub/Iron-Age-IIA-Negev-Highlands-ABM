@@ -1,9 +1,9 @@
-"""nomad_abm.model
+"""model
 
 The core nomad-household agent-based model for the Negev Highlands
-Iron Age IIA simulation. This is the canonical location for the model
-code; ``Code/model_opt.py`` is a backwards-compatibility shim that
-re-exports the symbols defined here.
+Iron Age IIA simulation (the calibrated model). ``Code/calibration.ipynb``
+imports it as ``model``; ``Code/sensitivity_model.py`` is the variant
+used for the sensitivity analysis.
 """
 
 import os

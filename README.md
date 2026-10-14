@@ -141,7 +141,11 @@ export NOMAD_ABM_CALIB_SHP=/path/to/P_for_calib.shp
 - `environment.yml` and `requirements.txt` list every dependency.
 - The model accepts a `seed` argument and seeds both `random` and
   `numpy.random`, so a given seed reproduces a given run.
-- Simulation outputs land in timestamped folders under `Results/`.
+- Simulation outputs land under `Results/` (or `NOMAD_ABM_RESULTS_DIR`):
+  calibration replicates in `Results/run/trial_<n>/iter_<i>/`, with the
+  Optuna study in `Results/run/opt_run.db`; the best-trial re-runs in
+  `Results/trial_best_params/`; the sensitivity tests in
+  `Results/sensitivity/`.
 
 ## Data
 
