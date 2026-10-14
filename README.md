@@ -139,11 +139,13 @@ export NOMAD_ABM_CALIB_SHP=/path/to/P_for_calib.shp
 ## Reproducibility
 
 - `environment.yml` and `requirements.txt` list every dependency.
-- The model accepts a `seed` argument and seeds `random`,
-  `numpy.random` and Mesa's own generator (which sets the household
-  order each year), so a given seed reproduces a given run when it runs
-  on its own. Trials run in parallel threads share the global
-  generators.
+- The model accepts a `seed` argument. Each run draws only from its own
+  generators, all derived from that seed: one for the order of the
+  rainfall years, Mesa's model generator (`model.random`, which also
+  sets the household order each year) and a numpy generator
+  (`model.np_rng`). No global random state is used, so a given seed
+  reproduces a given run, also when Optuna runs trials in parallel
+  threads.
 - Simulation outputs land under `Results/` (or `NOMAD_ABM_RESULTS_DIR`):
   calibration replicates in `Results/run/trial_<n>/iter_<i>/`, with the
   Optuna study in `Results/run/opt_run.db`; the best-trial re-runs in

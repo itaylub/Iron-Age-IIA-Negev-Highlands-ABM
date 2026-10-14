@@ -16,7 +16,6 @@ os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
 import numpy as np
 import h5py
-import random
 import copy
 import math
 import json
@@ -285,7 +284,7 @@ def place_household(model, current_agent, suitability_raster):
 
     def get_valid_position():
         while True:
-            random_index = np.random.choice(np.arange(len(prob)), p=prob)
+            random_index = model.np_rng.choice(np.arange(len(prob)), p=prob)
             y, x = np.unravel_index(random_index, suitability_raster.shape)
             mesa_y = suitability_raster.shape[0] - y - 1
             if (20 <= x < model.grid.width - 20 and
@@ -320,7 +319,7 @@ def place_members(model, current_agent, ter):
     else:
         prob = np.ones(len(ter)) / len(ter)
     prob /= prob.sum()
-    selected_index = np.random.choice(len(ter), p=prob)
+    selected_index = model.np_rng.choice(len(ter), p=prob)
     return ter[selected_index]
 
 
@@ -416,13 +415,27 @@ def get_suitability_raster(y_output, indices, year, weights, accumulator=None, l
     return suitability_raster, new_accumulator, yi_hu_stressed_z
 
 
+def run_generators(seed):
+    """Numpy random generators for one run, both derived from its seed.
+
+    Returns (year_rng, draw_rng), two independent generators: year_rng
+    shuffles the order of the rainfall years, draw_rng is the model's own
+    generator for numpy draws (camp cells, NomadModel.np_rng). Python-level
+    draws use Mesa's model.random, seeded with the same seed. A run thus
+    shares no random state with other runs in the same process, such as
+    Optuna trials in parallel threads. seed=None draws fresh entropy.
+    """
+    year_seq, draw_seq = np.random.SeedSequence(seed).spawn(2)
+    return np.random.default_rng(year_seq), np.random.default_rng(draw_seq)
+
+
 class Household_Agent(mesa.Agent):
     def __init__(self, model, threshold, manpower=None, surplus=None, flock_head=None):
         super().__init__(model)
         if flock_head is None:
             self.flock_head = 0
             for _ in range(10):
-                flock_n = np.floor(random.gauss(105, 15))
+                flock_n = np.floor(self.random.gauss(105, 15))
                 self.flock_head += flock_n
         else:
             self.flock_head = flock_head
@@ -489,7 +502,7 @@ class Household_Agent(mesa.Agent):
             if not survived:
                 if self.model.fixed_territory:
                     # In fixed territory mode, we "reset" the agent instead of removing it
-                    self.flock_head = sum(np.floor(random.gauss(105, 15)) for _ in range(10))
+                    self.flock_head = sum(np.floor(self.random.gauss(105, 15)) for _ in range(10))
                     self.manpower = max(35, np.floor(self.flock_head / 20))
                     self.surplus = 10
                     self.year_initiation()
@@ -504,11 +517,11 @@ class Household_Agent(mesa.Agent):
             self.buy_livestock_with_surplus(investment_amount)
         self.manpower = max(1, self.manpower + 10)
         self.manpower += herders
-        if random.uniform(0, 1) > 0.7:
-            self.manpower += math.ceil(5 * random.uniform(0, 1))
-        if self.manpower > 55 and random.uniform(0, 1) > 0.8:
-            self.manpower -= math.ceil(5 * random.uniform(0, 1))
-        if self.surplus > 100 and random.random() < 0.3: self.manpower += 1
+        if self.random.uniform(0, 1) > 0.7:
+            self.manpower += math.ceil(5 * self.random.uniform(0, 1))
+        if self.manpower > 55 and self.random.uniform(0, 1) > 0.8:
+            self.manpower -= math.ceil(5 * self.random.uniform(0, 1))
+        if self.surplus > 100 and self.random.random() < 0.3: self.manpower += 1
         if self.surplus > 100:
             base_decay_rate = 0.05
             scaling_factor = 0.001 * (self.surplus - 100)
@@ -522,7 +535,7 @@ class Household_Agent(mesa.Agent):
 
     def year_initiation(self):
         self.own_suitability_raster = None
-        self.memory = [i for i in self.memory if (self.model.year - i[2]) * random.random() < 15]
+        self.memory = [i for i in self.memory if (self.model.year - i[2]) * self.random.random() < 15]
 
         if self.model.fixed_territory:
             if self.territory and self.territory not in self.model.territories:
@@ -665,7 +678,7 @@ class Household_Agent(mesa.Agent):
         if ratio > 1.1:
             max_growth_rate = 0.2 * stress_factor * small_flock_factor
             diminishing_factor = 1 - (self.flock_head / 1500)
-            growth_rate = max_growth_rate * diminishing_factor * min(ratio, 2.0) * random.uniform(0.7, 1.3)
+            growth_rate = max_growth_rate * diminishing_factor * min(ratio, 2.0) * self.random.uniform(0.7, 1.3)
             max_sustainable = carrying_capacity * 1.2
             growth_amount = min(self.flock_head * growth_rate, max_sustainable - self.flock_head)
             self.flock_head = np.floor(self.flock_head + max(0, growth_amount))
@@ -675,7 +688,7 @@ class Household_Agent(mesa.Agent):
             stress_impact = 1 + (avg_stress / 20)
             if self.flock_head < 100:
                 base_decline *= max(0.4, self.flock_head / 100)
-            decline_rate = base_decline * stress_impact * random.uniform(0.8, 1.2)
+            decline_rate = base_decline * stress_impact * self.random.uniform(0.8, 1.2)
             decline_rate = min(decline_rate, 0.3)
             self.flock_head = np.floor(self.flock_head * (1 - decline_rate))
 
@@ -701,11 +714,11 @@ class Household_Agent(mesa.Agent):
             veg_value = self.model.veg_ras[to_numpy_y(self.model, y), x]
             ag_value = self.model.ag_ras[to_numpy_y(self.model, y), x]
             env_factor = 1.0 + ((veg_value * 0.02) + (ag_value * 0.02))
-            final_score = score * env_factor * random.uniform(0.8, 1.2)
+            final_score = score * env_factor * self.random.uniform(0.8, 1.2)
             enhanced_scores.append((pos, final_score))
         if not enhanced_scores:
             return None
-        selected_idx = random.choices(
+        selected_idx = self.random.choices(
             range(len(enhanced_scores)),
             weights=[s[1] for s in enhanced_scores],
             k=1
@@ -751,7 +764,7 @@ class Household_Agent(mesa.Agent):
                 total_score = base_score * env_factor
                 ownership_bias = 1.5
                 final_score = total_score * ownership_bias
-                random_factor = random.uniform(0.9, 1.1)
+                random_factor = self.random.uniform(0.9, 1.1)
                 bst_cells.append([enc[0], final_score * random_factor])
         for enc_data in self.model.enclosures:
             enc_pos, enc_year, enc_owner = enc_data
@@ -765,7 +778,7 @@ class Household_Agent(mesa.Agent):
                     base_score = 10 - (age / 2)
                     env_factor = 1.0 + (veg_value * 0.02) + (ag_value * 0.02) + (suit_val * 0.02)
                     final_score = base_score * env_factor
-                    random_factor = random.uniform(0.7, 1.3)
+                    random_factor = self.random.uniform(0.7, 1.3)
                     bst_cells.append([enc_pos, final_score * random_factor])
         has_reuse_candidates = False
         if bst_cells:
@@ -773,9 +786,9 @@ class Household_Agent(mesa.Agent):
             if average_score > 8:
                 has_reuse_candidates = True
         if self.model.enclosures:
-            should_consider_new = not has_reuse_candidates or random.random() > 0.7
+            should_consider_new = not has_reuse_candidates or self.random.random() > 0.7
         else:
-            should_consider_new = random.random() > 0.4
+            should_consider_new = self.random.random() > 0.4
         if should_consider_new:
             for cell in nbr:
                 if any(e[0] == cell and (self.model.year - e[1]) < 25 for e in self.model.enclosures):
@@ -787,7 +800,7 @@ class Household_Agent(mesa.Agent):
                 env_score = (suit_val * 0.7) + (veg_value * 0.15) + (ag_value * 0.15)
                 if env_score > mean_val + 1:
                     base_score = env_score * 0.8
-                    random_factor = random.uniform(0.75, 1.25)
+                    random_factor = self.random.uniform(0.75, 1.25)
                     bst_cells.append([cell, base_score * random_factor])
         if not bst_cells:
             return self.pos
@@ -796,11 +809,11 @@ class Household_Agent(mesa.Agent):
             total_weight = sum(weights)
             if total_weight > 0:
                 normalized_weights = [w / total_weight for w in weights]
-                selected_idx = random.choices(range(len(bst_cells)), weights=normalized_weights, k=1)[0]
+                selected_idx = self.random.choices(range(len(bst_cells)), weights=normalized_weights, k=1)[0]
                 selected_cell = bst_cells[selected_idx][0]
             else:
                 if bst_cells:
-                    selected_idx = random.randint(0, len(bst_cells) - 1)
+                    selected_idx = self.random.randint(0, len(bst_cells) - 1)
                     selected_cell = bst_cells[selected_idx][0]
         return selected_cell
 
@@ -849,10 +862,12 @@ class Household_Agent(mesa.Agent):
 
 class NomadModel(mesa.Model):
     def __init__(self, suitability_raster, return_raster, stress_ras, inds, place_raster=None, ras_w=None,
-                 y_output=None, num_agents=None, fixed_territory=False, seed=None):
+                 y_output=None, num_agents=None, fixed_territory=False, seed=None, np_rng=None):
         # The seed also seeds Mesa's own generator (self.random), which sets
         # the household order in shuffle_do; without it that order is unseeded.
+        # All Python-level draws use self.random, all numpy draws self.np_rng.
         super().__init__(seed=seed)
+        self.np_rng = np_rng if np_rng is not None else run_generators(seed)[1]
         if num_agents is not None:
             self.num_agents = num_agents
         else:
@@ -941,7 +956,7 @@ class NomadModel(mesa.Model):
         # to inds in place (the caller passes the same list every year).
         if self.year >= len(inds):
             next_cycle = list(range(len(self.y_output)))
-            random.shuffle(next_cycle)
+            self.random.shuffle(next_cycle)
             inds.extend(next_cycle)
         self.suitability_raster, self.return_raster, stress_ras = get_suitability_raster(
             self.y_output, inds, self.year, self.weights, accumulator=self.return_raster,
@@ -973,7 +988,7 @@ class NomadModel(mesa.Model):
 
     def create_replacement_agent(self, resources):
         """Creates a new agent to replace one that failed, with a fresh start."""
-        additional_flocks = sum(np.floor(random.gauss(90, 15)) for _ in range(10))
+        additional_flocks = sum(np.floor(self.random.gauss(90, 15)) for _ in range(10))
         new_agents = Household_Agent.create_agents(
             model=self,
             n=1,
@@ -1147,16 +1162,15 @@ def run_model_opt(model_years, ras_wts, main_run_directory, trial_number, iterat
         y_output_data = GlobalData.y_output
     run_directory = os.path.join(main_run_directory, f"trial_{trial_number}", f"iter_{iteration}")
     os.makedirs(run_directory, exist_ok=True)
-    if seed is not None:
-        random.seed(seed)
-        np.random.seed(seed)
+    # Per-run generators: the run draws from no global random state.
+    year_rng, draw_rng = run_generators(seed)
     inds = list(range(len(y_output_data)))
-    random.shuffle(inds)
+    year_rng.shuffle(inds)
     suitability_raster, return_raster, stress_ras = get_suitability_raster(
         y_output_data, inds, year=0, weights=ras_wts
     )
     model = NomadModel(suitability_raster, return_raster, stress_ras, inds, ras_w=ras_wts, y_output=y_output_data,
-                       num_agents=num_agents, fixed_territory=fixed_territory, seed=seed)
+                       num_agents=num_agents, fixed_territory=fixed_territory, seed=seed, np_rng=draw_rng)
     plot_y = [10, 20, 30, 40, 50, 60, 70]
     try:
         for i in range(model_years):
