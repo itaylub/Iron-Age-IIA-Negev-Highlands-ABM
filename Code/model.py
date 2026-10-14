@@ -273,6 +273,13 @@ def pasture_val(model, current_pos, r):
     return np.sum(window)
 
 
+def territory_pasture(model, territory):
+    """Mean pasture (veg_map) over the territory's cells, and their number."""
+    cols = np.array([cell[0] for cell in territory])
+    rows = to_numpy_y(model, np.array([cell[1] for cell in territory]))
+    return float(np.mean(model.veg_map[rows, cols])), len(territory)
+
+
 def pasture_layer(year_data):
     """Pasture for the herds: yearly array 2 (vegetation x the year's rainfall).
 
@@ -761,11 +768,8 @@ class Household_Agent(mesa.Agent):
         return 0
 
     def update_flock_size(self):
-        env_value = pasture_val(self.model, self.pos, 30)
-        neighborhood = self.model.grid.get_neighborhood(
-            self.pos, moore=True, include_center=False, radius=30)
-        neighborhood_size = len(neighborhood)
-        avg_env_value = env_value / neighborhood_size if neighborhood_size > 0 else 0
+        # Capacity over the territory's cells (Ch. 5 §5.3.2: n = cells in the territory)
+        avg_env_value, neighborhood_size = territory_pasture(self.model, self.territory)
 
         quality_factor = avg_env_value / 5.0
         goats_per_cell = 1.125 * quality_factor
@@ -779,8 +783,11 @@ class Household_Agent(mesa.Agent):
             if 0 <= numpy_y < self.model.stress_ras.shape[0] and 0 <= x < self.model.stress_ras.shape[1]:
                 stress_values.append(self.model.stress_ras[numpy_y, x])
 
-        avg_stress = sum(stress_values) / len(stress_values) if stress_values else 0
-        stress_factor = 1 - min(0.5, avg_stress / 20)
+        avg_stress = sum(stress_values) / len(stress_values) if stress_values else 10
+        # stress_ras is 10 on unused ground and near 0 on heavily used ground,
+        # so use pressure = 10 - avg_stress: heavy use slows growth and speeds decline.
+        pressure = 10 - avg_stress
+        stress_factor = 1 - min(0.5, pressure / 20)
 
         small_flock_factor = 1.0
         if self.flock_head < 500:
@@ -790,6 +797,7 @@ class Household_Agent(mesa.Agent):
             max_growth_rate = 0.2 * stress_factor * small_flock_factor
             diminishing_factor = 1 - (self.flock_head / 1500)
             growth_rate = max_growth_rate * diminishing_factor * min(ratio, 2.0) * self.random.uniform(0.7, 1.3)
+            growth_rate = min(growth_rate, 0.2)  # realised growth at most 20% a year
             max_sustainable = carrying_capacity * 1.2
             growth_amount = min(self.flock_head * growth_rate, max_sustainable - self.flock_head)
             self.flock_head = np.floor(self.flock_head + max(0, growth_amount))
@@ -797,7 +805,7 @@ class Household_Agent(mesa.Agent):
         elif ratio < 0.9:
             gap = 0.9 - ratio
             base_decline = 0.05 + (gap * 0.5)
-            stress_impact = 1 + (avg_stress / 20)
+            stress_impact = 1 + (pressure / 20)
             if self.flock_head < 100:
                 base_decline *= max(0.4, self.flock_head / 100)
             decline_rate = base_decline * stress_impact * self.random.uniform(0.8, 1.2)
