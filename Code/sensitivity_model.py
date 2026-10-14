@@ -750,8 +750,9 @@ class Household_Agent(mesa.Agent):
         surplus_deficit = threshold - self.surplus
         self.convert_livestock_to_surplus(surplus_deficit)
         if self.surplus <= 0 or self.flock_head < 15 or self.manpower <= 0:
+            # The successor inherits the surplus and herd; its manpower is set
+            # as for a new household, max(35, herd / 20) (Household_Agent.__init__).
             leftover_resources = {
-                'manpower': max(1, self.manpower),
                 'surplus': max(0, self.surplus),
                 'flock_head': max(0, self.flock_head)
             }
@@ -1008,7 +1009,6 @@ class NomadModel(mesa.Model):
             model=self,
             n=1,
             threshold=self.threshold,
-            manpower=resources['manpower'],
             surplus=resources['surplus'],
             flock_head=resources['flock_head'] + additional_flocks
         )
