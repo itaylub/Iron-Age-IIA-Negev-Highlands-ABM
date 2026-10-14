@@ -1012,19 +1012,9 @@ class NomadModel(mesa.Model):
             surplus=resources['surplus'],
             flock_head=resources['flock_head'] + additional_flocks
         )
-        agent = new_agents[0]
-        
-        # Even in fixed territory mode, if an agent is replaced (not just reset),
-        # we find a new valid location because the previous one was unsustainable.
-        # We temporarily place it to allow territory/suitability calculations.
-        temp_pos = (self.grid.width // 2, self.grid.height // 2)
-        self.grid.place_agent(agent, temp_pos)
-
-        # Override fixed_territory temporarily to ensure the new agent finds a home
-        original_fixed = self.fixed_territory
-        self.fixed_territory = False
-        agent.year_initiation()
-        self.fixed_territory = original_fixed
+        # The new household is placed once, with everyone else, in the
+        # shuffle_do("year_initiation") that follows in move_year. (Replacements
+        # are queued only outside fixed-territory mode.)
 
 
 def viz_map(model, suitability_raster, year, run_dir):
