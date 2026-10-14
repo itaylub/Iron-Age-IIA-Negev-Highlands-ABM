@@ -269,15 +269,10 @@ def eval_neighborhood(model, x, y, household, radius, n):
     return eval_env
 
 
-def overlap_territory(model, current_agent, nbr):
-    for territory in model.territories:
-        if current_agent.territory is not None and territory == current_agent.territory:
-            continue
-        intersection = set(nbr).intersection(set(territory))
-        overlap_state = len(intersection) / len(nbr)
-        if overlap_state > 0.25:
-            return True
-    return False
+def overlap_territory(nbr, taken):
+    """Share of the candidate area's cells (nbr) that lie in `taken`, the union
+    of the territories already set this year (model.territories)."""
+    return sum(cell in taken for cell in nbr) / len(nbr)
 
 
 def place_household(model, current_agent, suitability_raster):
@@ -304,13 +299,22 @@ def place_household(model, current_agent, suitability_raster):
                     model.place_raster[y, x] == 1):
                 return x, mesa_y
 
-    x, y = get_valid_position()
-    nbr = model.grid.get_neighborhood((x, y), moore=True, include_center=False, radius=20)
-    while (overlap_territory(model, current_agent, nbr) and
-           eval_neighborhood(model, x, y, current_agent, 20, 35) < 1):
+    # Re-draw while the radius-20 candidate area is crowded (25% or more of its
+    # cells inside this year's other territories) or poor (capacity test below
+    # 1), for at most 100 draws. If no draw passes both tests, take the least
+    # crowded candidate, preferring those that pass the capacity test.
+    taken = set().union(*model.territories)
+    candidates = []
+    for _ in range(100):
         x, y = get_valid_position()
         nbr = model.grid.get_neighborhood((x, y), moore=True, include_center=False, radius=20)
-    return (x, y)
+        crowded_share = overlap_territory(nbr, taken)
+        poor = eval_neighborhood(model, x, y, current_agent, 20, 35) < 1
+        if crowded_share < 0.25 and not poor:
+            return (x, y)
+        candidates.append((poor, crowded_share, (x, y)))
+    poor, crowded_share, pos = min(candidates, key=lambda c: (c[0], c[1]))
+    return pos
 
 
 def place_members(model, current_agent, ter):
@@ -956,6 +960,9 @@ class NomadModel(mesa.Model):
     def move_year(self, inds):
         if not self.fixed_territory:
             self.reset_pos()
+        # Territories are set afresh each year; the overlap test in
+        # place_household counts only those already set this year.
+        self.territories = []
         # Runs longer than the data reuse the observed years: each further
         # cycle through them gets a new shuffle of the year order, appended
         # to inds in place (the caller passes the same list every year).
