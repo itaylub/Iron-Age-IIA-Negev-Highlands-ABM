@@ -371,16 +371,22 @@ def place_household(model, current_agent, suitability_raster):
 
 
 def place_members(model, current_agent, ter):
-    current_agent.update_own_suitability_raster()
-    own_suitability_raster = current_agent.own_suitability_raster
+    # Personalised values on the territory's cells only, read fresh for each
+    # family camp: the current shared surface (with this year's earlier
+    # degradation) + HM (home-range bonus and camp memory, built once a year,
+    # see update_own_suitability_raster) + the territory bonus, which is 2.5
+    # inside the territory. Negative values are clipped before cubing.
+    if current_agent.home_memory_bonus is None:
+        current_agent.update_own_suitability_raster()
+    home_memory = current_agent.home_memory_bonus
     ter = [cell for cell in ter if model.place_raster[to_numpy_y(model, cell[1]), cell[0]]]
     if not ter: return current_agent.pos
 
-    suitability_values = [
-        own_suitability_raster[to_numpy_y(model, cell[1]), cell[0]] for cell in ter
-    ]
+    cols = np.array([cell[0] for cell in ter])
+    rows = to_numpy_y(model, np.array([cell[1] for cell in ter]))
+    suitability_values = model.suitability_raster[rows, cols] + home_memory[rows, cols] + 2.5
 
-    prob_weights = np.array(suitability_values) ** 3
+    prob_weights = np.maximum(suitability_values, 0) ** 3
     prob_weights = np.nan_to_num(prob_weights, nan=0.0, posinf=0.0, neginf=0.0)
     total_weight = np.sum(prob_weights)
 
@@ -391,6 +397,9 @@ def place_members(model, current_agent, ter):
     prob /= prob.sum()
 
     selected_index = model.np_rng.choice(len(ter), p=prob)
+    # The new family camp joins this year's memory: -0.5 at its cell for the
+    # later draws, as the memory loop gives this year's camps.
+    home_memory[rows[selected_index], cols[selected_index]] -= 0.5
     return ter[selected_index]
 
 
@@ -557,6 +566,8 @@ class Household_Agent(mesa.Agent):
         self.enc_memory = []
         self.threshold = threshold
         self.own_suitability_raster = None
+        self.home_memory_bonus = None
+        self.last_camp = None
         self.prosperity_index = None
         self.env_quality = None
 
@@ -643,13 +654,16 @@ class Household_Agent(mesa.Agent):
 
     def year_initiation(self):
         self.own_suitability_raster = None
+        self.home_memory_bonus = None
         self.memory = [i for i in self.memory if (self.model.year - i[2]) * self.random.random() < 15]
+        # Home-range centre: the first camp, then moved toward last year's camp
+        # (kept by reset_pos, since Mesa's remove_agent sets pos to None).
         if self.general_territory_center is None:
-            self.general_territory_center = self.pos
+            self.general_territory_center = self.last_camp
         else:
             self.general_territory_center = (
-                0.9 * self.general_territory_center[0] + 0.1 * self.pos[0],
-                0.9 * self.general_territory_center[1] + 0.1 * self.pos[1]
+                0.9 * self.general_territory_center[0] + 0.1 * self.last_camp[0],
+                0.9 * self.general_territory_center[1] + 0.1 * self.last_camp[1]
             )
         mesa_x, mesa_y = place_household(self.model, self, self.model.suitability_raster)
         self.model.grid.place_agent(self, (mesa_x, mesa_y))
@@ -957,38 +971,49 @@ class Household_Agent(mesa.Agent):
         return selected_cell
 
     def update_own_suitability_raster(self):
-        if self.own_suitability_raster is None:
-            self.own_suitability_raster = self.model.suitability_raster.copy()
+        """Personalised surface for the main-camp draw, built once a year.
+
+        own_suitability_raster = the current shared surface + HM + T, each
+        bonus once. HM (home-range bonus and camp memory) is kept in
+        home_memory_bonus for the family-camp draws (place_members), which add
+        it and the territory bonus to the shared surface on the territory's
+        cells only. T is the bonus around last year's territory.
+        """
+        shape = self.model.suitability_raster.shape
+        home_memory = np.zeros(shape)
         if self.general_territory_center:
             center_x, center_y = self.general_territory_center
             center_numpy_y = to_numpy_y(self.model, center_y)
             center_numpy_x = center_x
-            Y, X = np.ogrid[:self.model.suitability_raster.shape[0], :self.model.suitability_raster.shape[1]]
+            Y, X = np.ogrid[:shape[0], :shape[1]]
             dist_from_center = np.sqrt((X - center_numpy_x) ** 2 + (Y - center_numpy_y) ** 2)
             sigma = 50
             pull_strength = 5.0
             territory_bias = pull_strength * np.exp(- (dist_from_center ** 2) / (2 * sigma ** 2))
-            self.own_suitability_raster += territory_bias
+            home_memory += territory_bias
+        if self.memory:
+            for (x, y), value, year in self.memory:
+                numpy_cell = (to_numpy_y(self.model, y), x)
+                diff_y = self.model.year - year
+                if diff_y == 0:
+                    home_memory[numpy_cell] -= 0.5
+                else:
+                    time_factor = 1 / (diff_y ** 0.5)
+                    if value >= 5:
+                        home_memory[numpy_cell] += value * time_factor * 0.5
+                    elif value > 0:
+                        # Penalty capped at 5 x w: q counts as no lower than 0.1
+                        home_memory[numpy_cell] -= (1 / max(value, 0.1)) * time_factor * 0.5
+        self.home_memory_bonus = home_memory
+        self.own_suitability_raster = self.model.suitability_raster + home_memory
         if self.territory:
-            territory_mask = np.zeros_like(self.own_suitability_raster, dtype=bool)
+            territory_mask = np.zeros(shape, dtype=bool)
             for x, y in self.territory:
                 numpy_y = to_numpy_y(self.model, y)
                 territory_mask[numpy_y, x] = True
             distances = distance_transform_edt(~territory_mask)
             adjustment = np.where(distances <= 20, 2.5 / (distances + 1), 0)
             self.own_suitability_raster += adjustment
-        if self.memory:
-            for (x, y), value, year in self.memory:
-                numpy_cell = (to_numpy_y(self.model, y), x)
-                diff_y = self.model.year - year
-                if diff_y == 0:
-                    self.own_suitability_raster[numpy_cell] -= 0.5
-                else:
-                    time_factor = 1 / (diff_y ** 0.5)
-                    if value >= 5:
-                        self.own_suitability_raster[numpy_cell] += value * time_factor * 0.5
-                    elif value > 0:
-                        self.own_suitability_raster[numpy_cell] -= (1 / value) * time_factor * 0.5
 
 
 class NomadModel(mesa.Model):
@@ -1094,6 +1119,7 @@ class NomadModel(mesa.Model):
 
     def reset_pos(self):
         for agent in self.agents:
+            agent.last_camp = agent.pos  # for the home-range centre in year_initiation
             self.grid.remove_agent(agent)
 
     def create_replacement_agent(self, resources):
