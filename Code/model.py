@@ -611,6 +611,10 @@ class Household_Agent(mesa.Agent):
         if self.surplus < 10:
             survived = self.handle_survival_crisis(threshold=10)
             if not survived:
+                # Mesa's remove() deregisters the household but leaves it on
+                # the grid, where its cell would stay occupied for the rest of
+                # the run (eval_neighborhood), so take it off the grid first.
+                self.model.grid.remove_agent(self)
                 self.remove()
                 return
         if self.surplus > 80 and self.flock_head < 600:

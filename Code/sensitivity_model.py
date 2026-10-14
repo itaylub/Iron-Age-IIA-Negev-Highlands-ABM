@@ -523,8 +523,11 @@ class Household_Agent(mesa.Agent):
                 else:
                     if self.territory in self.model.territories:
                         self.model.territories.remove(self.territory)
+                    # Off the grid, then deregistered with Mesa's remove(), which
+                    # also takes it out of agents_by_type (used by shuffle_do);
+                    # model.agents.remove(self) left it acting every year.
                     self.model.grid.remove_agent(self)
-                    self.model.agents.remove(self)
+                    self.remove()
                     return
         if self.surplus > 80 and self.flock_head < 600:
             investment_amount = min(self.surplus * 0.2, 40)
