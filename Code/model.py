@@ -273,6 +273,16 @@ def pasture_val(model, current_pos, r):
     return np.sum(window)
 
 
+def pasture_layer(year_data):
+    """Pasture for the herds: yearly array 2 (vegetation x the year's rainfall).
+
+    No-data cells (-inf and the -1.8e308 fill value, found in group 74) are
+    set to 0, i.e. no pasture.
+    """
+    pasture = np.nan_to_num(year_data[2], nan=0.0, posinf=0.0, neginf=0.0)
+    return np.maximum(pasture, 0.0)
+
+
 def set_camp(agent):
     x, y = agent.pos
     agent.surplus -= 1
@@ -995,8 +1005,8 @@ class NomadModel(mesa.Model):
 
         # Access lazy data
         year_0_data = y_output[inds[0]]
-        self.veg_ras = year_0_data[0]
-        self.veg_map = year_0_data[0]
+        self.veg_ras = pasture_layer(year_0_data)
+        self.veg_map = self.veg_ras
         self.ag_ras = year_0_data[1]
 
         self.stress_ras = stress_ras
@@ -1044,7 +1054,7 @@ class NomadModel(mesa.Model):
         self.ras_control.append(self.suitability_raster.copy())
 
         current_year_data = self.y_output[inds[self.year]]
-        self.veg_ras = current_year_data[0]
+        self.veg_ras = pasture_layer(current_year_data)
         self.ag_ras = current_year_data[1]
 
         self.stress_ras = stress_ras

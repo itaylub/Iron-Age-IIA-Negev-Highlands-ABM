@@ -106,6 +106,17 @@ Notes:
   int(x.split('_')[1]))` — so the order matters, not the names.
 - The current (`_10_25`) file has 3 arrays per group; the legacy file
   has 4. The model code only uses the first three positions.
+- Roles of the three arrays in each year:
+  - `array_0`: the year's rainfall membership, the annual-rainfall
+    layer of the suitability surface (`Yearly_rain` weight).
+  - `array_1`: agricultural potential (`ag_ras`).
+  - `array_2`: pasture, the permanent vegetation layer times the
+    year's rainfall (about `veg_fit × array_0 / 10`). The model reads
+    it as `veg_ras` for herd capacity and enclosure scoring
+    (`pasture_layer`).
+- `group_74`'s `array_2` has no-data cells (`-inf` and the
+  `-1.8 × 10³⁰⁸` fill value), 359 of them inside `ext_raster`; the
+  other groups are clean. `pasture_layer` sets them to 0 (no pasture).
 - All groups have identical structure (`sample_structurally_uniform =
   true`).
 
