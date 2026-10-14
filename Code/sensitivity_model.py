@@ -919,14 +919,9 @@ class NomadModel(mesa.Model):
             self.grid.place_agent(agent, (mesa_x, mesa_y))
             self.target_raster[to_numpy_y(self, agent.pos[1]), agent.pos[0]] += 0.5
 
-            current_env_value = env_mean_val(self, agent.pos, 20)
-            base_radius = 20
-            if current_env_value < 3.5:
-                territory_radius = base_radius + 10
-            elif current_env_value < 5.0:
-                territory_radius = base_radius + 5
-            else:
-                territory_radius = base_radius
+            # Year 0: fixed territory radius of 25, as in model.py
+            # (the 20/25/30 rule applies from Year 1, in year_initiation).
+            territory_radius = 25
 
             territory = self.grid.get_neighborhood((mesa_x, mesa_y), moore=True, include_center=True,
                                                    radius=territory_radius)
