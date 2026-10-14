@@ -749,7 +749,7 @@ class Household_Agent(mesa.Agent):
                 return True
         surplus_deficit = threshold - self.surplus
         self.convert_livestock_to_surplus(surplus_deficit)
-        if self.surplus < 0 or self.flock_head < 15 or self.manpower <= 0:
+        if self.surplus <= 0 or self.flock_head < 15 or self.manpower <= 0:
             leftover_resources = {
                 'manpower': max(1, self.manpower),
                 'surplus': max(0, self.surplus),
