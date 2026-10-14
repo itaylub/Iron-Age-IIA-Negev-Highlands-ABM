@@ -378,6 +378,7 @@ def Yi_params(year, accumulator, latest_output):
             y, x = np.ogrid[-radius_cells:radius_cells + 1, -radius_cells:radius_cells + 1]
             dist = np.sqrt(x * x + y * y)
             weights = 1.0 / np.power(dist + 1, 2)
+            weights[dist > radius_cells] = 0  # circular window of radius 20 cells
             CONV_KERNEL = weights / np.sum(weights)
         last_year_output = convolve2d(new_accumulator, CONV_KERNEL, mode='same', boundary='fill', fillvalue=0)
     else:
