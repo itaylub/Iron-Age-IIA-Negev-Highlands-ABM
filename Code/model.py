@@ -562,6 +562,7 @@ class Household_Agent(mesa.Agent):
         self.threshold = threshold
         self.own_suitability_raster = None
         self.prosperity_index = None
+        self.env_quality = None
 
     def step(self):
         self.update_flock_size()
@@ -573,6 +574,7 @@ class Household_Agent(mesa.Agent):
 
         current_env_value = env_mean_val(self.model, self.pos, 20)
         env_quality = current_env_value / 10.0
+        self.env_quality = env_quality  # Q, logged to check its range (item 9)
 
         denominator = self.manpower + 10 + herders
         if denominator > 0:
@@ -583,7 +585,7 @@ class Household_Agent(mesa.Agent):
         prosperity_index = (self.surplus / (denominator * 2)) * env_quality
         self.prosperity_index = copy.copy(prosperity_index)
         is_prosperous = prosperity_index > 0.6
-        if is_prosperous and self.model.year > 5:
+        if is_prosperous and self.model.year >= 4:
             if self.manpower >= 15 and self.surplus >= self.threshold:
                 if existing_enclosure:
                     xn, yn = existing_enclosure
@@ -802,6 +804,19 @@ class Household_Agent(mesa.Agent):
             decline_rate = min(decline_rate, 0.3)
             self.flock_head = np.floor(self.flock_head * (1 - decline_rate))
 
+    def cells_occupied_by_others(self):
+        """Cells other households occupy this year: their main and family camps
+        (this year's memory entries) and the compounds they have already reused
+        or built on this year."""
+        current_year = self.model.year
+        occupied = set()
+        for other in self.model.agents_by_type[Household_Agent]:
+            if other is not self:
+                occupied.update(entry[0] for entry in other.memory if entry[2] == current_year)
+        occupied.update(enc[0] for enc in self.model.enclosures
+                        if enc[1] == current_year and enc[2] is not self)
+        return occupied
+
     def find_recent_enclosure(self, r=20):
         recent_enclosures = []
         current_year = self.model.year
@@ -819,6 +834,10 @@ class Household_Agent(mesa.Agent):
             if in_range(enc[0], self.pos, territory_radius) and (current_year - enc[1]) < 25 and enc[1] != current_year:
                 score = (25 - (current_year - enc[1])) * 0.8
                 recent_enclosures.append((enc[0], score))
+
+        # Reuse only unoccupied compounds (Ch. 5 §5.3.3).
+        occupied = self.cells_occupied_by_others()
+        recent_enclosures = [(pos, score) for pos, score in recent_enclosures if pos not in occupied]
 
         enhanced_scores = []
         for pos, score in recent_enclosures:
@@ -1038,7 +1057,8 @@ class NomadModel(mesa.Model):
                                                             "surplus": "surplus",
                                                             "proseprity index": "prosperity_index",
                                                             "position": "pos",
-                                                            "enclosures": get_agent_enclosures
+                                                            "enclosures": get_agent_enclosures,
+                                                            "env_quality": "env_quality"
                                                             })
         self.datacollector.collect(self)
 
