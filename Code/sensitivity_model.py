@@ -209,17 +209,6 @@ def env_mean_val(model, current_pos, r):
     return sum(env_values) / len(env_values)
 
 
-def pasture_val(model, current_pos, r):
-    x, y = current_pos
-    numpy_y = to_numpy_y(model, y)
-    y_min = max(0, numpy_y - r)
-    y_max = min(model.veg_map.shape[0], numpy_y + r + 1)
-    x_min = max(0, x - r)
-    x_max = min(model.veg_map.shape[1], x + r + 1)
-    window = model.veg_map[y_min:y_max, x_min:x_max]
-    return np.sum(window)
-
-
 def territory_pasture(model, territory):
     """Mean pasture (veg_map) over the territory's cells, and their number."""
     cols = np.array([cell[0] for cell in territory])
@@ -543,10 +532,12 @@ class Household_Agent(mesa.Agent):
             self.buy_livestock_with_surplus(investment_amount)
         self.manpower = max(1, self.manpower + 10)
         self.manpower += herders
+        # Manpower drift: equal odds of gain and loss (0.3 each) at any size,
+        # keeping at least 1 person as above.
         if self.random.uniform(0, 1) > 0.7:
             self.manpower += math.ceil(5 * self.random.uniform(0, 1))
-        if self.manpower > 55 and self.random.uniform(0, 1) > 0.8:
-            self.manpower -= math.ceil(5 * self.random.uniform(0, 1))
+        if self.random.uniform(0, 1) > 0.7:
+            self.manpower = max(1, self.manpower - math.ceil(5 * self.random.uniform(0, 1)))
         if self.surplus > 100 and self.random.random() < 0.3: self.manpower += 1
         if self.surplus > 100:
             base_decay_rate = 0.05
@@ -621,35 +612,32 @@ class Household_Agent(mesa.Agent):
         ag_benefit = min(0.4, mean_ag_value * 0.04)
         base_need_per_person = 18 * (1 - ag_benefit)
         subsistence_need = self.manpower * base_need_per_person
-        env_value = pasture_val(self.model, self.pos, 25)
-        neighborhood = self.model.grid.get_neighborhood(
-            self.pos, moore=True, include_center=False, radius=25)
-        neighborhood_size = len(neighborhood)
-        avg_env_value = env_value / neighborhood_size if neighborhood_size > 0 else 0
+        # Capacity over the territory's cells, as in update_flock_size
+        avg_env_value, neighborhood_size = territory_pasture(self.model, self.territory)
         quality_factor = avg_env_value / 5.0
         carrying_capacity = neighborhood_size * 1.125 * quality_factor
         stress_ratio = max(0, 1 - (carrying_capacity / self.flock_head)) if self.flock_head > 0 else 0
         buffer_multiplier = 1.5
         stress_multiplier = 1 + (stress_ratio * 0.3)
         total_livestock_needed = subsistence_need * buffer_multiplier * stress_multiplier
-        if self.flock_head > 0:
-            non_cull_fraction = max(0, (self.flock_head - total_livestock_needed) / self.flock_head)
-        else:
-            non_cull_fraction = 0
-        productive_herd = max(0, self.flock_head - (subsistence_need * non_cull_fraction))
-        non_lethal_rate = 0.15
-        surplus_from_products = productive_herd * non_lethal_rate
         excess_livestock = max(0, self.flock_head - total_livestock_needed)
         culling_rate = 0.35
         cull_amount = excess_livestock * 0.8
         surplus_from_culling = cull_amount * culling_rate
+        # Productive herd: the herd left after culling (the whole herd at or
+        # below the working herd).
+        productive_herd = max(0, self.flock_head - cull_amount)
+        non_lethal_rate = 0.15
+        surplus_from_products = productive_herd * non_lethal_rate
         self.flock_head -= cull_amount
         total_surplus_generated = surplus_from_products + surplus_from_culling
         decay_rate = 0.3
         preserved_surplus = current_surplus * (1 - decay_rate)
         consumption_per_person = 1.2
         base_consumption = self.manpower * consumption_per_person
-        luxury_consumption = (preserved_surplus + total_surplus_generated) * 0.05
+        # Extra 5% consumption only when the available surplus is abundant (above 100)
+        available_surplus = preserved_surplus + total_surplus_generated
+        luxury_consumption = available_surplus * 0.05 if available_surplus > 100 else 0
         total_consumption = base_consumption + luxury_consumption
         final_surplus = preserved_surplus + total_surplus_generated - total_consumption
         max_surplus_cap = 200 + (self.manpower * 2.5)
