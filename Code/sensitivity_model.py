@@ -934,6 +934,13 @@ class NomadModel(mesa.Model):
     def move_year(self, inds):
         if not self.fixed_territory:
             self.reset_pos()
+        # Runs longer than the data reuse the observed years: each further
+        # cycle through them gets a new shuffle of the year order, appended
+        # to inds in place (the caller passes the same list every year).
+        if self.year >= len(inds):
+            next_cycle = list(range(len(self.y_output)))
+            random.shuffle(next_cycle)
+            inds.extend(next_cycle)
         self.suitability_raster, self.return_raster, stress_ras = get_suitability_raster(
             self.y_output, inds, self.year, self.weights, accumulator=self.return_raster,
             latest_output=self.yearly_outputs[-1])
