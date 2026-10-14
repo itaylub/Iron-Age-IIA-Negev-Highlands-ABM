@@ -238,6 +238,7 @@ def get_degrade_kernel(r, d_factor):
     y, x = np.ogrid[-r:r + 1, -r:r + 1]
     dist = (np.abs(x) + np.abs(y)) / 2.0
     kernel = d_factor / (dist + 0.001)
+    kernel[r, r] = 0  # D does not act at the camp cell, which loses only P (env_degrade)
     KERNEL_CACHE[key] = kernel
     return kernel
 
