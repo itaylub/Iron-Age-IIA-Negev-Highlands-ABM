@@ -849,8 +849,10 @@ class Household_Agent(mesa.Agent):
 
 class NomadModel(mesa.Model):
     def __init__(self, suitability_raster, return_raster, stress_ras, inds, place_raster=None, ras_w=None,
-                 y_output=None, num_agents=None, fixed_territory=False):
-        super().__init__()
+                 y_output=None, num_agents=None, fixed_territory=False, seed=None):
+        # The seed also seeds Mesa's own generator (self.random), which sets
+        # the household order in shuffle_do; without it that order is unseeded.
+        super().__init__(seed=seed)
         if num_agents is not None:
             self.num_agents = num_agents
         else:
@@ -1154,7 +1156,7 @@ def run_model_opt(model_years, ras_wts, main_run_directory, trial_number, iterat
         y_output_data, inds, year=0, weights=ras_wts
     )
     model = NomadModel(suitability_raster, return_raster, stress_ras, inds, ras_w=ras_wts, y_output=y_output_data,
-                       num_agents=num_agents, fixed_territory=fixed_territory)
+                       num_agents=num_agents, fixed_territory=fixed_territory, seed=seed)
     plot_y = [10, 20, 30, 40, 50, 60, 70]
     try:
         for i in range(model_years):
