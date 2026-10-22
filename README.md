@@ -2,6 +2,8 @@
 
 [![Software DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21336898.svg)](https://doi.org/10.5281/zenodo.21336898)
 [![Data DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20473345.svg)](https://doi.org/10.5281/zenodo.20473345)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/itaylub/Iron-Age-IIA-Negev-Highlands-ABM/blob/master/Code/calibration.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/itaylub/Iron-Age-IIA-Negev-Highlands-ABM/master?labpath=Code%2Fcalibration.ipynb)
 
 *Two Zenodo archives: the **software** (this code) and the **input data**.*
 

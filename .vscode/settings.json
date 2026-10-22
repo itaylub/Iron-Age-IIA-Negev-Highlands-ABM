@@ -1,0 +1,10 @@
+{
+  "notebook.diff.ignoreOutputs": true,
+  "notebook.diff.ignoreMetadata": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true
+  },
+  "notebook.formatOnSave.enabled": true,
+  "jupyter.interactiveWindow.textEditor.executeSelection": true
+}
