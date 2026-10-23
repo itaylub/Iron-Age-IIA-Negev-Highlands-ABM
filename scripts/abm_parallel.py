@@ -44,6 +44,11 @@ def set_environment(results_dir):
     # The input files are only read. Without this, HDF5 file locking can
     # refuse a second process opening the same file.
     os.environ.setdefault("HDF5_USE_FILE_LOCKING", "FALSE")
+    # The model runs numpy single-threaded anyway (model.py). With Intel
+    # MKL, the sequential layer also avoids loading the OpenMP/TBB
+    # threading DLLs, whose mismatch crashed np.cov on the PC
+    # (Windows code 0xc06d007f). Must be set before numpy is imported.
+    os.environ.setdefault("MKL_THREADING_LAYER", "SEQUENTIAL")
     # Draw figures to files only; no window system in worker processes.
     os.environ.setdefault("MPLBACKEND", "Agg")
     # GDAL and PROJ data folders. A pixi or conda shell sets these when it
