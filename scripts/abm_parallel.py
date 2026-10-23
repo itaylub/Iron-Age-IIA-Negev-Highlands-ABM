@@ -40,6 +40,25 @@ def set_environment(results_dir):
     # The input files are only read. Without this, HDF5 file locking can
     # refuse a second process opening the same file.
     os.environ.setdefault("HDF5_USE_FILE_LOCKING", "FALSE")
+    # Draw figures to files only; no window system in worker processes.
+    os.environ.setdefault("MPLBACKEND", "Agg")
+    # GDAL and PROJ data folders. A pixi or conda shell sets these when it
+    # activates; starting python.exe directly does not. Look for them in
+    # the environment Python runs from.
+    _set_data_dir("GDAL_DATA", ["Library/share/gdal", "share/gdal"], "header.dxf")
+    _set_data_dir("PROJ_DATA", ["Library/share/proj", "share/proj"], "proj.db")
+    if os.environ.get("PROJ_DATA"):
+        os.environ.setdefault("PROJ_LIB", os.environ["PROJ_DATA"])
+
+
+def _set_data_dir(var, candidates, marker):
+    if os.environ.get(var):
+        return
+    for rel in candidates:
+        path = os.path.join(sys.prefix, *rel.split("/"))
+        if os.path.exists(os.path.join(path, marker)):
+            os.environ[var] = path
+            return
 
 
 def import_model():
