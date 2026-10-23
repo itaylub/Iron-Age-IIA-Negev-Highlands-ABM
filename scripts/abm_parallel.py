@@ -8,8 +8,12 @@ Import ``model`` only through ``import_model()``, after the results
 folder has been set, because ``model.RESULTS_DIR`` is read at import.
 """
 
+import faulthandler
 import os
 import sys
+
+# If a compiled library (GDAL, PROJ, HDF5) crashes Python, print where.
+faulthandler.enable()
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CODE_DIR = os.path.join(REPO_ROOT, "Code")

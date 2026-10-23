@@ -73,7 +73,9 @@ def run_one(task):
         t_model = time.perf_counter() - t0
         say(f"    replicate {seed}: model done in {t_model / 60:.1f} min; scoring ...")
         gdf_real = gpd.read_file(model.CALIB_SHP_PATH)
+        say(f"    replicate {seed}: read the sites shapefile ({len(gdf_real)} sites)")
         gdf_model = model.to_gdf(sim)
+        say(f"    replicate {seed}: built the simulated sites ({len(gdf_model)} cells)")
         score, _ = model.obj_func(gdf_real, gdf_model, run_dir)
         total = time.perf_counter() - t0
         say(f"    replicate {seed}: scored {float(score):.3f}, {total / 60:.1f} min in all")
