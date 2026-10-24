@@ -1,9 +1,8 @@
-"""nomad_abm.sensitivity
+"""sensitivity_model
 
-Variant of :mod:`nomad_abm.model` used for sensitivity analysis.
+Variant of ``Code/model.py`` used for the sensitivity analysis.
 Supports variable agent counts and fixed-territory modes.
-``Code/model_opt_sensitivity.py`` is a backwards-compatibility shim that
-re-exports the symbols defined here.
+``Code/sensitivity_analysis.ipynb`` imports it as ``sensitivity_model``.
 """
 
 import os
@@ -17,7 +16,6 @@ os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
 import numpy as np
 import h5py
-import random
 import copy
 import math
 import json
@@ -191,6 +189,7 @@ def get_degrade_kernel(r, d_factor):
     y, x = np.ogrid[-r:r + 1, -r:r + 1]
     dist = (np.abs(x) + np.abs(y)) / 2.0
     kernel = d_factor / (dist + 0.001)
+    kernel[r, r] = 0  # D does not act at the camp cell, which loses only P (env_degrade)
     KERNEL_CACHE[key] = kernel
     return kernel
 
@@ -211,15 +210,21 @@ def env_mean_val(model, current_pos, r):
     return sum(env_values) / len(env_values)
 
 
-def pasture_val(model, current_pos, r):
-    x, y = current_pos
-    numpy_y = to_numpy_y(model, y)
-    y_min = max(0, numpy_y - r)
-    y_max = min(model.veg_map.shape[0], numpy_y + r + 1)
-    x_min = max(0, x - r)
-    x_max = min(model.veg_map.shape[1], x + r + 1)
-    window = model.veg_map[y_min:y_max, x_min:x_max]
-    return np.sum(window)
+def territory_pasture(model, territory):
+    """Mean pasture (veg_map) over the territory's cells, and their number."""
+    cols = np.array([cell[0] for cell in territory])
+    rows = to_numpy_y(model, np.array([cell[1] for cell in territory]))
+    return float(np.mean(model.veg_map[rows, cols])), len(territory)
+
+
+def pasture_layer(year_data):
+    """Pasture for the herds: yearly array 2 (vegetation x the year's rainfall).
+
+    No-data cells (-inf and the -1.8e308 fill value, found in group 74) are
+    set to 0, i.e. no pasture.
+    """
+    pasture = np.nan_to_num(year_data[2], nan=0.0, posinf=0.0, neginf=0.0)
+    return np.maximum(pasture, 0.0)
 
 
 def set_camp(agent):
@@ -261,15 +266,10 @@ def eval_neighborhood(model, x, y, household, radius, n):
     return eval_env
 
 
-def overlap_territory(model, current_agent, nbr):
-    for territory in model.territories:
-        if current_agent.territory is not None and territory == current_agent.territory:
-            continue
-        intersection = set(nbr).intersection(set(territory))
-        overlap_state = len(intersection) / len(nbr)
-        if overlap_state > 0.25:
-            return True
-    return False
+def overlap_territory(nbr, taken):
+    """Share of the candidate area's cells (nbr) that lie in `taken`, the union
+    of the territories already set this year (model.territories)."""
+    return sum(cell in taken for cell in nbr) / len(nbr)
 
 
 def place_household(model, current_agent, suitability_raster):
@@ -286,7 +286,7 @@ def place_household(model, current_agent, suitability_raster):
 
     def get_valid_position():
         while True:
-            random_index = np.random.choice(np.arange(len(prob)), p=prob)
+            random_index = model.np_rng.choice(np.arange(len(prob)), p=prob)
             y, x = np.unravel_index(random_index, suitability_raster.shape)
             mesa_y = suitability_raster.shape[0] - y - 1
             if (20 <= x < model.grid.width - 20 and
@@ -296,24 +296,39 @@ def place_household(model, current_agent, suitability_raster):
                     model.place_raster[y, x] == 1):
                 return x, mesa_y
 
-    x, y = get_valid_position()
-    nbr = model.grid.get_neighborhood((x, y), moore=True, include_center=False, radius=20)
-    while (overlap_territory(model, current_agent, nbr) and
-           eval_neighborhood(model, x, y, current_agent, 20, 35) < 1):
+    # Re-draw while the radius-20 candidate area is crowded (25% or more of its
+    # cells inside this year's other territories) or poor (capacity test below
+    # 1), for at most 100 draws. If no draw passes both tests, take the least
+    # crowded candidate, preferring those that pass the capacity test.
+    taken = set().union(*model.territories)
+    candidates = []
+    for _ in range(100):
         x, y = get_valid_position()
         nbr = model.grid.get_neighborhood((x, y), moore=True, include_center=False, radius=20)
-    return (x, y)
+        crowded_share = overlap_territory(nbr, taken)
+        poor = eval_neighborhood(model, x, y, current_agent, 20, 35) < 1
+        if crowded_share < 0.25 and not poor:
+            return (x, y)
+        candidates.append((poor, crowded_share, (x, y)))
+    poor, crowded_share, pos = min(candidates, key=lambda c: (c[0], c[1]))
+    return pos
 
 
 def place_members(model, current_agent, ter):
-    current_agent.update_own_suitability_raster()
-    own_suitability_raster = current_agent.own_suitability_raster
+    # Personalised values on the territory's cells only, read fresh for each
+    # family camp: the current shared surface (with this year's earlier
+    # degradation) + HM (home-range bonus and camp memory, built once a year,
+    # see update_own_suitability_raster) + the territory bonus, which is 2.5
+    # inside the territory. Negative values are clipped before cubing.
+    if current_agent.home_memory_bonus is None:
+        current_agent.update_own_suitability_raster()
+    home_memory = current_agent.home_memory_bonus
     ter = [cell for cell in ter if model.place_raster[to_numpy_y(model, cell[1]), cell[0]]]
     if not ter: return current_agent.pos
-    suitability_values = [
-        own_suitability_raster[to_numpy_y(model, cell[1]), cell[0]] for cell in ter
-    ]
-    prob_weights = np.array(suitability_values) ** 3
+    cols = np.array([cell[0] for cell in ter])
+    rows = to_numpy_y(model, np.array([cell[1] for cell in ter]))
+    suitability_values = model.suitability_raster[rows, cols] + home_memory[rows, cols] + 2.5
+    prob_weights = np.maximum(suitability_values, 0) ** 3
     prob_weights = np.nan_to_num(prob_weights, nan=0.0, posinf=0.0, neginf=0.0)
     total_weight = np.sum(prob_weights)
     if total_weight > 0:
@@ -321,7 +336,10 @@ def place_members(model, current_agent, ter):
     else:
         prob = np.ones(len(ter)) / len(ter)
     prob /= prob.sum()
-    selected_index = np.random.choice(len(ter), p=prob)
+    selected_index = model.np_rng.choice(len(ter), p=prob)
+    # The new family camp joins this year's memory: -0.5 at its cell for the
+    # later draws, as the memory loop gives this year's camps.
+    home_memory[rows[selected_index], cols[selected_index]] -= 0.5
     return ter[selected_index]
 
 
@@ -361,6 +379,7 @@ def Yi_params(year, accumulator, latest_output):
             y, x = np.ogrid[-radius_cells:radius_cells + 1, -radius_cells:radius_cells + 1]
             dist = np.sqrt(x * x + y * y)
             weights = 1.0 / np.power(dist + 1, 2)
+            weights[dist > radius_cells] = 0  # circular window of radius 20 cells
             CONV_KERNEL = weights / np.sum(weights)
         last_year_output = convolve2d(new_accumulator, CONV_KERNEL, mode='same', boundary='fill', fillvalue=0)
     else:
@@ -417,13 +436,27 @@ def get_suitability_raster(y_output, indices, year, weights, accumulator=None, l
     return suitability_raster, new_accumulator, yi_hu_stressed_z
 
 
+def run_generators(seed):
+    """Numpy random generators for one run, both derived from its seed.
+
+    Returns (year_rng, draw_rng), two independent generators: year_rng
+    shuffles the order of the rainfall years, draw_rng is the model's own
+    generator for numpy draws (camp cells, NomadModel.np_rng). Python-level
+    draws use Mesa's model.random, seeded with the same seed. A run thus
+    shares no random state with other runs in the same process, such as
+    Optuna trials in parallel threads. seed=None draws fresh entropy.
+    """
+    year_seq, draw_seq = np.random.SeedSequence(seed).spawn(2)
+    return np.random.default_rng(year_seq), np.random.default_rng(draw_seq)
+
+
 class Household_Agent(mesa.Agent):
     def __init__(self, model, threshold, manpower=None, surplus=None, flock_head=None):
         super().__init__(model)
         if flock_head is None:
             self.flock_head = 0
             for _ in range(10):
-                flock_n = np.floor(random.gauss(105, 15))
+                flock_n = np.floor(self.random.gauss(105, 15))
                 self.flock_head += flock_n
         else:
             self.flock_head = flock_head
@@ -441,7 +474,10 @@ class Household_Agent(mesa.Agent):
         self.enc_memory = []
         self.threshold = threshold
         self.own_suitability_raster = None
+        self.home_memory_bonus = None
+        self.last_camp = None
         self.prosperity_index = None
+        self.env_quality = None
         self.territory_radius = 25
 
     def step(self):
@@ -453,6 +489,7 @@ class Household_Agent(mesa.Agent):
         existing_enclosure = self.find_recent_enclosure()
         current_env_value = env_mean_val(self.model, self.pos, 20)
         env_quality = current_env_value / 10.0
+        self.env_quality = env_quality  # Q, logged to check its range (item 9)
         denominator = self.manpower + 10 + herders
         if denominator > 0:
             surplus_ratio = self.surplus / denominator
@@ -461,7 +498,7 @@ class Household_Agent(mesa.Agent):
         prosperity_index = (self.surplus / (denominator * 2)) * env_quality
         self.prosperity_index = copy.copy(prosperity_index)
         is_prosperous = prosperity_index > 0.6
-        if is_prosperous and self.model.year > 5:
+        if is_prosperous and self.model.year >= 4:
             if self.manpower >= 15 and self.surplus >= self.threshold:
                 if existing_enclosure:
                     xn, yn = existing_enclosure
@@ -490,26 +527,31 @@ class Household_Agent(mesa.Agent):
             if not survived:
                 if self.model.fixed_territory:
                     # In fixed territory mode, we "reset" the agent instead of removing it
-                    self.flock_head = sum(np.floor(random.gauss(105, 15)) for _ in range(10))
+                    self.flock_head = sum(np.floor(self.random.gauss(105, 15)) for _ in range(10))
                     self.manpower = max(35, np.floor(self.flock_head / 20))
                     self.surplus = 10
                     self.year_initiation()
                 else:
                     if self.territory in self.model.territories:
                         self.model.territories.remove(self.territory)
+                    # Off the grid, then deregistered with Mesa's remove(), which
+                    # also takes it out of agents_by_type (used by shuffle_do);
+                    # model.agents.remove(self) left it acting every year.
                     self.model.grid.remove_agent(self)
-                    self.model.agents.remove(self)
+                    self.remove()
                     return
         if self.surplus > 80 and self.flock_head < 600:
             investment_amount = min(self.surplus * 0.2, 40)
             self.buy_livestock_with_surplus(investment_amount)
         self.manpower = max(1, self.manpower + 10)
         self.manpower += herders
-        if random.uniform(0, 1) > 0.7:
-            self.manpower += math.ceil(5 * random.uniform(0, 1))
-        if self.manpower > 55 and random.uniform(0, 1) > 0.8:
-            self.manpower -= math.ceil(5 * random.uniform(0, 1))
-        if self.surplus > 100 and random.random() < 0.3: self.manpower += 1
+        # Manpower drift: equal odds of gain and loss (0.3 each) at any size,
+        # keeping at least 1 person as above.
+        if self.random.uniform(0, 1) > 0.7:
+            self.manpower += math.ceil(5 * self.random.uniform(0, 1))
+        if self.random.uniform(0, 1) > 0.7:
+            self.manpower = max(1, self.manpower - math.ceil(5 * self.random.uniform(0, 1)))
+        if self.surplus > 100 and self.random.random() < 0.3: self.manpower += 1
         if self.surplus > 100:
             base_decay_rate = 0.05
             scaling_factor = 0.001 * (self.surplus - 100)
@@ -523,7 +565,8 @@ class Household_Agent(mesa.Agent):
 
     def year_initiation(self):
         self.own_suitability_raster = None
-        self.memory = [i for i in self.memory if (self.model.year - i[2]) * random.random() < 15]
+        self.home_memory_bonus = None
+        self.memory = [i for i in self.memory if (self.model.year - i[2]) * self.random.random() < 15]
 
         if self.model.fixed_territory:
             if self.territory and self.territory not in self.model.territories:
@@ -538,12 +581,14 @@ class Household_Agent(mesa.Agent):
             self.memory.append([self.pos, env_mean_val(self.model, self.pos, self.territory_radius), self.model.year])
             return
 
+        # Home-range centre: the first camp, then moved toward last year's camp
+        # (kept by reset_pos, since Mesa's remove_agent sets pos to None).
         if self.general_territory_center is None:
-            self.general_territory_center = self.pos
+            self.general_territory_center = self.last_camp
         else:
             self.general_territory_center = (
-                0.9 * self.general_territory_center[0] + 0.1 * self.pos[0],
-                0.9 * self.general_territory_center[1] + 0.1 * self.pos[1]
+                0.9 * self.general_territory_center[0] + 0.1 * self.last_camp[0],
+                0.9 * self.general_territory_center[1] + 0.1 * self.last_camp[1]
             )
         mesa_x, mesa_y = place_household(self.model, self, self.model.suitability_raster)
         self.model.grid.place_agent(self, (mesa_x, mesa_y))
@@ -583,35 +628,32 @@ class Household_Agent(mesa.Agent):
         ag_benefit = min(0.4, mean_ag_value * 0.04)
         base_need_per_person = 18 * (1 - ag_benefit)
         subsistence_need = self.manpower * base_need_per_person
-        env_value = pasture_val(self.model, self.pos, 25)
-        neighborhood = self.model.grid.get_neighborhood(
-            self.pos, moore=True, include_center=False, radius=25)
-        neighborhood_size = len(neighborhood)
-        avg_env_value = env_value / neighborhood_size if neighborhood_size > 0 else 0
+        # Capacity over the territory's cells, as in update_flock_size
+        avg_env_value, neighborhood_size = territory_pasture(self.model, self.territory)
         quality_factor = avg_env_value / 5.0
         carrying_capacity = neighborhood_size * 1.125 * quality_factor
         stress_ratio = max(0, 1 - (carrying_capacity / self.flock_head)) if self.flock_head > 0 else 0
         buffer_multiplier = 1.5
         stress_multiplier = 1 + (stress_ratio * 0.3)
         total_livestock_needed = subsistence_need * buffer_multiplier * stress_multiplier
-        if self.flock_head > 0:
-            non_cull_fraction = max(0, (self.flock_head - total_livestock_needed) / self.flock_head)
-        else:
-            non_cull_fraction = 0
-        productive_herd = max(0, self.flock_head - (subsistence_need * non_cull_fraction))
-        non_lethal_rate = 0.15
-        surplus_from_products = productive_herd * non_lethal_rate
         excess_livestock = max(0, self.flock_head - total_livestock_needed)
         culling_rate = 0.35
         cull_amount = excess_livestock * 0.8
         surplus_from_culling = cull_amount * culling_rate
+        # Productive herd: the herd left after culling (the whole herd at or
+        # below the working herd).
+        productive_herd = max(0, self.flock_head - cull_amount)
+        non_lethal_rate = 0.15
+        surplus_from_products = productive_herd * non_lethal_rate
         self.flock_head -= cull_amount
         total_surplus_generated = surplus_from_products + surplus_from_culling
         decay_rate = 0.3
         preserved_surplus = current_surplus * (1 - decay_rate)
         consumption_per_person = 1.2
         base_consumption = self.manpower * consumption_per_person
-        luxury_consumption = (preserved_surplus + total_surplus_generated) * 0.05
+        # Extra 5% consumption only when the available surplus is abundant (above 100)
+        available_surplus = preserved_surplus + total_surplus_generated
+        luxury_consumption = available_surplus * 0.05 if available_surplus > 100 else 0
         total_consumption = base_consumption + luxury_consumption
         final_surplus = preserved_surplus + total_surplus_generated - total_consumption
         max_surplus_cap = 200 + (self.manpower * 2.5)
@@ -643,11 +685,8 @@ class Household_Agent(mesa.Agent):
         return 0
 
     def update_flock_size(self):
-        env_value = pasture_val(self.model, self.pos, 30)
-        neighborhood = self.model.grid.get_neighborhood(
-            self.pos, moore=True, include_center=False, radius=30)
-        neighborhood_size = len(neighborhood)
-        avg_env_value = env_value / neighborhood_size if neighborhood_size > 0 else 0
+        # Capacity over the territory's cells (Ch. 5 §5.3.2: n = cells in the territory)
+        avg_env_value, neighborhood_size = territory_pasture(self.model, self.territory)
         quality_factor = avg_env_value / 5.0
         goats_per_cell = 1.125 * quality_factor
         carrying_capacity = goats_per_cell * neighborhood_size
@@ -658,27 +697,44 @@ class Household_Agent(mesa.Agent):
             numpy_y = to_numpy_y(self.model, y)
             if 0 <= numpy_y < self.model.stress_ras.shape[0] and 0 <= x < self.model.stress_ras.shape[1]:
                 stress_values.append(self.model.stress_ras[numpy_y, x])
-        avg_stress = sum(stress_values) / len(stress_values) if stress_values else 0
-        stress_factor = 1 - min(0.5, avg_stress / 20)
+        avg_stress = sum(stress_values) / len(stress_values) if stress_values else 10
+        # stress_ras is 10 on unused ground and near 0 on heavily used ground,
+        # so use pressure = 10 - avg_stress: heavy use slows growth and speeds decline.
+        pressure = 10 - avg_stress
+        stress_factor = 1 - min(0.5, pressure / 20)
         small_flock_factor = 1.0
         if self.flock_head < 500:
             small_flock_factor = 2.0 - (self.flock_head / 500)
         if ratio > 1.1:
             max_growth_rate = 0.2 * stress_factor * small_flock_factor
             diminishing_factor = 1 - (self.flock_head / 1500)
-            growth_rate = max_growth_rate * diminishing_factor * min(ratio, 2.0) * random.uniform(0.7, 1.3)
+            growth_rate = max_growth_rate * diminishing_factor * min(ratio, 2.0) * self.random.uniform(0.7, 1.3)
+            growth_rate = min(growth_rate, 0.2)  # realised growth at most 20% a year
             max_sustainable = carrying_capacity * 1.2
             growth_amount = min(self.flock_head * growth_rate, max_sustainable - self.flock_head)
             self.flock_head = np.floor(self.flock_head + max(0, growth_amount))
         elif ratio < 0.9:
             gap = 0.9 - ratio
             base_decline = 0.05 + (gap * 0.5)
-            stress_impact = 1 + (avg_stress / 20)
+            stress_impact = 1 + (pressure / 20)
             if self.flock_head < 100:
                 base_decline *= max(0.4, self.flock_head / 100)
-            decline_rate = base_decline * stress_impact * random.uniform(0.8, 1.2)
+            decline_rate = base_decline * stress_impact * self.random.uniform(0.8, 1.2)
             decline_rate = min(decline_rate, 0.3)
             self.flock_head = np.floor(self.flock_head * (1 - decline_rate))
+
+    def cells_occupied_by_others(self):
+        """Cells other households occupy this year: their main and family camps
+        (this year's memory entries) and the compounds they have already reused
+        or built on this year."""
+        current_year = self.model.year
+        occupied = set()
+        for other in self.model.agents_by_type[Household_Agent]:
+            if other is not self:
+                occupied.update(entry[0] for entry in other.memory if entry[2] == current_year)
+        occupied.update(enc[0] for enc in self.model.enclosures
+                        if enc[1] == current_year and enc[2] is not self)
+        return occupied
 
     def find_recent_enclosure(self, r=20):
         recent_enclosures = []
@@ -696,17 +752,20 @@ class Household_Agent(mesa.Agent):
             if in_range(enc[0], self.pos, territory_radius) and (current_year - enc[1]) < 25 and enc[1] != current_year:
                 score = (25 - (current_year - enc[1])) * 0.8
                 recent_enclosures.append((enc[0], score))
+        # Reuse only unoccupied compounds (Ch. 5 §5.3.3).
+        occupied = self.cells_occupied_by_others()
+        recent_enclosures = [(pos, score) for pos, score in recent_enclosures if pos not in occupied]
         enhanced_scores = []
         for pos, score in recent_enclosures:
             x, y = pos
             veg_value = self.model.veg_ras[to_numpy_y(self.model, y), x]
             ag_value = self.model.ag_ras[to_numpy_y(self.model, y), x]
             env_factor = 1.0 + ((veg_value * 0.02) + (ag_value * 0.02))
-            final_score = score * env_factor * random.uniform(0.8, 1.2)
+            final_score = score * env_factor * self.random.uniform(0.8, 1.2)
             enhanced_scores.append((pos, final_score))
         if not enhanced_scores:
             return None
-        selected_idx = random.choices(
+        selected_idx = self.random.choices(
             range(len(enhanced_scores)),
             weights=[s[1] for s in enhanced_scores],
             k=1
@@ -723,15 +782,19 @@ class Household_Agent(mesa.Agent):
                 return True
         surplus_deficit = threshold - self.surplus
         self.convert_livestock_to_surplus(surplus_deficit)
-        if self.surplus < 0 or self.flock_head < 15 or self.manpower <= 0:
+        if self.surplus <= 0 or self.flock_head < 15 or self.manpower <= 0:
+            # The successor inherits the surplus and herd; its manpower is set
+            # as for a new household, max(35, herd / 20) (Household_Agent.__init__).
             leftover_resources = {
-                'manpower': max(1, self.manpower),
                 'surplus': max(0, self.surplus),
                 'flock_head': max(0, self.flock_head)
             }
             if not hasattr(self.model, 'scheduled_new_agents'):
                 self.model.scheduled_new_agents = []
-            self.model.scheduled_new_agents.append(leftover_resources)
+            # In fixed-territory mode the household is reset in place (step),
+            # so no replacement is queued and the population stays constant.
+            if not self.model.fixed_territory:
+                self.model.scheduled_new_agents.append(leftover_resources)
             return False
         return True
 
@@ -752,7 +815,7 @@ class Household_Agent(mesa.Agent):
                 total_score = base_score * env_factor
                 ownership_bias = 1.5
                 final_score = total_score * ownership_bias
-                random_factor = random.uniform(0.9, 1.1)
+                random_factor = self.random.uniform(0.9, 1.1)
                 bst_cells.append([enc[0], final_score * random_factor])
         for enc_data in self.model.enclosures:
             enc_pos, enc_year, enc_owner = enc_data
@@ -766,7 +829,7 @@ class Household_Agent(mesa.Agent):
                     base_score = 10 - (age / 2)
                     env_factor = 1.0 + (veg_value * 0.02) + (ag_value * 0.02) + (suit_val * 0.02)
                     final_score = base_score * env_factor
-                    random_factor = random.uniform(0.7, 1.3)
+                    random_factor = self.random.uniform(0.7, 1.3)
                     bst_cells.append([enc_pos, final_score * random_factor])
         has_reuse_candidates = False
         if bst_cells:
@@ -774,9 +837,9 @@ class Household_Agent(mesa.Agent):
             if average_score > 8:
                 has_reuse_candidates = True
         if self.model.enclosures:
-            should_consider_new = not has_reuse_candidates or random.random() > 0.7
+            should_consider_new = not has_reuse_candidates or self.random.random() > 0.7
         else:
-            should_consider_new = random.random() > 0.4
+            should_consider_new = self.random.random() > 0.4
         if should_consider_new:
             for cell in nbr:
                 if any(e[0] == cell and (self.model.year - e[1]) < 25 for e in self.model.enclosures):
@@ -788,7 +851,7 @@ class Household_Agent(mesa.Agent):
                 env_score = (suit_val * 0.7) + (veg_value * 0.15) + (ag_value * 0.15)
                 if env_score > mean_val + 1:
                     base_score = env_score * 0.8
-                    random_factor = random.uniform(0.75, 1.25)
+                    random_factor = self.random.uniform(0.75, 1.25)
                     bst_cells.append([cell, base_score * random_factor])
         if not bst_cells:
             return self.pos
@@ -797,11 +860,11 @@ class Household_Agent(mesa.Agent):
             total_weight = sum(weights)
             if total_weight > 0:
                 normalized_weights = [w / total_weight for w in weights]
-                selected_idx = random.choices(range(len(bst_cells)), weights=normalized_weights, k=1)[0]
+                selected_idx = self.random.choices(range(len(bst_cells)), weights=normalized_weights, k=1)[0]
                 selected_cell = bst_cells[selected_idx][0]
             else:
                 if bst_cells:
-                    selected_idx = random.randint(0, len(bst_cells) - 1)
+                    selected_idx = self.random.randint(0, len(bst_cells) - 1)
                     selected_cell = bst_cells[selected_idx][0]
         return selected_cell
 
@@ -814,44 +877,59 @@ class Household_Agent(mesa.Agent):
         return agents
 
     def update_own_suitability_raster(self):
-        if self.own_suitability_raster is None:
-            self.own_suitability_raster = self.model.suitability_raster.copy()
+        """Personalised surface for the main-camp draw, built once a year.
+
+        own_suitability_raster = the current shared surface + HM + T, each
+        bonus once. HM (home-range bonus and camp memory) is kept in
+        home_memory_bonus for the family-camp draws (place_members), which add
+        it and the territory bonus to the shared surface on the territory's
+        cells only. T is the bonus around last year's territory.
+        """
+        shape = self.model.suitability_raster.shape
+        home_memory = np.zeros(shape)
         if self.general_territory_center:
             center_x, center_y = self.general_territory_center
             center_numpy_y = to_numpy_y(self.model, center_y)
             center_numpy_x = center_x
-            Y, X = np.ogrid[:self.model.suitability_raster.shape[0], :self.model.suitability_raster.shape[1]]
+            Y, X = np.ogrid[:shape[0], :shape[1]]
             dist_from_center = np.sqrt((X - center_numpy_x) ** 2 + (Y - center_numpy_y) ** 2)
             sigma = 50
             pull_strength = 5.0
             territory_bias = pull_strength * np.exp(- (dist_from_center ** 2) / (2 * sigma ** 2))
-            self.own_suitability_raster += territory_bias
+            home_memory += territory_bias
+        if self.memory:
+            for (x, y), value, year in self.memory:
+                numpy_cell = (to_numpy_y(self.model, y), x)
+                diff_y = self.model.year - year
+                if diff_y == 0:
+                    home_memory[numpy_cell] -= 0.5
+                else:
+                    time_factor = 1 / (diff_y ** 0.5)
+                    if value >= 5:
+                        home_memory[numpy_cell] += value * time_factor * 0.5
+                    elif value > 0:
+                        # Penalty capped at 5 x w: q counts as no lower than 0.1
+                        home_memory[numpy_cell] -= (1 / max(value, 0.1)) * time_factor * 0.5
+        self.home_memory_bonus = home_memory
+        self.own_suitability_raster = self.model.suitability_raster + home_memory
         if self.territory:
-            territory_mask = np.zeros_like(self.own_suitability_raster, dtype=bool)
+            territory_mask = np.zeros(shape, dtype=bool)
             for x, y in self.territory:
                 numpy_y = to_numpy_y(self.model, y)
                 territory_mask[numpy_y, x] = True
             distances = distance_transform_edt(~territory_mask)
             adjustment = np.where(distances <= 20, 2.5 / (distances + 1), 0)
             self.own_suitability_raster += adjustment
-        if self.memory:
-            for (x, y), value, year in self.memory:
-                numpy_cell = (to_numpy_y(self.model, y), x)
-                diff_y = self.model.year - year
-                if diff_y == 0:
-                    self.own_suitability_raster[numpy_cell] -= 0.5
-                else:
-                    time_factor = 1 / (diff_y ** 0.5)
-                    if value >= 5:
-                        self.own_suitability_raster[numpy_cell] += value * time_factor * 0.5
-                    elif value > 0:
-                        self.own_suitability_raster[numpy_cell] -= (1 / value) * time_factor * 0.5
 
 
 class NomadModel(mesa.Model):
     def __init__(self, suitability_raster, return_raster, stress_ras, inds, place_raster=None, ras_w=None,
-                 y_output=None, num_agents=None, fixed_territory=False):
-        super().__init__()
+                 y_output=None, num_agents=None, fixed_territory=False, seed=None, np_rng=None):
+        # The seed also seeds Mesa's own generator (self.random), which sets
+        # the household order in shuffle_do; without it that order is unseeded.
+        # All Python-level draws use self.random, all numpy draws self.np_rng.
+        super().__init__(seed=seed)
+        self.np_rng = np_rng if np_rng is not None else run_generators(seed)[1]
         if num_agents is not None:
             self.num_agents = num_agents
         else:
@@ -880,8 +958,8 @@ class NomadModel(mesa.Model):
         self.scheduled_new_agents = []
 
         year_0_data = y_output[inds[0 % len(inds)]]
-        self.veg_ras = year_0_data[0]
-        self.veg_map = year_0_data[0]
+        self.veg_ras = pasture_layer(year_0_data)
+        self.veg_map = self.veg_ras
         self.ag_ras = year_0_data[1]
 
         self.stress_ras = stress_ras
@@ -893,14 +971,9 @@ class NomadModel(mesa.Model):
             self.grid.place_agent(agent, (mesa_x, mesa_y))
             self.target_raster[to_numpy_y(self, agent.pos[1]), agent.pos[0]] += 0.5
 
-            current_env_value = env_mean_val(self, agent.pos, 20)
-            base_radius = 20
-            if current_env_value < 3.5:
-                territory_radius = base_radius + 10
-            elif current_env_value < 5.0:
-                territory_radius = base_radius + 5
-            else:
-                territory_radius = base_radius
+            # Year 0: fixed territory radius of 25, as in model.py
+            # (the 20/25/30 rule applies from Year 1, in year_initiation).
+            territory_radius = 25
 
             territory = self.grid.get_neighborhood((mesa_x, mesa_y), moore=True, include_center=True,
                                                    radius=territory_radius)
@@ -922,7 +995,8 @@ class NomadModel(mesa.Model):
                                                             "surplus": "surplus",
                                                             "proseprity index": "prosperity_index",
                                                             "position": "pos",
-                                                            "enclosures": get_agent_enclosures
+                                                            "enclosures": get_agent_enclosures,
+                                                            "env_quality": "env_quality"
                                                             })
         self.datacollector.collect(self)
 
@@ -935,6 +1009,16 @@ class NomadModel(mesa.Model):
     def move_year(self, inds):
         if not self.fixed_territory:
             self.reset_pos()
+        # Territories are set afresh each year; the overlap test in
+        # place_household counts only those already set this year.
+        self.territories = []
+        # Runs longer than the data reuse the observed years: each further
+        # cycle through them gets a new shuffle of the year order, appended
+        # to inds in place (the caller passes the same list every year).
+        if self.year >= len(inds):
+            next_cycle = list(range(len(self.y_output)))
+            self.random.shuffle(next_cycle)
+            inds.extend(next_cycle)
         self.suitability_raster, self.return_raster, stress_ras = get_suitability_raster(
             self.y_output, inds, self.year, self.weights, accumulator=self.return_raster,
             latest_output=self.yearly_outputs[-1])
@@ -944,7 +1028,7 @@ class NomadModel(mesa.Model):
         # Use modulo to cycle through available years
         data_idx = inds[self.year % len(inds)]
         current_year_data = self.y_output[data_idx]
-        self.veg_ras = current_year_data[0]
+        self.veg_ras = pasture_layer(current_year_data)
         self.ag_ras = current_year_data[1]
 
         self.stress_ras = stress_ras
@@ -961,32 +1045,22 @@ class NomadModel(mesa.Model):
 
     def reset_pos(self):
         for agent in self.agents:
+            agent.last_camp = agent.pos  # for the home-range centre in year_initiation
             self.grid.remove_agent(agent)
 
     def create_replacement_agent(self, resources):
         """Creates a new agent to replace one that failed, with a fresh start."""
-        additional_flocks = sum(np.floor(random.gauss(90, 15)) for _ in range(10))
+        additional_flocks = sum(np.floor(self.random.gauss(90, 15)) for _ in range(10))
         new_agents = Household_Agent.create_agents(
             model=self,
             n=1,
             threshold=self.threshold,
-            manpower=resources['manpower'],
             surplus=resources['surplus'],
             flock_head=resources['flock_head'] + additional_flocks
         )
-        agent = new_agents[0]
-        
-        # Even in fixed territory mode, if an agent is replaced (not just reset),
-        # we find a new valid location because the previous one was unsustainable.
-        # We temporarily place it to allow territory/suitability calculations.
-        temp_pos = (self.grid.width // 2, self.grid.height // 2)
-        self.grid.place_agent(agent, temp_pos)
-
-        # Override fixed_territory temporarily to ensure the new agent finds a home
-        original_fixed = self.fixed_territory
-        self.fixed_territory = False
-        agent.year_initiation()
-        self.fixed_territory = original_fixed
+        # The new household is placed once, with everyone else, in the
+        # shuffle_do("year_initiation") that follows in move_year. (Replacements
+        # are queued only outside fixed-territory mode.)
 
 
 def viz_map(model, suitability_raster, year, run_dir):
@@ -1139,16 +1213,15 @@ def run_model_opt(model_years, ras_wts, main_run_directory, trial_number, iterat
         y_output_data = GlobalData.y_output
     run_directory = os.path.join(main_run_directory, f"trial_{trial_number}", f"iter_{iteration}")
     os.makedirs(run_directory, exist_ok=True)
-    if seed is not None:
-        random.seed(seed)
-        np.random.seed(seed)
+    # Per-run generators: the run draws from no global random state.
+    year_rng, draw_rng = run_generators(seed)
     inds = list(range(len(y_output_data)))
-    random.shuffle(inds)
+    year_rng.shuffle(inds)
     suitability_raster, return_raster, stress_ras = get_suitability_raster(
         y_output_data, inds, year=0, weights=ras_wts
     )
     model = NomadModel(suitability_raster, return_raster, stress_ras, inds, ras_w=ras_wts, y_output=y_output_data,
-                       num_agents=num_agents, fixed_territory=fixed_territory)
+                       num_agents=num_agents, fixed_territory=fixed_territory, seed=seed, np_rng=draw_rng)
     plot_y = [10, 20, 30, 40, 50, 60, 70]
     try:
         for i in range(model_years):

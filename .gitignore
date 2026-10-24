@@ -7,10 +7,22 @@ __pycache__/
 *.so
 #---Folders---
 Results/
+output/
+outputs/
+batch_results/
+runs/
 # Input data is archived on Zenodo and fetched by scripts/download_data.py;
 # it is not stored in git. See docs/DATA.md.
 Data/
 anaconda_projects/
+
+# --- Simulation Outputs & Large Binary Data ---
+*.parquet
+*.h5
+*.npy
+*.feather
+*.pkl
+*.pickle
 # --- GIS & Data Exclusions ---
 *.gdb/
 *.lock
