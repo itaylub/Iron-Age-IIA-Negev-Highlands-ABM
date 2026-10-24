@@ -17,6 +17,10 @@ What it does:
 - writes replicate outputs to ``Results/<study-name>/run/trial_<n>/iter_<i>/``
   and the settings to ``Results/<study-name>/run_settings.json``.
 
+The observed sites to calibrate against default to ``Data/P_for_calib.shp``;
+choose another file with ``--calib-shp``. The study records the file, and
+``analyse_calibration.py`` and ``run_measures.py`` use the same one.
+
 Stopping and restarting: Ctrl+C stops all processes. Run the same
 command again to continue the same study. Finished trials are kept;
 trials cut off mid-run are not counted toward ``--trials``.
@@ -130,12 +134,16 @@ def main():
     parser.add_argument("--warm-start-top", type=int, default=19)
     parser.add_argument("--export-sqlite", action="store_true",
                         help="copy the study to opt_run.db and exit")
+    parser.add_argument("--calib-shp", default=None,
+                        help="observed sites to calibrate against (default: Data/P_for_calib.shp). "
+                             "Recorded in the study; a continued study must use the same file.")
     args = parser.parse_args()
 
     results_dir = os.path.abspath(
         args.results_dir or os.path.join(ap.REPO_ROOT, "Results", args.study_name)
     )
     ap.set_environment(results_dir)
+    ap.set_calib_shp(args.calib_shp)
     storage_path = os.path.join(results_dir, "study.log")
 
     import optuna
@@ -144,15 +152,31 @@ def main():
         export_sqlite(storage_path, args.study_name, results_dir)
         return
 
+    model = ap.import_model()
+    calib = ap.describe_calib(model)
+    print(ap.calib_line(calib))
+
     storage = ap.make_storage(storage_path)
     study = optuna.create_study(
         study_name=args.study_name, storage=storage, direction="minimize",
         load_if_exists=True, sampler=make_sampler(), pruner=make_pruner(),
     )
     is_new = len(study.trials) == 0
-    queued = enqueue_warm_start(study, args) if (is_new and not args.no_warm_start) else []
-    if not is_new:
+    if is_new:
+        study.set_user_attr("calib_shp", calib["path"])
+        study.set_user_attr("calib_counts", {k: calib[k] for k in ("sites", "enclosed", "other")})
+    else:
+        stored = study.user_attrs.get("calib_shp")
+        if stored is None:
+            # Studies made before 24 Oct 2026 used the default file.
+            stored = os.path.abspath(os.path.join(model.DATA_DIR, "P_for_calib.shp"))
+        if os.path.normcase(os.path.abspath(stored)) != os.path.normcase(calib["path"]):
+            raise SystemExit(
+                f"Study '{args.study_name}' was calibrated against\n  {stored}\n"
+                f"but this run would use\n  {calib['path']}\n"
+                "Pass the same --calib-shp, or start a new --study-name.")
         print(f"Continuing study '{args.study_name}' ({len(study.trials)} trials so far).")
+    queued = enqueue_warm_start(study, args) if (is_new and not args.no_warm_start) else []
 
     settings = {
         "started": datetime.now().isoformat(timespec="seconds"),
@@ -168,6 +192,7 @@ def main():
         "pruner": "MedianPruner(n_startup_trials=10, n_warmup_steps=5)",
         "search_space": "integer weights 0-7 for the seven layers (model.objective)",
         "warm_start": queued,
+        "calibration_sites": calib,
         "git_commit": ap.git_commit(),
         **ap.machine_info(),
     }
@@ -175,7 +200,6 @@ def main():
     with open(os.path.join(results_dir, f"run_settings_{stamp}.json"), "w") as f:
         json.dump(settings, f, indent=2)
 
-    model = ap.import_model()
     handles = ap.create_shared_data(model)
     ctx = mp.get_context("spawn")
     procs = []

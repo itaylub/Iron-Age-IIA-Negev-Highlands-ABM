@@ -201,7 +201,8 @@ def load_trial_params(results_dir, study_name, trial_no):
     match = [t for t in study.trials if t.number == trial_no]
     if not match:
         raise SystemExit(f"Trial {trial_no} not found in study {study_name}.")
-    return {k: match[0].params[k] for k in KEYS}
+    # The study's calibration target (None for studies made before 24 Oct 2026)
+    return {k: match[0].params[k] for k in KEYS}, study.user_attrs.get("calib_shp")
 
 
 def earlier_seeds(compare_csv, trial_no):
@@ -228,16 +229,25 @@ def main():
     parser.add_argument("--seed-base", type=int, default=7_000_000)
     parser.add_argument("--years", type=int, default=75)
     parser.add_argument("--workers", type=int, default=16)
+    parser.add_argument("--calib-shp", default=None,
+                        help="measure against this file instead of the study's own target "
+                             "(e.g. score one calibration's runs against another count)")
     args = parser.parse_args()
 
     results_dir = os.path.abspath(args.results_dir)
     ap.set_environment(results_dir)
-    out_dir = os.path.join(results_dir, "analysis", f"measures_trial{args.trial}")
+    params, stored = load_trial_params(results_dir, args.study_name, args.trial)
+    ap.set_calib_shp(args.calib_shp or stored)
+    tag = ""
+    if args.calib_shp and (stored is None or
+                           os.path.normcase(os.path.abspath(args.calib_shp)) != os.path.normcase(stored)):
+        tag = "_vs_" + os.path.splitext(os.path.basename(args.calib_shp))[0]
+
+    out_dir = os.path.join(results_dir, "analysis", f"measures_trial{args.trial}{tag}")
     runs_dir, sites_dir, occ_dir = (os.path.join(out_dir, d) for d in ("runs", "sites", "occupation"))
     for d in (out_dir, runs_dir, sites_dir, occ_dir):
         os.makedirs(d, exist_ok=True)
 
-    params = load_trial_params(results_dir, args.study_name, args.trial)
     compare_csv = args.compare_csv or os.path.join(results_dir, "analysis", "rerun_top10_runs.csv")
     earlier = earlier_seeds(compare_csv, args.trial)
     seeds = sorted(earlier) if earlier else [args.seed_base + i for i in range(args.replicates)]
@@ -248,6 +258,10 @@ def main():
     tasks = [(s, i, args.trial, params, args.years, runs_dir, sites_dir, occ_dir)
              for i, s in enumerate(seeds)]
     model = ap.import_model()
+    say(ap.calib_line(ap.describe_calib(model)))
+    if tag:
+        say(f"Note: measured against {args.calib_shp}, not the study's own target "
+            f"({stored or 'the default Data/P_for_calib.shp'}). Outputs in '{os.path.basename(out_dir)}'.")
     handles = ap.create_shared_data(model)
     rows, trajs, failed = [], {}, []
     say(f"Started {datetime.now():%H:%M:%S} on {args.workers} processes")
@@ -272,8 +286,11 @@ def main():
         return
     rows.sort(key=lambda r: r["iteration"])
 
-    # Reproducibility check against the re-evaluation
-    if earlier:
+    # Reproducibility check against the re-evaluation (only when scored
+    # against the same target; another target gives other scores by design)
+    if earlier and tag:
+        say("\nReproducibility check skipped: these runs are scored against another target.")
+    elif earlier:
         diffs = [abs(r["score_obj_func"] - earlier[r["seed"]]) for r in rows if r["seed"] in earlier]
         for r in rows:
             r["score_earlier"] = earlier.get(r["seed"], "")

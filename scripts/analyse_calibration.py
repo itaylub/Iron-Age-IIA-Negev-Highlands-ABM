@@ -163,9 +163,9 @@ def run_task(task):
                 time.perf_counter() - t0, traceback.format_exc())
 
 
-def rerun_top(distinct, n_top, replicates, years, workers, results_dir, out_dir):
+def rerun_top(distinct, n_top, replicates, years, workers, results_dir, out_dir, tag=""):
     chosen = distinct[:n_top]
-    runs_dir = os.path.join(results_dir, f"rerun_top{n_top}")
+    runs_dir = os.path.join(results_dir, f"rerun_top{n_top}{tag}")
     tasks = []
     for rank, t in enumerate(chosen, start=1):
         params = {k: t.params[k] for k in KEYS}
@@ -177,6 +177,7 @@ def rerun_top(distinct, n_top, replicates, years, workers, results_dir, out_dir)
     say(f"\nRe-running {len(chosen)} weight sets x {replicates} runs = {len(tasks)} runs "
         f"on {workers} processes, started {datetime.now():%H:%M:%S}")
     model = ap.import_model()
+    say(ap.calib_line(ap.describe_calib(model)))
     handles = ap.create_shared_data(model)
     results, failed = [], []
     try:
@@ -192,7 +193,7 @@ def rerun_top(distinct, n_top, replicates, years, workers, results_dir, out_dir)
     if failed:
         say(f"\n{len(failed)} run(s) failed. First error:\n{failed[0][7]}")
 
-    with open(os.path.join(out_dir, f"rerun_top{n_top}_runs.csv"), "w", newline="") as f:
+    with open(os.path.join(out_dir, f"rerun_top{n_top}{tag}_runs.csv"), "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["rank_in_calibration", "trial", "seed", "score", "spatial_error",
                     "site_type_error", "minutes"])
@@ -223,7 +224,7 @@ def rerun_top(distinct, n_top, replicates, years, workers, results_dir, out_dir)
     if not rows:
         say("No runs finished.")
         return
-    with open(os.path.join(out_dir, f"rerun_top{n_top}.csv"), "w", newline="") as f:
+    with open(os.path.join(out_dir, f"rerun_top{n_top}{tag}.csv"), "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
@@ -239,7 +240,7 @@ def rerun_top(distinct, n_top, replicates, years, workers, results_dir, out_dir)
     say("  " + ", ".join(f"{k} {win[f'norm_{k}']}" for k in KEYS))
     if len(rows) > 1 and rows[1]["mean_score"] - win["mean_score"] < 2 * win["se"]:
         say("  Note: the runner-up is within two standard errors; the two are not clearly different.")
-    say(f"Saved: {os.path.join(out_dir, f'rerun_top{n_top}.csv')}")
+    say(f"Saved: {os.path.join(out_dir, f'rerun_top{n_top}{tag}.csv')}")
 
 
 def main():
@@ -253,6 +254,8 @@ def main():
     parser.add_argument("--replicates", type=int, default=30)
     parser.add_argument("--years", type=int, default=75)
     parser.add_argument("--workers", type=int, default=16)
+    parser.add_argument("--calib-shp", default=None,
+                        help="score the re-runs against this file instead of the study's own target")
     args = parser.parse_args()
 
     results_dir = os.path.abspath(args.results_dir)
@@ -265,10 +268,19 @@ def main():
     optuna.logging.set_verbosity(optuna.logging.WARNING)
     study = optuna.load_study(study_name=args.study_name,
                               storage=ap.make_storage(os.path.join(results_dir, "study.log")))
+    stored = study.user_attrs.get("calib_shp")  # None for studies made before 24 Oct 2026
+    ap.set_calib_shp(args.calib_shp or stored)
+    tag = ""
+    if args.calib_shp and (stored is None or
+                           os.path.normcase(os.path.abspath(args.calib_shp)) != os.path.normcase(stored)):
+        # Scoring against another target: keep these outputs apart from the study's own.
+        tag = "_vs_" + os.path.splitext(os.path.basename(args.calib_shp))[0]
+        say(f"Note: re-runs are scored against {args.calib_shp}, not the study's own target "
+            f"({stored or 'the default Data/P_for_calib.shp'}). Outputs end in '{tag}'.")
     distinct = settle_check(study, out_dir, max(args.top, args.rerun_top))
     if args.rerun_top and distinct:
         rerun_top(distinct, args.rerun_top, args.replicates, args.years, args.workers,
-                  results_dir, out_dir)
+                  results_dir, out_dir, tag)
     say(f"\nOutputs in {out_dir}")
 
 

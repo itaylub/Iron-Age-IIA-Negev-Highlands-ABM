@@ -70,6 +70,53 @@ def _set_data_dir(var, candidates, marker):
             return
 
 
+def set_calib_shp(path):
+    """Use this file of observed sites as the calibration target.
+
+    Must run before ``import_model()``: the model reads
+    NOMAD_ABM_CALIB_SHP at import. Child processes inherit it.
+    """
+    if path:
+        os.environ["NOMAD_ABM_CALIB_SHP"] = os.path.abspath(path)
+
+
+def describe_calib(model):
+    """Path, counts and CRS of the calibration sites the model will use.
+
+    Stops with a message if the file is missing or its ``value`` field
+    holds anything other than 1 (other site) and 2 (enclosed compound).
+    """
+    import geopandas as gpd
+
+    path = model.CALIB_SHP_PATH
+    if not os.path.exists(path):
+        raise SystemExit(f"Calibration sites not found: {path}")
+    gdf = gpd.read_file(path)
+    if "value" not in gdf.columns:
+        raise SystemExit(f"{path} has no 'value' field (1 = other site, 2 = enclosed compound).")
+    bad = sorted(set(gdf["value"].dropna().astype(int)) - {1, 2})
+    if bad or gdf["value"].isna().any():
+        raise SystemExit(f"{path}: 'value' must be 1 or 2 for every site; found {bad or 'empty values'}.")
+    enc = int((gdf["value"] == 2).sum())
+    oth = int((gdf["value"] == 1).sum())
+    epsg = gdf.crs.to_epsg() if gdf.crs is not None else None
+    return {"path": os.path.abspath(path), "sites": len(gdf), "enclosed": enc, "other": oth,
+            "enclosed_share_pct": round(100 * enc / len(gdf), 2) if len(gdf) else None,
+            "crs_epsg": epsg}
+
+
+def calib_line(c):
+    if c["crs_epsg"] == 2039:
+        warn = ""
+    elif c["crs_epsg"] is None:
+        warn = "\n  Note: could not confirm the CRS as EPSG:2039 (Israel TM Grid); check the .prj"
+    else:
+        warn = f"\n  WARNING: CRS is EPSG:{c['crs_epsg']}; the model uses EPSG:2039 (Israel TM Grid)"
+    return (f"Calibration sites: {c['path']}\n"
+            f"  {c['sites']} sites, {c['enclosed']} enclosed, {c['other']} other "
+            f"({c['enclosed_share_pct']}% enclosed){warn}")
+
+
 def import_model():
     if CODE_DIR not in sys.path:
         sys.path.insert(0, CODE_DIR)
