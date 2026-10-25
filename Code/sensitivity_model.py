@@ -988,7 +988,10 @@ class NomadModel(mesa.Model):
                 agent.memory.append([selected_cell, env_mean_val(self, selected_cell, 5), self.year])
                 self.target_raster[to_numpy_y(self, selected_cell[1]), selected_cell[0]] += 0.25
             env_degrade(self, mesa_x, mesa_y, territory_radius, 0.5, 0.9)
-            agent.memory.append([agent.pos, env_mean_val(self, agent.pos, territory_radius), self.year])
+            # The first camp's remembered quality is measured within 20 cells,
+            # as in model.py, so that with the default switches this file runs
+            # the calibrated model.
+            agent.memory.append([agent.pos, env_mean_val(self, agent.pos, 20), self.year])
 
         self.datacollector = DataCollector(agent_reporters={"Manpower": "manpower",
                                                             "flocks": "flock_head",
