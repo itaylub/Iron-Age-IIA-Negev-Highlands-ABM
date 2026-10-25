@@ -203,6 +203,29 @@ def make_storage(path):
     return optuna.storages.JournalStorage(backend)
 
 
+def load_study_in(results_dir, study_name=None):
+    """Load the study in <results_dir>/study.log.
+
+    With no name, use the only study in the file; with several, stop and
+    list them.
+    """
+    import optuna
+
+    path = os.path.join(results_dir, "study.log")
+    if not os.path.exists(path):
+        raise SystemExit(f"No study file at {path}")
+    storage = make_storage(path)
+    names = optuna.get_all_study_names(storage)
+    if study_name is None:
+        if len(names) != 1:
+            raise SystemExit(f"{path} holds {len(names)} studies ({', '.join(names)}); "
+                             "choose one with --study-name.")
+        study_name = names[0]
+    elif study_name not in names:
+        raise SystemExit(f"No study '{study_name}' in {path}; it holds: {', '.join(names) or 'none'}.")
+    return optuna.load_study(study_name=study_name, storage=storage)
+
+
 def git_commit():
     import subprocess
 

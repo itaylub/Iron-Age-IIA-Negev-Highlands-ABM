@@ -196,11 +196,11 @@ def load_trial_params(results_dir, study_name, trial_no):
     import optuna
 
     optuna.logging.set_verbosity(optuna.logging.WARNING)
-    study = optuna.load_study(study_name=study_name,
-                              storage=ap.make_storage(os.path.join(results_dir, "study.log")))
+    study = ap.load_study_in(results_dir, study_name)
+    print(f"Study: {study.study_name}", flush=True)
     match = [t for t in study.trials if t.number == trial_no]
     if not match:
-        raise SystemExit(f"Trial {trial_no} not found in study {study_name}.")
+        raise SystemExit(f"Trial {trial_no} not found in study {study.study_name}.")
     # The study's calibration target (None for studies made before 24 Oct 2026)
     return {k: match[0].params[k] for k in KEYS}, study.user_attrs.get("calib_shp")
 
@@ -220,7 +220,8 @@ def earlier_seeds(compare_csv, trial_no):
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--results-dir", required=True, help="the calibration's folder")
-    parser.add_argument("--study-name", default="opt_fixed_2026_10")
+    parser.add_argument("--study-name", default=None,
+                        help="default: the only study in <results-dir>/study.log")
     parser.add_argument("--trial", type=int, required=True)
     parser.add_argument("--compare-csv", default=None,
                         help="default: <results-dir>/analysis/rerun_top10_runs.csv")

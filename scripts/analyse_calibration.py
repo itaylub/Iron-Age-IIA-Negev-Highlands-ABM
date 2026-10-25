@@ -247,7 +247,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--results-dir", required=True,
                         help="the calibration's folder (holds study.log)")
-    parser.add_argument("--study-name", default="opt_fixed_2026_10")
+    parser.add_argument("--study-name", default=None,
+                        help="default: the only study in <results-dir>/study.log")
     parser.add_argument("--top", type=int, default=10, help="distinct weight sets to list")
     parser.add_argument("--rerun-top", type=int, default=0,
                         help="re-run this many leading weight sets (0 = settle check only)")
@@ -266,8 +267,8 @@ def main():
     import optuna
 
     optuna.logging.set_verbosity(optuna.logging.WARNING)
-    study = optuna.load_study(study_name=args.study_name,
-                              storage=ap.make_storage(os.path.join(results_dir, "study.log")))
+    study = ap.load_study_in(results_dir, args.study_name)
+    say(f"Study: {study.study_name}")
     stored = study.user_attrs.get("calib_shp")  # None for studies made before 24 Oct 2026
     ap.set_calib_shp(args.calib_shp or stored)
     tag = ""
