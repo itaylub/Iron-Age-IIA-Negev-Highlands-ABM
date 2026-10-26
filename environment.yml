@@ -25,8 +25,10 @@ dependencies:
   - matplotlib>=3.8
   - seaborn>=0.13
 
-  # Agent-based modeling
-  - mesa>=3.0,<4.0
+  # Agent-based modeling. Pinned exactly: seeded runs reproduce only with
+  # the same Mesa generator. The October 2026 calibration ran with mesa 3.5.1
+  # (numpy 2.5.3, Python 3.12.14). The code needs at least 3.3.
+  - mesa==3.5.1
 
   # Optimization
   - optuna>=3.5

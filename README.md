@@ -2,6 +2,8 @@
 
 [![Software DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21336898.svg)](https://doi.org/10.5281/zenodo.21336898)
 [![Data DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20473345.svg)](https://doi.org/10.5281/zenodo.20473345)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/itaylub/Iron-Age-IIA-Negev-Highlands-ABM/blob/master/Code/calibration.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/itaylub/Iron-Age-IIA-Negev-Highlands-ABM/master?labpath=Code%2Fcalibration.ipynb)
 
 *Two Zenodo archives: the **software** (this code) and the **input data**.*
 
@@ -20,7 +22,7 @@ archaeological record. Households make annual decisions about camp
 location, territory, livestock management, and enclosure construction
 under stochastic rainfall regimes.
 
-The model is implemented in Python on top of [Mesa 3.0](https://mesa.readthedocs.io/),
+The model is implemented in Python on top of [Mesa 3](https://mesa.readthedocs.io/) (pinned to 3.5.1, the version the calibration ran with),
 with [Optuna](https://optuna.org/) for parameter calibration and standard
 geospatial / scientific libraries (geopandas, shapely, numpy, scipy,
 h5py).
@@ -139,9 +141,18 @@ export NOMAD_ABM_CALIB_SHP=/path/to/P_for_calib.shp
 ## Reproducibility
 
 - `environment.yml` and `requirements.txt` list every dependency.
-- The model accepts a `seed` argument and seeds both `random` and
-  `numpy.random`, so a given seed reproduces a given run.
-- Simulation outputs land in timestamped folders under `Results/`.
+- The model accepts a `seed` argument. Each run draws only from its own
+  generators, all derived from that seed: one for the order of the
+  rainfall years, Mesa's model generator (`model.random`, which also
+  sets the household order each year) and a numpy generator
+  (`model.np_rng`). No global random state is used, so a given seed
+  reproduces a given run, also when Optuna runs trials in parallel
+  threads.
+- Simulation outputs land under `Results/` (or `NOMAD_ABM_RESULTS_DIR`):
+  calibration replicates in `Results/run/trial_<n>/iter_<i>/`, with the
+  Optuna study in `Results/run/opt_run.db`; the best-trial re-runs in
+  `Results/trial_best_params/`; the sensitivity tests in
+  `Results/sensitivity/`.
 
 ## Data
 

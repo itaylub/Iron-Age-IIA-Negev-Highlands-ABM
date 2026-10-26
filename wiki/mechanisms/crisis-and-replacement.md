@@ -3,9 +3,12 @@ type: mechanism
 created: 2026-10-08
 code: "model.py › Household_Agent.handle_survival_crisis, L816–838; convert_livestock_to_surplus, L708–721; step, L589–593; NomadModel.create_replacement_agent, L1049–1058; move_year, L1039–1042"
 odd: "Submodels; Design concepts › adaptation"
+body_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 ---
 
 # Crisis and replacement
+
+> Status 2026-10-26: the body and the line numbers in the `code` field describe commit `2249331` (2026-10-05), before the 18 fixes of PR 8. Fixes that touch this mechanism are marked "Done in PR 8" under Things to check, with line numbers at `032c2a1`. The body is to be brought to the current code when its ODD submodel is written.
 
 ## What it does
 - **Crisis** when surplus < 10 after the enclosure decision (L589–590). The household sells livestock at 0.3 surplus per head to close the gap to 10, keeping a reserve of `min(18 × manpower, 100)` head (L825–826, L708–721).
@@ -43,17 +46,22 @@ It is thought to represent some kind of successor - in very abstract way.
   - The test reads as described: after the set-aside, manpower is the people left for other chores, and ≤ 0 means there are too few. Open: the replacement starts from that post-set-aside figure, `max(1, manpower)` (L830), so after a manpower failure it has 1 person for about 900 goats. The end-of-step restoration, `max(1, manpower + 10) + herders` (L600–601), then holds it near herders + 1, so its free manpower stays below 0. It would fail at its first crisis and could not reuse or build enclosures (15 free needed). This is a reading of the code, not run. Should a replacement start with manpower as a new household does, `max(35, herd / 20)` (L526–527)?
   - Itay, 2026-10-12: Yes, start like a new household.
   - For the separate PR: pass no inherited manpower to `create_replacement_agent`, so `__init__` sets `max(35, herd / 20)` (both files).
+  - Done in PR 8 (item 7, `7fae564`), both files: successors start with manpower as a new household, max(35, herd / 20).
 - Surplus < 0 cannot occur at that point, since `calc_surplus` floors it at 0 (L706) and the sale only adds. In practice failure comes from herd < 15 or manpower ≤ 0.
   - Asked whether that is acceptable. Itay, 2026-10-12: Yes but it should be = or < 0.
   - For the separate PR: `surplus <= 0` (L828). Since surplus is floored at 0, this criterion can then trigger.
+  - Done in PR 8 (item 4, `864dbd9`), both files: `model.py` L885.
 - Fixed-territory mode in `sensitivity_model.py`. When a household fails, `handle_survival_crisis` has already queued a replacement (the same code as `model.py` L834–836), and the fixed branch then resets the household instead of removing it (L491–496). Does each failure add a household in that mode? The reset also re-runs `year_initiation` in the middle of the step (L496).
   - Confirmed by reading (2026-10-12): `handle_survival_crisis` queues a replacement before returning False, and the fixed branch then keeps the household (L488–496), so each failure adds one household.
   - Asked whether fixed-territory runs should keep the population constant. Itay, 2026-10-12: Yes the population should be constant.
   - For the separate PR. The territory test (Ch. 5 §5.6; App. 5 §A5.7.4) ran with this; see [experiments](../model/experiments.md).
+  - Done in PR 8 (item 5, `7b129d1`): in fixed-territory mode no replacement is queued (`sensitivity_model.py` L794–797), so the population stays constant.
 - Replacements in `sensitivity_model.py` run `year_initiation` inside `create_replacement_agent` (L988) and again in the `shuffle_do("year_initiation")` that follows (L960). Does a new household camp twice in its first year?
   - Asked whether `model.py`'s way (placed once, with everyone else) is intended for both files. Itay, 2026-10-12: It should be the same as all the others.
   - For the separate PR: drop the immediate placement in `sensitivity_model.py › create_replacement_agent` (L983–988).
+  - Done in PR 8 (item 6, `1a60dab`): the new household is placed once, in the `shuffle_do("year_initiation")` that follows (`sensitivity_model.py` L1064–1066).
 - The "about 900" head is added on top of whatever herd the failed household had left, which may be under 15 (Ch. 5 §5.3.4 describes this as "on top of the inherited remainder").
 - Deferred here from the inventory round (agreed 2026-10-12): differences 4 (failure handling) and 6 (replacement placement) between `model.py` and `sensitivity_model.py`. See [inventory](../model/inventory.md#how-the-two-model-files-differ).
 - Deferred here from the camp-placement round (agreed 2026-10-12): whether Mesa's `Agent.remove()` (`model.py` L592) also takes a failed household off the grid; if not, it counts as an occupied cell in `eval_neighborhood` (L299–301). To test in the separate PR.
   - Checked 2026-10-13 in the Mesa source, v3.0.0 and v3.3.0 (the range in `requirements.txt`; GitHub `projectmesa/mesa`, `mesa/agent.py › Agent.remove`): `Agent.remove()` only deregisters the agent from the model and does not touch the grid. A failed household therefore stays on the grid, and since it is no longer in `model.agents`, `reset_pos` (L1045–1047) never takes it off: its cell counts as occupied in `eval_neighborhood` (L299–301) for the rest of the run. At present this has no effect, because `eval_neighborhood` is called only in the re-draw loop (L361–362), which never runs in `model.py` (overlap bug); it will matter once the separate PR fixes that loop. Proposed for the PR: take the household off the grid before `self.remove()`, as `sensitivity_model.py` does (L500).
+  - Done in PR 8 (item 8, `5284465`), both files: `model.grid.remove_agent(self)` before `self.remove()` (`model.py` L628–629); the sensitivity file's `model.agents.remove(self)` is replaced by `self.remove()`, which also takes the household out of `agents_by_type` (log.md, 2026-10-14).

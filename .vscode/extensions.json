@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "ms-toolsai.datawrangler",
+    "charliermarsh.ruff",
+    "usernamehw.errorlens",
+    "tamasfe.even-better-toml",
+    "mhutchie.git-graph",
+    "GitHub.vscode-pull-request-github",
+    "codezombiech.gitignore"
+  ]
+}

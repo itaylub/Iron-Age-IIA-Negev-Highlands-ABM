@@ -3,9 +3,12 @@ type: mechanism
 created: 2026-10-08
 code: "model.py › to_gdf, L1131–1157; set_camp, L277–280; year_initiation, L649; NomadModel.step, L1016"
 odd: "Design concepts › observation"
+body_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 ---
 
 # Site classification (from occupation signal to simulated sites)
+
+> Status 2026-10-26: the body and the line numbers in the `code` field describe commit `2249331` (2026-10-05), before the 18 fixes of PR 8. Fixes that touch this mechanism are marked "Done in PR 8" under Things to check, with line numbers at `032c2a1`. The body is to be brought to the current code when its ODD submodel is written.
 
 ## What it does
 Turns a run into a point pattern comparable with the survey record:

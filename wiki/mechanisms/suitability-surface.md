@@ -3,9 +3,12 @@ type: mechanism
 created: 2026-10-08
 code: "model.py › get_suitability_raster, L469–508; NomadModel.move_year, L1020–1043"
 odd: "Submodels; Input data; Design concepts › sensing"
+body_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 ---
 
 # Suitability surface
+
+> Status 2026-10-26: the body and the line numbers in the `code` field describe commit `2249331` (2026-10-05), before the 18 fixes of PR 8. Fixes that touch this mechanism are marked "Done in PR 8" under Things to check, with line numbers at `032c2a1`. The body is to be brought to the current code when its ODD submodel is written.
 
 ## What it does
 Each year the model rebuilds one shared suitability raster as a weighted sum of seven 0–10 layers. Four are permanent: distance to Tell el-Qudeirat (`kb`), distance to permanent water (`pw`), mean rainfall, and slope. Three are annual: reuse potential, resource exhaustion, and the year's rainfall. Cells whose slope suitability is below 1 are then zeroed, and the result is multiplied by the `ext_raster` mask, the outline of the Negev Highlands; the band between it and `place_raster`, where camps may go, is the buffer (Itay, 2026-10-12). Households read this surface, plus their own adjustments, to choose camps. The seven weights are the only calibrated parameters.
@@ -58,6 +61,7 @@ The idea behind this approach is to try and reflect the balance between differen
   - The reply means the code gives herds the year's rainfall membership (array 0) where pasture (array 2) was intended. Both model files do this (`model.py` L980–982, L1030; `sensitivity_model.py` L883–884, L947). `veg_map` sets herd capacity through `pasture_val` in `calc_surplus` (L667) and `update_flock_size` (L736), and `veg_ras` enters enclosure scoring (L800, L846, L868, L893). The calibration and all reported runs used array 0. App. 5 Table A5.6 describes the intended array.
   - Checked 2026-10-12 in the calibration data (files from the repository history, commit `14cb755^`). Array 2 ≈ `veg_fit` (permanent array 3) × array 0 / 10: the ratio has median 0.100 (IQR 0.093–0.108) and the correlation is 0.97 in groups 0, 1 and 37, as the reply describes. Group 74's array 2 holds no-data values (1,851 cells of −inf and 35,536 at −1.8 × 10³⁰⁸), 359 of them inside `ext_raster`; the other 74 groups are clean. Array 2 is unused now, but every 75-year run draws year 74.
   - Asked whether the separate PR should switch pasture to array 2 in both model files. Itay, 2026-10-12: Yes, separate PR. This is a big red flag!
+  - Done in PR 8 (item 1, `4bd3dd0`), both files: herds read yearly array 2 (`pasture_layer`, L273–280); year 74's no-data cells are set to 0 (a choice made in the PR, log.md 2026-10-14).
 - Corridor or point? Ch. 5 §5.2.1.2 describes this layer as cost-distance to the Tell el-Qudeirat–Faynan *corridor* ("only the red parts" of Figure 3.11). App. 5 Table A5.1 says "Distance to Tell el-Qudeirat … Site location", and Table A5.6 says "Cost-distance to Tell el-Qudeirat". The code name is `dist_to_kb`.
   - Itay, 2026-10-12: It was a point in the past but have changed to corridor, the name was just left so nothing breaks.
   - Checked 2026-10-12 in the calibration data. In `per_data` array 1 the cells at suitability ≥ 9.5 form a strip about 59 km long (237 columns) and 14 km wide (57 rows), elongated east–west (SD ratio 4.5), which fits a corridor rather than a point.

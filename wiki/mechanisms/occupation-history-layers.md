@@ -3,9 +3,12 @@ type: mechanism
 created: 2026-10-08
 code: "model.py › Yi_params, L427–466; get_suitability_raster, L491; NomadModel.move_year, L1023–1037"
 odd: "Submodels; Design concepts › adaptation, interaction"
+body_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 ---
 
 # Occupation history layers: reuse potential and resource exhaustion
+
+> Status 2026-10-26: the body and the line numbers in the `code` field describe commit `2249331` (2026-10-05), before the 18 fixes of PR 8. Fixes that touch this mechanism are marked "Done in PR 8" under Things to check, with line numbers at `032c2a1`. The body is to be brought to the current code when its ODD submodel is written.
 
 ## What it does
 One accumulator records past occupation. Each year it is halved, and last year's occupation signal (`target_raster`) is added to it, with cells at 2 or more multiplied by 1.5. Two suitability layers are derived from it, pulling in opposite directions:
@@ -50,6 +53,7 @@ My face validation, from the preliminary runs.
 ## Things to check
 - Direction of `stress_ras` in herd growth. `stress_ras` holds `yi_hu_stressed_z`, which is 10 where there has been no recent occupation and near 0 where occupation was heaviest (L452–464). `update_flock_size` treats higher values as more stress: growth falls (`stress_factor = 1 − min(0.5, avg_stress/20)`, L755) and decline rises (`stress_impact = 1 + avg_stress/20`, L772). The `veg_map` update in `move_year` uses the opposite reading, where low values reduce pasture (L1034–1037). Which direction is intended for the herd terms? App. 5 Table A5.6 describes `stress_ras` as "Cumulative human degradation pressure".
   - Settled on [herd dynamics](herd-dynamics.md), Things to check. Itay, 2026-10-13: Heavily used ground should slow herd growth and speed decline. The herd terms are to be inverted in the separate PR; the layer itself is unchanged. App. 5 Table A5.6's "degradation pressure" describes the layer's meaning, while its values are 10 where pressure is lowest.
+  - Done in PR 8 (item 12, `a2c8f8e`) in the herd terms ([herd dynamics](herd-dynamics.md)); the layer is unchanged.
 - The ×1.5 weight for cells ≥ 2 (L433–434) is not in Ch. 5 or App. 5. In practice it mostly picks out enclosure cells and heavily reused camps.
   - A new enclosure always adds at least 2.6 (1 + 2 × prosperity, prosperity > 0.8), so every new build gets the weight; other cells reach 2 when several events stack in one year.
   - Asked what the extra × 1.5 stands for. Itay, 2026-10-13: For very attractive cells which have been already invested heavily.
@@ -58,6 +62,7 @@ My face validation, from the preliminary runs.
   - Ch. 5 §5.3.1: "within about 20 cells (5 km)". At 28 cells the weight 1/(d+1)² is about 0.1% of the centre weight.
   - Asked whether the square is fine or should be a circle. Itay, 2026-10-13: Better to be a circle, but if it is complicated leave as is.
   - It is a one-line change: set the kernel weights to 0 where d > 20 before normalising (L442–446). For the separate PR. It shifts the smoothed values slightly, so it changes calibrated behaviour, though only a little.
+  - Done in PR 8 (item 15, `5dd711b`), both files: `Yi_params` L460.
 - Ch. 5 §5.3.1 says the stress record is "smoothed" before rescaling, which matches the code. Reuse potential, however, uses the unsmoothed accumulator (L465), so it acts on single cells.
   - Ch. 5 §5.3.1 reads the same way: "Each occupied cell is rewarded in proportion to how intensely it was occupied".
   - Asked whether per-cell reuse potential, with no spread to neighbours, is intended. Itay, 2026-10-13: Yes it is. The rationale is that the attractivity of a certain cell is growing by the occupation time (e.g. many repeated occupation = investment in buildings) but negative effects degrade the surrounding cells as well.
