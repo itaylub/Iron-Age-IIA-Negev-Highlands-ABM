@@ -3,9 +3,12 @@ type: mechanism
 created: 2026-10-08
 code: "model.py › Household_Agent.calc_surplus, L654–706; Household_Agent.step, L544–616; buy_livestock_with_surplus, L723–733"
 odd: "Submodels"
+body_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 ---
 
 # Household economy: subsistence, surplus, manpower
+
+> Status 2026-10-26: the body and the line numbers in the `code` field describe commit `2249331` (2026-10-05), before the 18 fixes of PR 8. Fixes that touch this mechanism are marked "Done in PR 8" under Things to check, with line numbers at `032c2a1`. The body is to be brought to the current code when its ODD submodel is written.
 
 ## What it does
 **Surplus** (`calc_surplus`, run right after [herd dynamics](herd-dynamics.md)):
@@ -55,9 +58,11 @@ To the sum of all liquid economic resources (i.e. not livestock) that a househol
   - Example (M = 52, no farming: Need 936, working herd 1,404): with 1,050 head the code counts all 1,050 as productive (157 units a year), while H − Need would be 114 head (17 units).
   - Itay, 2026-10-13: The productive herd is the livestock that did not get culled, hence all the herd if it is below the culling threshold.
   - At or below the working herd the code matches. Above it the code subtracts `Need × non_cull_fraction`, not the culled animals: with 2,000 head in the example the code counts 1,721 productive head, the herd left after culling is 1,523 (2,000 − 0.8 × 596). For the separate PR: `productive_herd = flock_head − cull_amount`. For the write-up: Ch. 5 §5.3.2's "those beyond the subsistence core" should say the herd left after culling.
+  - Done in PR 8 (item 13, `3c71690`), both files: L727.
 - Capacity area. `calc_surplus` computes its own capacity over a fixed radius-25 window around the camp (L667–674), and from it the stress ratio `s` (L675). For herd growth Itay wants capacity over the territory's cells ([herd dynamics](herd-dynamics.md), 2026-10-13). Deferred here from the herd-dynamics round (agreed, Itay, 2026-10-13): should this capacity also use the territory?
   - Itay, 2026-10-13: Yes.
   - For the separate PR, with the herd change: capacity in `calc_surplus` over the territory's cells (L667–674). For the write-up: App. 5 Table A5.4's evaluation radius 25 goes (see [herd dynamics](herd-dynamics.md)).
+  - Done in PR 8 (item 13, `3c71690`): `territory_pasture` in `calc_surplus` (L710).
 - Stress cost. Ch. 5 §5.3.2 and the code use `1 + 0.3 s` (L678). App. 5 Table A5.4 lists the stress maintenance cost as 15% × stress ratio.
   - Asked which coefficient is intended. Itay, 2026-10-13: 0.3.
   - The code and Ch. 5 match. For the write-up: App. 5 Table A5.4 should read 30% × stress ratio.
@@ -66,6 +71,7 @@ To the sum of all liquid economic resources (i.e. not livestock) that a househol
   - As coded it is deducted at every level: with 30 units available it takes 1.5 (L701–702).
   - Proposed rule: if the available surplus (0.7 × previous + this year's products and culling) is above 100, deduct 5% of it; otherwise nothing. Itay, 2026-10-13: Approve.
   - For the separate PR: that rule (L701–702). For the write-up: Ch. 5 §5.3.2 consumption should include it.
+  - Done in PR 8 (item 13, `3c71690`): L738–740.
 - Decay happens twice a year: 30% at the start of `calc_surplus` (L696–697) and 1–25% at the end of `step` (L607–616). Ch. 5 §5.3.2 describes both ("drawn down by consumption and by loss … above 100 units a household loses an additional 5–25%"). The 1% below 100 is not described.
   - Asked whether the 1% is intended. Itay, 2026-10-13: Yes.
   - For the write-up: Ch. 5 §5.3.2 and App. 5 Table A5.4 should describe the 1% a year at or below 100.
@@ -78,6 +84,7 @@ To the sum of all liquid economic resources (i.e. not livestock) that a househol
   - Asked whether the PR should make gains and losses equally likely or pull each household back toward its starting manpower, keeping the surplus bonus either way. Itay, 2026-10-13: Yes.
   - The reply did not say which of the two; asked again (A: equal odds; B: pull back toward the starting manpower). Itay, 2026-10-13: A.
   - For the separate PR: gain ⌈5U⌉ with probability 0.3 and lose ⌈5U⌉ with probability 0.3 at any size (drop the `> 55` condition, L602), keeping +1 with probability 0.3 when surplus > 100 (L605). For the write-up: Ch. 5 and App. 5 should describe the drift.
+  - Done in PR 8 (item 13, `3c71690`): L637–644. A loss keeps at least 1 person (a choice made in the PR, log.md 2026-10-14).
 - Liquid assets (raised 2026-10-13 by the My rationale answer). Itay's reading defines surplus as the liquid resources other than livestock. Ch. 5 §5.3.4 says: “The herd is the household's only liquid asset in the model; thus, it can be converted into surplus and back at a fixed rate of 0.3 units per animal.” Open: how §5.3.4 should read.
   - Asked how that sentence should read. Itay, 2026-10-13: Surplus is the translation of livestock to economic value (like money) but nothing specific.
   - Asked whether §5.3.4's sentence then stays as written or is reworded. Itay, 2026-10-13: Stay.

@@ -3,9 +3,12 @@ type: mechanism
 created: 2026-10-08
 code: "model.py › place_household, L333–366; place_members, L369–390; overlap_territory, L319–330; eval_neighborhood, L297–316; Household_Agent.year_initiation, L628–652"
 odd: "Submodels; Design concepts › objectives, stochasticity, interaction"
+body_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 ---
 
 # Camp and territory placement
+
+> Status 2026-10-26: the body and the line numbers in the `code` field describe commit `2249331` (2026-10-05), before the 18 fixes of PR 8. Fixes that touch this mechanism are marked "Done in PR 8" under Things to check, with line numbers at `032c2a1`. The body is to be brought to the current code when its ODD submodel is written.
 
 ## What it does
 Once a year each household, in random order:
@@ -55,12 +58,15 @@ The 3 exponent is coming from face validation in the initial experimental runs.
   - Asked whether the 25% applies to each other territory separately or to the total. Itay, 2026-10-12: In total, all other territories combined.
   - On the radius-20 candidate area. Itay, 2026-10-12: This is intended as it is the base diameter.
   - For the separate PR: share of the candidate area's cells that fall in the union of this year's other territories, rejected at 25% or more (Itay's wording; the code tests `> 0.25`).
+  - Done in PR 8 (item 3, `1be0dcd`), both files: `overlap_territory(nbr, taken)` returns the share of the candidate area's cells in this year's other territories, and a candidate is re-drawn at 25% or more (`model.py` L325–328, L360, L365–367).
 - `model.territories` is appended every year and never cleared in either file (L642; `sensitivity_model.py` L561–563). `sensitivity_model.py` tests overlap against this whole history, so territories from past years count. App. 5 Table A5.6 describes it as the "Registry of all active household territories for the current year".
   - Asked which territories the overlap test should count. Itay, 2026-10-12: Only this year.
   - Neither file does that now: `model.territories` is never cleared, and `reset_pos` takes households off the grid but leaves each household's `territory` from last year until it places again (L1045–1047; `territory` reset only in `__init__`, L536). For the separate PR.
+  - Done in PR 8 (item 3, `1be0dcd`): `move_year` clears `model.territories` each year (L1098). Each household's `territory` attribute is kept until it places again, because the main-camp draw reads last year's territory for the territory bonus; the overlap test reads only `model.territories` (a choice made in the PR, log.md 2026-10-14).
 - The re-draw needs both conditions (`and`, L361–362): a crowded but rich location is accepted. App. 5 Table A5.4 describes overlap alone as grounds for rejection.
   - Asked which rule is intended. Itay, 2026-10-12: Both, so a crowded but rich env is rejected and also a free and very poor env is rejected.
   - So the code's `and` should be `or` (L361). For the separate PR: with `or`, the re-draw loop has no exit if no cell passes both tests, so it needs a guard. Because the `model.py` overlap test never fires, the calibration ran with no re-draws at all.
+  - Done in PR 8 (item 3, `1be0dcd`): a candidate is re-drawn when crowded or poor, for at most 100 draws; if none passes both tests, the least crowded candidate is taken, preferring those that pass the capacity test (L356–371).
 - Fixed-territory mode (`sensitivity_model.py`, L528–539) keeps the main camp on the same cell every year (`set_camp` at the unchanged `pos`); only family camps move. Ch. 5 §5.6 says households "could move freely only within" their territory.
   - Asked whether the main camp should also move within the territory in that mode. Itay, 2026-10-12: No, leave as is.
   - For the write-up: Ch. 5 §5.6's "could move freely only within" their territory fits the family camps, while the main camp stays on one cell.
@@ -69,3 +75,4 @@ The 3 exponent is coming from face validation in the initial experimental runs.
 - In `model.py` a failed household calls `self.remove()` (L592). In Mesa 3, `Agent.remove` deregisters the agent from the model, but whether it also leaves the grid depends on the Mesa version (not checked here). If it stays, it would count as an occupied cell in `eval_neighborhood` (L299–301). `sensitivity_model.py` removes it from the grid explicitly (L500).
   - Deferred to [crisis and replacement](crisis-and-replacement.md) with differences 4 and 6, to be tested in the separate PR (agreed 2026-10-12).
   - Checked 2026-10-13 in the Mesa source (v3.0.0, v3.3.0): `Agent.remove()` does not take the agent off the grid. Details on [crisis and replacement](crisis-and-replacement.md).
+  - Done in PR 8: a failed household leaves the grid before `self.remove()` (item 8, `5284465`), and the sensitivity file's replacements are placed once, with everyone else (item 6, `1a60dab`). See [crisis and replacement](crisis-and-replacement.md).

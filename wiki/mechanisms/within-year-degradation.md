@@ -3,9 +3,12 @@ type: mechanism
 created: 2026-10-08
 code: "model.py › env_degrade, L393–420; get_degrade_kernel, L235–243"
 odd: "Submodels; Design concepts › interaction"
+body_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 ---
 
 # Within-year degradation
+
+> Status 2026-10-26: the body and the line numbers in the `code` field describe commit `2249331` (2026-10-05), before the 18 fixes of PR 8. Fixes that touch this mechanism are marked "Done in PR 8" under Things to check, with line numbers at `032c2a1`. The body is to be brought to the current code when its ODD submodel is written.
 
 ## What it does
 When a camp is set, suitability around it is lowered at once in the shared `suitability_raster`, so households placed later in the same year see a degraded landscape. For each cell in a square window of half-width r around the camp:
@@ -53,6 +56,7 @@ From the idea that households have greater effect and for bigger area than a sin
 - Does P have any effect? At the centre the kernel term is D/0.001, so 500 for D = 0.5 and 300 for D = 0.3 (L240–241). That already takes the centre cell to the 0.0001 floor before the centre penalty P is applied (L418–420), so P = 0.9 and P = 0.5 change nothing. App. 5 Table A5.2 describes D as "fixed at 0.5, weight 0.9", and Table A5.4 lists P as a separate parameter.
   - Asked which is intended at the camp cell: drop to the floor, or lose only P. Itay, 2026-10-13: D should not affect at the camp cell.
   - For the separate PR: set the kernel's centre to 0 (`get_degrade_kernel`, L241), so the camp cell loses only P (0.9 or 0.5). Changes calibrated behaviour: camp cells no longer drop to the floor within the year.
+  - Done in PR 8 (item 16, `5a83e8d`), both files: `get_degrade_kernel` L241.
 - Distance metric. The App. 5 eq. A5.1–A5.2 caption says "d(x,y) is Manhattan distance from the occupied cell". The kernel uses half the Manhattan distance, `(|dx| + |dy|) / 2` (L240), so the reduction at a given cell is twice what the caption's formula gives. The window is a square. Which is intended?
   - Asked whether to fix the caption or the code. Itay, 2026-10-13: Follow the code.
   - For the write-up: the App. 5 eq. A5.1–A5.2 caption should say half the Manhattan distance.
@@ -65,3 +69,4 @@ From the idea that households have greater effect and for bigger area than a sin
   - Noted 2026-10-13: the main camp degrades its surroundings only after all nine family camps are placed (family loop L645–649, main camp L651; Year 0: L997–1002). Even after that fix, family camps would not see their own main camp's degradation.
   - Asked whether the main camp's degradation should come before the family camps are drawn. Itay, 2026-10-13: No, it should come after, as it simulates the activity of the main camp and its centrality within the camps.
   - The code matches.
+  - Done in PR 8 (item 14, `df4776c`): each family draw reads the current shared surface, with this year's earlier degradation, on the territory's cells (`place_members`, L386–388). The main camp still degrades its surroundings after the nine family camps (L687–693).

@@ -3,9 +3,12 @@ type: mechanism
 created: 2026-10-08
 code: "model.py › Household_Agent.step, L550–587; find_recent_enclosure, L779–814; build_enclosure, L840–915"
 odd: "Submodels; Design concepts › emergence, objectives, collectives"
+body_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 ---
 
 # Enclosure construction (prosperity, reuse, new builds)
+
+> Status 2026-10-26: the body and the line numbers in the `code` field describe commit `2249331` (2026-10-05), before the 18 fixes of PR 8. Fixes that touch this mechanism are marked "Done in PR 8" under Things to check, with line numbers at `032c2a1`. The body is to be brought to the current code when its ODD submodel is written.
 
 ## What it does
 In each household's step, after herd, surplus and manpower deductions:
@@ -43,9 +46,11 @@ A better than average conditions. The value is stemming from face validation in 
 - Start year. Ch. 5 §5.3.3 says eligibility starts "from the fifth year onward". The code tests `model.year > 5`, with Year 0 as the first step, which is the seventh step (L564).
   - Itay, 2026-10-12: Oh, so fix it so the statement will hold (.year>=4).
   - For the separate PR: `self.model.year >= 4` (L564; same in `sensitivity_model.py`).
+  - Done in PR 8 (item 9, `cfbcacc`), both files: `model.py` L597.
 - Unoccupied? Ch. 5 §5.3.3 speaks of reusing "an existing, unoccupied enclosed compound". The code does not check whether another household is at or near the compound this year.
   - Asked whether reuse should require that. Itay, 2026-10-12: Yes, it should.
   - For the separate PR: what counts as occupied (another household's main camp on the cell, a family camp, or the compound lying inside another territory this year). Deferred to the PR (agreed, Itay, 2026-10-13: confirmed).
+  - Done in PR 8 (item 9, `cfbcacc`): occupied means another household's main or family camp on the cell this year, or its reuse or build there this year (`cells_occupied_by_others`, L819–830; applied in `find_recent_enclosure`, L850–852). The test applies to reuse only, not to `build_enclosure`'s existing-compound candidates (a choice made in the PR, log.md 2026-10-14).
 - A "new build" can land on an existing compound's cell: own enclosures of any age, or others' older than 15 years, are candidates in `build_enclosure` (L842–875). The event is recorded as new construction with the larger signal (L577–586).
   - Asked whether that is intended. Itay, 2026-10-12: Yes, as it is hypothesized that reuse after such long time requires more resources.
 - "Built within the previous 35 years" (Ch. 5 §5.3.3). Each reuse appends a fresh entry with the current year to `model.enclosures` and `enc_memory` (L573–574), so the age windows run from the last use, not from construction.
@@ -64,3 +69,4 @@ A better than average conditions. The value is stemming from face validation in 
   - Asked whether Q should be capped at 1, or the separate PR should first log Q in a test run and decide from that. Itay, 2026-10-12: Yes.
   - The reply did not say which of the two options; asked again. Itay, 2026-10-13: Log Q.
   - For the separate PR: log Q (`env_quality`, L552–553) in a test run, then decide whether to cap it at 1. Until then Ch. 5 §5.3.3's "from 0 … to 1" stands unchecked.
+  - Partly done in PR 8 (item 9, `cfbcacc`): Q is stored as `env_quality` (L586) and logged in `household_data.csv` (L1084). Whether to cap it at 1 is still open.

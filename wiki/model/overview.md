@@ -2,8 +2,11 @@
 type: model
 created: 2026-10-08
 repository: "https://github.com/itaylub/Iron-Age-IIA-Negev-Highlands-ABM"
-code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
-code_commit_date: 2026-10-05
+code_commit: 032c2a1fbd26ec47017c65939ca372e02a575938
+code_commit_date: 2026-10-26
+code_branch: claude/separate-pr-code-fixes
+code_note: "model.py last changed in 5a83e8d (2026-10-14, the PR 8 fixes); sensitivity_model.py in 5f415eb (2026-10-25). Re-pinned 2026-10-26 from 2249331 (2026-10-05)."
+previous_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 version: "1.0.0 (CITATION.cff); CHANGELOG [Unreleased] reshaping since"
 software_doi: "10.5281/zenodo.21336898"
 data_doi: "10.5281/zenodo.20473345"
@@ -12,6 +15,8 @@ data_doi: "10.5281/zenodo.20473345"
 # Nomad ABM: overview
 
 An agent-based model in Python on Mesa 3 (`Code/model.py`) in which nine nomadic households reposition once a year for 75 years over a 318 × 280 grid of 250 m cells in the Negev Highlands. The accumulated occupation is classified into sites and compared with the Iron Age IIA record. A variant (`Code/sensitivity_model.py`) runs the sensitivity tests. File-level detail is in the [inventory](inventory.md).
+
+This page describes the code after the 18 fixes of PR 8 (separate-PR list in `log.md`, 2026-10-14), at the commit in the frontmatter. Line numbers in the dated Things to check entries refer to the earlier commit `2249331`.
 
 ## Purpose
 
@@ -34,57 +39,61 @@ Following Lake 2014, I would situate this model as a hypothesis testing kind of 
 
 ## Entities and state variables
 
-**Household agents** (`model.py › Household_Agent`, L515–949). Ch. 5 §5.2.2 defines a household as "a tentative group of about ten nuclear families". State in the code (`__init__`, L516–542):
+**Household agents** (`model.py › Household_Agent`, L544–1018). Ch. 5 §5.2.2 defines a household as "a tentative group of about ten nuclear families". State in the code (`__init__`, L545–574):
 
 | Variable | Code | Initial value | Documented in |
 |---|---|---|---|
-| Livestock | `flock_head` | sum of 10 draws of ⌊N(105, 15)⌋, about 1,050 (L519–522) | Ch. 5 §5.2.2; App. 5 Table A5.5 |
-| Manpower | `manpower` | max(35, ⌊flock/20⌋) (L526–527) | Ch. 5 §5.2.2 |
-| Surplus | `surplus` | 0 (L531–532) | Ch. 5 §5.2.2 |
+| Livestock | `flock_head` | sum of 10 draws of ⌊N(105, 15)⌋, about 1,050 (L548–551) | Ch. 5 §5.2.2; App. 5 Table A5.5 |
+| Manpower | `manpower` | max(35, ⌊flock/20⌋) (L555–556); also for a successor household (PR 8 item 7) | Ch. 5 §5.2.2 |
+| Surplus | `surplus` | 0 (L560–561) | Ch. 5 §5.2.2 |
 | Camp location | `pos` (Mesa) | set by placement | Ch. 5 §5.2.2 |
-| Territory | `territory` | list of cells; radius 25 at Year 0 (L993; intended, Itay 2026-10-12), 20/25/30 later (L632–641) | Ch. 5 §5.3.1 |
-| Home-range centre | `general_territory_center` | None (L537) | Ch. 5 §5.3.1 |
+| Last camp | `last_camp` | None (L572); set to `pos` by `reset_pos` before the household leaves the grid each year (L1124) | Ch. 5 §5.3.1 ("P is last year's camp", write-up list) |
+| Territory | `territory` | list of cells; radius 25 at Year 0 (L1066; intended, Itay 2026-10-12), 20/25/30 later (L674–683); kept until the household places again, for the territory bonus | Ch. 5 §5.3.1 |
+| Home-range centre | `general_territory_center` | None (L566); the Year-0 camp from Year 1, then moved toward the last camp (L663–669) | Ch. 5 §5.3.1 |
 | Camp memory | `memory`, entries `[cell, quality, year]` | empty | Ch. 5 §5.3.1 |
 | Enclosure memory | `enc_memory`, entries `[cell, year]` | empty | Ch. 5 §5.3.3 |
-| Personalised suitability | `own_suitability_raster` | None, rebuilt yearly | Ch. 5 §5.3.1 |
-| Prosperity index | `prosperity_index` | None, set each step (L561–562) | Ch. 5 §5.3.3 |
-| Enclosure surplus floor | `threshold` | 10 (model-level, L976) | Ch. 5 §5.3.3 |
+| Personalised suitability | `own_suitability_raster` | None, rebuilt yearly for the main-camp draw (L975–1018) | Ch. 5 §5.3.1 |
+| Home-range and memory bonus | `home_memory_bonus` | None (L571), built with the surface above and reused for the family-camp draws (L1009, L388) | Ch. 5 §5.3.1 |
+| Prosperity index | `prosperity_index` | None, set each step (L594–595) | Ch. 5 §5.3.3 |
+| Environmental quality Q | `env_quality` | None, set each step (L574, L586); logged in `household_data.csv` | Ch. 5 §5.3.3 |
+| Enclosure surplus floor | `threshold` | 10 (model-level, L1049) | Ch. 5 §5.3.3 |
 
 Ch. 5 §5.2.2 and App. 5 Table A5.5 also list a crisis flag (`in_severe_crisis`), which the code no longer has: it was removed in December 2025, and Itay (2026-10-12) accepts adjusting the text to the code. See Things to check.
 
-**Nuclear families** are not agents. Each year nine family camps are drawn inside the household's territory (`year_initiation`, L645–649).
+**Nuclear families** are not agents. Each year nine family camps are drawn inside the household's territory (`year_initiation`, L687–691).
 
-**Environment** (`NomadModel`, L952–1058): `suitability_raster`, `return_raster` (the occupation accumulator), `stress_ras` (resource-exhaustion layer, 10 = untouched), `veg_ras`/`veg_map` (pasture), `ag_ras` (agricultural potential), `target_raster` (this year's occupation signal), `place_raster` (valid-placement mask: the Israeli Negev Highlands, leaving out the Egyptian side for lack of data and the eastern lowlands, per Itay 2026-10-12), `ext_raster` (the Negev Highlands outline; the band between the two masks is the buffer, per Itay 2026-10-12), `enclosures` (list of `[cell, year, agent]`), `territories`. App. 5 Table A5.6 documents these.
+**Environment** (`NomadModel`, L1021–1135): `suitability_raster`, `return_raster` (the occupation accumulator), `stress_ras` (resource-exhaustion layer, 10 = untouched), `veg_ras` (pasture: the year's array 2, no-data cells set to 0; `pasture_layer`, L273–280) and `veg_map` (`veg_ras` reduced for exhaustion, L1111–1114), `ag_ras` (agricultural potential), `target_raster` (this year's occupation signal), `place_raster` (valid-placement mask: the Israeli Negev Highlands, leaving out the Egyptian side for lack of data and the eastern lowlands, per Itay 2026-10-12), `ext_raster` (the Negev Highlands outline; the band between the two masks is the buffer, per Itay 2026-10-12), `enclosures` (list of `[cell, year, agent]`), `territories` (the territories set so far this year, cleared in `move_year`, L1098). App. 5 Table A5.6 documents these. The model also holds `np_rng`, its numpy generator (L1028; see Initialisation).
 
 ## Scales
 
-- Space: 318 rows × 280 columns of 250 m cells. `NomadModel` builds `MultiGrid(width=280, height=318, torus=False)` from the raster shape (L957–958), and Ch. 5 §5.2.1.1 says space is bounded, not toroidal. Model extent 3,251.54 km² (`Num_agents`, L284; App. 5 Table A5.4). CRS is ITM, EPSG:2039 (`to_gdf`, L1150–1156; docs/DATA.md).
-- Time: annual steps for 75 years in calibration (`objective_function`, `n_years=75`, L1294). Each step is "a single episode of occupation within a given year" (Ch. 5 §5.2.3).
+- Space: 318 rows × 280 columns of 250 m cells. `NomadModel` builds `MultiGrid(width=280, height=318, torus=False)` from the raster shape (L1030–1031), and Ch. 5 §5.2.1.1 says space is bounded, not toroidal. Model extent 3,251.54 km² (`Num_agents`, L290; App. 5 Table A5.4). CRS is ITM, EPSG:2039 (`to_gdf`, L1227–1233; docs/DATA.md).
+- Time: annual steps for 75 years in calibration (`objective_function`, `n_years=75`, L1370). Each step is "a single episode of occupation within a given year" (Ch. 5 §5.2.3).
 
 ## Process overview and scheduling
 
-As implemented in `run_model_opt` (L1242–1291), with `model.step` and `model.move_year`:
+As implemented in `run_model_opt` (L1319–1367), with `model.step` and `model.move_year`:
 
-1. **Initialise** (`NomadModel.__init__`, L953–1012): compute this year's suitability from shuffled rainfall years, then place nine households one after another in creation order. For each: draw a camp, set a radius-25 territory, place nine family camps, degrade the surroundings.
-2. **Each year t = 0…74, `step`** (L1014–1018): all households run `Household_Agent.step` in random order (`shuffle_do`). Each does [herd update](../mechanisms/herd-dynamics.md), [surplus](../mechanisms/household-economy.md), [enclosure reuse/build](../mechanisms/enclosure-construction.md), [crisis](../mechanisms/crisis-and-replacement.md), livestock purchase, manpower and surplus decay. The year's `target_raster` is stored, then `year += 1`.
-3. **Between years, `move_year`** (L1020–1043): remove all households from the grid. Rebuild the [suitability surface](../mechanisms/suitability-surface.md) with this year's rainfall draw and the [occupation history layers](../mechanisms/occupation-history-layers.md). Update pasture (`veg_map`) for exhaustion and reset `target_raster`. Create [replacement households](../mechanisms/crisis-and-replacement.md). Then all households run `year_initiation` in a new random order: [memory pruning and personalised suitability](../mechanisms/memory-and-territorial-attachment.md), [camp and territory placement](../mechanisms/camp-and-territory-placement.md), and [within-year degradation](../mechanisms/within-year-degradation.md).
+1. **Initialise** (`NomadModel.__init__`, L1022–1086): compute this year's suitability from shuffled rainfall years, then place nine households one after another in creation order. For each: draw a camp (re-drawn while the candidate area is crowded by the territories already set or poor; see [placement](../mechanisms/camp-and-territory-placement.md)), set a radius-25 territory, place nine family camps, degrade the surroundings.
+2. **Each year t = 0…74, `step`** (L1088–1092): all households run `Household_Agent.step` in random order (`shuffle_do`, on Mesa's seeded generator). Each does [herd update](../mechanisms/herd-dynamics.md), [surplus](../mechanisms/household-economy.md), [enclosure reuse/build](../mechanisms/enclosure-construction.md), [crisis](../mechanisms/crisis-and-replacement.md) (a household that fails leaves the grid and the schedule, L628–629), livestock purchase, manpower and surplus decay. The year's `target_raster` is stored, then `year += 1`.
+3. **Between years, `move_year`** (L1094–1120): remove all households from the grid, keeping each one's last camp (`reset_pos`, L1122–1125), and clear this year's territories. Rebuild the [suitability surface](../mechanisms/suitability-surface.md) with this year's rainfall draw and the [occupation history layers](../mechanisms/occupation-history-layers.md). Update pasture (array 2, then `veg_map` for exhaustion) and reset `target_raster`. Create [replacement households](../mechanisms/crisis-and-replacement.md). Then all households run `year_initiation` in a new random order: [memory pruning and personalised suitability](../mechanisms/memory-and-territorial-attachment.md), [camp and territory placement](../mechanisms/camp-and-territory-placement.md), and [within-year degradation](../mechanisms/within-year-degradation.md).
 4. **After 75 steps**: [classify sites](../mechanisms/site-classification.md) and score against the record ([calibration objective](../mechanisms/calibration-objective.md)).
 
 Placement and the economic step are two separate passes over the households, each in its own random order. Ch. 5 §5.4 describes one pass in which each household places and then manages its herd. See Things to check.
 
-Itay (2026-10-12): the herd update at the start of `step` (L545) counts as the "resource calculation" stage of Ch. 5 Fig. 5.3, and the ODD follows the code's two passes rather than the single pass of Ch. 5 §5.4.
+Itay (2026-10-12): the herd update at the start of `step` (L577) counts as the "resource calculation" stage of Ch. 5 Fig. 5.3, and the ODD follows the code's two passes rather than the single pass of Ch. 5 §5.4.
 
 Ch. 5 Fig. 5.3 lists "Eight sequential stages" per year: "environmental update; household repositioning in randomised order; territory establishment; resource calculation; prosperity assessment and enclosure decision; crisis check; livestock and demographic adjustment; and end-of-year bookkeeping". Ch. 5 Fig. 5.6 gives the outer loop: "model.move_year() resets household grid positions and updates dynamic environmental layers, followed by model.step() executing the full annual household decision sequence". Captions as printed on pp. 146 and 160 of the thesis PDF; the figure images have not been examined.
 
 ## Initialisation
 
-- Number of households: `Num_agents()` returns ⌊(3,251.54 / 18) / 20⌋ = 9 (L283–287). Ch. 5 §5.2.4 derives it from 18 km² per nuclear family (Rosen & Finkelstein 1992 on Seligman et al. 1962), ten families per household (about 180 km²), so about 18 households at carrying capacity, halved "again to be on the conservative side".
-- In Year 0, households choose "on environmental suitability alone" (Ch. 5 §5.2.4). In the code, memory and territory are empty at Year 0, so the personalised raster equals the shared one.
-- Rainfall years: the indices of the yearly stack (76 groups per docs/DATA.md) are shuffled once per run (L1254–1255) and read in order, so a run uses each observed year at most once. The file holds 75 years (`num_groups` = 75; DATA.md's 76 counts the `metadata` group), so a 75-year run uses each exactly once. Itay (2026-10-12): 75 years were prepared so that each year of a run is different; only the longer sensitivity runs reuse years. The year's pasture and agriculture arrays derive from the same rainfall year (Itay, 2026-10-12).
+- Number of households: `Num_agents()` returns ⌊(3,251.54 / 18) / 20⌋ = 9 (L289–293). Ch. 5 §5.2.4 derives it from 18 km² per nuclear family (Rosen & Finkelstein 1992 on Seligman et al. 1962), ten families per household (about 180 km²), so about 18 households at carrying capacity, halved "again to be on the conservative side".
+- In Year 0, households choose "on environmental suitability alone" (Ch. 5 §5.2.4). In the code, memory, territory and home-range centre are empty at Year 0, so the personalised raster equals the shared one. Each household's Year-0 camp memory holds the mean suitability within 20 cells of the camp (L1076); later years use the territory radius (L694). From Year 1 the home-range centre starts at the Year-0 camp (L663–664).
+- Random numbers: each run derives two numpy generators from its seed (`run_generators`, L530–541), one for the order of the rainfall years and one for camp-cell draws (`np_rng`). Mesa's own generator, seeded with the same seed (`super().__init__(seed=seed)`, L1027), sets the household order in `shuffle_do` and makes every Python-level draw. Runs therefore reproduce from their seeds and share no random state with other runs in the same process (PR 8 items 10 and 17).
+- Rainfall years: the indices of the yearly stack (76 groups per docs/DATA.md) are shuffled once per run (L1328–1330) and read in order, so a run uses each observed year at most once. The file holds 75 years (`num_groups` = 75; DATA.md's 76 counts the `metadata` group), so a 75-year run uses each exactly once. Itay (2026-10-12): 75 years were prepared so that each year of a run is different; only the longer sensitivity runs reuse years. The year's pasture and agriculture arrays derive from the same rainfall year (Itay, 2026-10-12).
 
 ## Input data
 
-Inputs are fetched from Zenodo into `Data/` (`scripts/download_data.py`; docs/DATA.md). Permanent layers come from `per_data_10_25.h5` (six arrays, of which four enter the suitability sum). The yearly stack is `yearly_data_10_25.h5` (three arrays per year). There are two masks (`ext_raster.npy`, `place_raster.npy`) and the calibration points (`P_for_calib.shp`). See [inventory](inventory.md) and [suitability surface](../mechanisms/suitability-surface.md).
+Inputs are fetched from Zenodo into `Data/` (`scripts/download_data.py`; docs/DATA.md). Permanent layers come from `per_data_10_25.h5` (six arrays, of which four enter the suitability sum). The yearly stack is `yearly_data_10_25.h5` (three arrays per year: array 0 enters the suitability sum as current-year rainfall, array 1 is agricultural potential, array 2 is the herds' pasture). There are two masks (`ext_raster.npy`, `place_raster.npy`) and the calibration points: `P_for_calib.shp` by default (`NOMAD_ABM_CALIB_SHP` overrides it), and `P_for_calib_strict.shp`, built from the sites table by `scripts/make_calib_sites.py` (commit `87dd382`) and passed with `--calib-shp` to the calibration scripts. See [inventory](inventory.md) and [suitability surface](../mechanisms/suitability-surface.md).
 
 ## Mechanisms
 - [Suitability surface](../mechanisms/suitability-surface.md): seven weighted layers, the calibrated part of the model
@@ -103,6 +112,7 @@ Inputs are fetched from Zenodo into `Data/` (`scripts/download_data.py`; docs/DA
 - [Inventory](inventory.md) · [Parameters](parameters.md) · [Assumptions register](assumptions.md) · [Experiments](experiments.md) · [ODD map](odd-map.md) · [Literature cited](literature-cited.md)
 
 ## Things to check
+Dated entries below keep the line numbers of commit `2249331` (2026-10-05), as checked then. Lines starting "Done in PR 8" were added on 2026-10-26.
 - Schedule order. The code runs placement for all households, then the economic step for all, in two separate random orders (L1015, L1043). Ch. 5 §5.4 describes each household placing and then managing its herd in turn. Ch. 5 §5.2.3 gives a third order, enclosure decision before the livestock update, while the code updates the herd first (L545–546, then L564–587). Ch. 5 Fig. 5.3 puts "resource calculation" before the enclosure decision and "livestock and demographic adjustment" after the crisis check. That matches the code if the herd update (L545) counts as resource calculation and the purchase and manpower changes (L594–605) as the later adjustment. Which order should the ODD describe?
   - Itay, 2026-10-12: Initial herd update count as a resource update.
 - Still open after that reply: one pass or two? Ch. 5 §5.4 says "the households act one after another, in a random order. First, each household selects a camp, sets its territory and disperses the nuclear families within it (Section 5.3.1); then it works through the following behaviours". The code places all households in one random order (`move_year`, L1043) and runs all economic steps in another (`step`, L1015).
@@ -115,6 +125,7 @@ Inputs are fetched from Zenodo into `Data/` (`scripts/download_data.py`; docs/DA
   - The first option is `model.py`'s fixed radius 25 at Year 0. Ch. 5 §5.3.1 and App. 5 Table A5.4 give the 20/25/30 rule with no Year-0 exception. The sensitivity tests ran `sensitivity_model.py`, which applies 20/25/30 at Year 0 (L895–908).
   - Asked whether "the first one" meant `model.py`'s fixed radius 25. Itay, 2026-10-12: Yes.
   - The sensitivity-file difference is taken up with the two model files ([inventory](inventory.md), Things to check).
+  - Done in PR 8: `sensitivity_model.py` uses radius 25 at Year 0 (item 2, `6a3a981`) and measures the Year-0 camp memory within 20 cells, as `model.py` does (`5f415eb`, 2026-10-25). The check that `sensitivity_model.py` at its default switches reproduces the calibrated model's runs is in `sensitivity\check\check.csv` of the strict calibration's results folder on the PC (not read in this session).
 - Run length versus data. `model.py` reads `inds[self.year]` with no wrap-around (L486, L1029). A run longer than the number of yearly groups (76 per docs/DATA.md) would fail. `sensitivity_model.py` cycles with a modulo (L399, L945), which is how the 150-year test ran.
   - Itay, 2026-10-12: As the simulated data was prepared specifically for this, I made only 75 years so each year is different, but for longer runs (only in the sensitivity analysis) I reused some of the years.
   - Asked whether "simulated data" means the observed IMS years processed for the model (Ch. 5 §5.2.1.2). Itay, 2026-10-12: Yes, and the other arrays that derive from it (pasture and agriculture).
@@ -122,6 +133,7 @@ Inputs are fetched from Zenodo into `Data/` (`scripts/download_data.py`; docs/DA
   - Itay, 2026-10-12: I am not sure the extra group is real at all, maybe it is just 75 groups. We need to check the actual file.
   - Checked 2026-10-12. `yearly_data_10_25.h5` from the repository history (commit `14cb755^`; SHA-256 equal to docs/DATA.md, so the calibration file) has 76 top-level groups: `group_0`…`group_74` (75 years, each with `array_0`–`array_2`) and `metadata` (`num_groups` = 75, `arrays_per_group` = 3). DATA.md counted `metadata` as a year. `LazyYearlyData` takes its length from `num_groups` (L76, L79–80), so a 75-year run uses every year exactly once. Read with the HDF5 C library; Zenodo is not reachable from this session.
   - Deferred to the [experiments](experiments.md) round (agreed 2026-10-12): in the 150-year run the modulo replays years 0–74 in the same shuffled order for years 75–149 (`sensitivity_model.py` L399, L945).
+  - Done in PR 8 (item 18, `cbd1fb7`): each further 75-year cycle gets a new shuffle of the year order (`sensitivity_model.py › NomadModel.move_year`, L1018–1024 at the current commit).
   - "Independently"? Ch. 5 §5.2.1.2 says each year's rainfall "is taken from a randomly chosen observed year (August–July) in the IMS record" and speaks of "Drawing independently each year from measured present-day rainfall". The code shuffles the years once and uses each at most once (L1254–1255), which matches the reply ("so each year is different").
   - Asked which wording the journal version should use. Itay, 2026-10-12: "A random year from a list of 75(?) years, each only once" - feel free to improve the phrasing, but this is the essence.
   - Wording for the journal version, Itay, 2026-10-12 (approved Claude draft): "Each simulated year takes its rainfall, and the pasture and arable-land layers derived from it, from one of 75 observed years in the IMS record (August–July, years with at least 20 active stations). The years are drawn at random without replacement, so no year repeats within a 75-year run." It replaces Ch. 5 §5.2.1.2's "drawing independently each year".

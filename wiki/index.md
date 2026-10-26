@@ -7,14 +7,15 @@
 - [Can autochthonous nomadic processes generate the Iron Age IIA pattern?](questions/palimpsest-sufficiency.md): the model's research question, Ch. 5 §5.1
 ## Notes
 ## Model
-- [Overview](model/overview.md): purpose, entities, scales, schedule, initialisation · Purpose reading written
-- [Inventory](model/inventory.md): files, notebooks, docs, data, outputs; how `model.py` and `sensitivity_model.py` differ
-- [Parameters](model/parameters.md): every value in the code against App. 5 Table A5.4; calibrated weights
+- [Overview](model/overview.md): purpose, entities, scales, schedule, initialisation, random generators · Purpose reading written · code at `032c2a1` (after PR 8)
+- [Inventory](model/inventory.md): files, notebooks, calibration scripts, docs, data, outputs; how `model.py` and `sensitivity_model.py` differ · code at `032c2a1`
+- [Parameters](model/parameters.md): every value in the code against App. 5 Table A5.4; calibrated weights · code at `032c2a1`
 - [Assumptions register](model/assumptions.md): 35 assumptions with where encoded and justification status
 - [Experiments](model/experiments.md): calibration, best-trial replication, four sensitivity tests, smoke test
 - [ODD map](model/odd-map.md): ODD elements → wiki pages and gaps
 - [Literature cited](model/literature-cited.md): works Ch. 5 / App. 5 cite per component; none ingested
 ## Mechanisms
+Page bodies describe the code at `2249331` (before PR 8); PR 8 fixes are marked "Done in PR 8" under each page's Things to check.
 - [Suitability surface](mechanisms/suitability-surface.md): seven weighted 0–10 layers, slope cut, mask · rationale written
 - [Occupation history layers](mechanisms/occupation-history-layers.md): reuse potential (×5) and resource exhaustion (fuzzy, 0.5 decay) · rationale written
 - [Memory and territorial attachment](mechanisms/memory-and-territorial-attachment.md): home-range centre, territory bonus, camp memory · rationale written

@@ -3,9 +3,12 @@ type: mechanism
 created: 2026-10-08
 code: "model.py › obj_func, L1160–1235; objective_function, L1294–1339; objective, L1342–1392; Code/calibration.ipynb cell 1"
 odd: "Purpose and patterns; Design concepts › observation; (calibration, outside ODD core)"
+body_code_commit: 2249331932b0a42ec47c33bca0ac94f4b8728813
 ---
 
 # Calibration objective and procedure
+
+> Status 2026-10-26: the body and the line numbers in the `code` field describe commit `2249331` (2026-10-05), before the 18 fixes of PR 8. Fixes that touch this mechanism are marked "Done in PR 8" under Things to check, with line numbers at `032c2a1`. The body is to be brought to the current code when its ODD submodel is written.
 
 ## What it does
 **Score per run** (`obj_func`, L1160–1235), comparing the archaeological points (`gdf`, from `P_for_calib.shp`) with the simulated sites (`gdf1`, from [site classification](site-classification.md)):
@@ -49,8 +52,10 @@ Ratio, it ranges always between 0 to 1 as there are always more other sites (val
   - Itay, 2026-10-12 (clarifying the reply above): I did not say they didn't. I said they did and I don't think they interrupted each other. I will consider (b) [each run with its own generator, in the separate PR]. (c) [re-running the best trial alone] already happened in the validation.
   - What (c) refers to (Ch. 5 §5.5.4): "To confirm that this result is not an artefact of a single fortunate set of random seeds, the best-scoring combination was re-run for 30 additional replicates", giving 0.213 ± 0.021 against the calibration's 0.2013. That tests robustness across new seeds, not whether a seed reproduces its score.
   - A further check of the no-interference reply is deferred to [experiments](../model/experiments.md) (agreed 2026-10-12): comparing trial 173's ten calibration replicates (seeds 17300–17309, `objective_function` L1309–1310) with runs that used the same seeds outside the parallel batch, if any exist.
+  - Done in PR 8: each run has its own random generators (item 10, `d27116c`; `run_generators`, L530–541), and Mesa's generator is seeded with the run's seed (item 17, `2a34132`; L1027).
 - `objective` sets `CUDA_VISIBLE_DEVICES` per trial (L1348–1350). No GPU code is in the model.
   - Asked whether this can go in the separate PR. Itay, 2026-10-12: Yes.
+  - Done in PR 8 (item 10, `8b3483e`): removed from `objective`.
 - calibration.ipynb's main block calls `run_optimization(n_trials=13, n_jobs=4)`, while the function default is 200 trials with `n_jobs=10`. The study is loaded with `load_if_exists=True`, so the 200 trials reported (Ch. 5 §5.5.2) may have accumulated over several sessions. Is the notebook state the last of them?
   - Itay, 2026-10-12: As the 200 runs took very long, I did not run them all at once but, as written did small batches at each time (e.g. 13). The Optuna database contains 200 trials (see exported table "G:\Other computers\My Computer\Drive\01_PROJECTS\MA_thesis\ABM\Results\opt_2_26_v1.csv"; "G:\Other computers\My Computer\Drive\01_PROJECTS\MA_thesis\ABM\Results\run\opt_run.db"; "G:\Other computers\My Computer\Drive\01_PROJECTS\MA_thesis\ABM\Results\run\optimization_summary.csv").
   - Checked 2026-10-12 in both exports (read through the Drive connector). Trials 0–217: 143 complete, 57 pruned and 18 failed (0–9, 22–25, 56–59), so the 200 are the complete and pruned trials, as App. 5 §A5.3 says. They ran from 2026-02-17 to 2026-03-05. The best is trial 173 (0.2013), whose weights are the best-trial weights in [parameters](../model/parameters.md#calibrated-weights).
