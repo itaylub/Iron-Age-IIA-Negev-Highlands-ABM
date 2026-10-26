@@ -70,3 +70,4 @@ A better than average conditions. The value is stemming from face validation in 
   - The reply did not say which of the two options; asked again. Itay, 2026-10-13: Log Q.
   - For the separate PR: log Q (`env_quality`, L552–553) in a test run, then decide whether to cap it at 1. Until then Ch. 5 §5.3.3's "from 0 … to 1" stands unchecked.
   - Partly done in PR 8 (item 9, `cfbcacc`): Q is stored as `env_quality` (L586) and logged in `household_data.csv` (L1084). Whether to cap it at 1 is still open.
+  - Checked 2026-10-26 (command run by Itay on the PC; `household_data.csv` of trial 197's 30 measure runs, `analysis\measures_trial197\runs`): 20,250 values of Q, from 0.135 to 0.545, mean 0.412; none above 1. By construction the six 0–10 layers keep Q at or below 1 (their weights sum to 1), but the reuse layer (accumulator × 5, `Yi_params` L480) has no upper bound, so Q can pass 1 only where a whole 20-cell neighbourhood is heavily reused.

@@ -146,7 +146,7 @@ The fixed code was recalibrated on the owner's PC with `scripts/calibrate.py` ag
 |---|---|---|---|
 | Prosperity thresholds | 0.6 (eligible), 0.8 (new) | L596, L609 | 0.6, 0.8, Assumed |
 | Start | `year >= 4` (PR 8 item 9) | L597 | "from the fifth year onward" (Ch. 5 §5.3.3); `year >= 4` intended (Itay, 2026-10-12) |
-| Environmental quality Q | mean suitability within 20 cells / 10, uncapped; logged | L584–586 | "from 0 … to 1" (Ch. 5 §5.3.3); whether to cap at 1 is open (PR 8 item 9) |
+| Environmental quality Q | mean suitability within 20 cells / 10, uncapped; logged | L584–586 | "from 0 … to 1" (Ch. 5 §5.3.3); whether to cap at 1 is open (PR 8 item 9). Trial 197's 30 runs: 0.135–0.545, none above 1 ([enclosures](../mechanisms/enclosure-construction.md), Things to check) |
 | Reuse minima, cost | M ≥ 15, S ≥ 10; 10 M, 6 S | L598, L601–602 | same, Assumed |
 | New-build minima, cost | M ≥ 30, S ≥ 30; 20 M, 25 S | L609, L612–613 | same, Assumed |
 | Manpower recovery | 90% | L608, L620 | 90%, Assumed |

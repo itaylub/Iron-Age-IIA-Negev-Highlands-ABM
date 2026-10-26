@@ -22,7 +22,7 @@ archaeological record. Households make annual decisions about camp
 location, territory, livestock management, and enclosure construction
 under stochastic rainfall regimes.
 
-The model is implemented in Python on top of [Mesa 3.0](https://mesa.readthedocs.io/),
+The model is implemented in Python on top of [Mesa 3](https://mesa.readthedocs.io/) (pinned to 3.5.1, the version the calibration ran with),
 with [Optuna](https://optuna.org/) for parameter calibration and standard
 geospatial / scientific libraries (geopandas, shapely, numpy, scipy,
 h5py).
