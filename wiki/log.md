@@ -294,3 +294,8 @@ Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13, 14, 15, 16; al
 - mechanism pages: bodies not rewritten. Each has `body_code_commit: 2249331…` in its frontmatter and a status note under its title; the bodies are to be brought to the current code with the ODD submodels (direction-note subtasks 7a–c).
 - not done, for the owner: the October 2026 calibrated weights (study `opt_fixed_strict_2026_10`, trial 197) are not on parameters.md, because `analysis\rerun_top10.csv` is on the PC and was not read; model/experiments.md does not yet record the October 2026 studies. docs/DATA.md, docs/objective_function.md and README as revised in PR 8 item 11 were not re-read.
 - readings: none written; none owed outside the guides' templates.
+
+## [2026-10-26] code | model/parameters.md: calibrated weights of the fixed code (trial 197) | — | Claude (Claude Code, research-wiki)
+- added: the trial 197 table (integers, normalised weights, mean ± SD across the 10 leading distinct sets) and its scores, from `rerun_top10.csv` and `rerun_top10_runs.csv` (Drive copies of the study's `analysis\` files), under "Calibration of the fixed code (October 2026)". The trial 197 values were checked against both files; the 30-run mean and SD recomputed from the per-run file.
+- Itay, 2026-10-26: approved the values; the integers are 0–7 importance scores and only the normalised values matter, so their sum carries no meaning.
+- not added: the leading-20 means from the settle check (`settle_check.json`, on the PC only).

@@ -27,7 +27,21 @@ Normalised integer weights, sampled 0–7 (`objective`, L1422–1436).
 Sources: best-trial integers from CHANGELOG [1.0.0] "Phase 6 follow-up", which cites "§4.6.4 of the thesis" (older numbering). Cluster means from Ch. 5 §5.5.4 ("the 19 trials scoring below 0.21"). Ch. 5 Fig. 5.9 (p. 169) shows the 19-trial means. The best trial's own integers appear only in the CHANGELOG. Best calibration score 0.2013; 30-replicate re-run 0.213 ± 0.021 (Ch. 5 §5.5.4).
 
 ### Calibration of the fixed code (October 2026)
-The fixed code was recalibrated on the owner's PC with `scripts/calibrate.py` against `P_for_calib_strict.shp` (study `opt_fixed_strict_2026_10`; calibrated set: trial 197). The weights are to be copied here from the study's `analysis\rerun_top10.csv`, which is on the PC and has not been read in this session.
+The fixed code was recalibrated on the owner's PC with `scripts/calibrate.py` against `P_for_calib_strict.shp` (study `opt_fixed_strict_2026_10`). The 10 leading distinct weight sets were each re-run 30 times on fresh seeds (`scripts/analyse_calibration.py --rerun-top 10`), and the set with the lowest 30-run mean is the calibrated one: trial 197.
+
+| Weight (code key) | Layer | Trial 197, integer (normalised) | 10 leading distinct sets, mean ± SD | Used by |
+|---|---|---|---|---|
+| `dist_to_kb` | distance to Tell el-Qudeirat (–Faynan corridor) | 6 (0.30) | 0.294 ± 0.007 | [suitability](../mechanisms/suitability-surface.md) |
+| `p_water` | distance to permanent water | 1 (0.05) | 0.022 ± 0.023 | suitability |
+| `Mean_rain` | long-term mean rainfall | 4 (0.20) | 0.186 ± 0.020 | suitability |
+| `slope_suitability` | slope | 0 | 0.004 ± 0.013 | suitability |
+| `return_to_site` | reuse potential | 7 (0.35) | 0.314 ± 0.029 | suitability |
+| `humen_stress` | multi-annual resource exhaustion | 2 (0.10) | 0.173 ± 0.034 | suitability |
+| `Yearly_rain` | current-year rainfall | 0 | 0.008 ± 0.017 | suitability |
+
+- Trial 197: 10-run calibration score 0.1695 (first in the calibration); 30 re-runs 0.1755 ± 0.019 (SD; SE 0.0035), mean spatial error 0.311, mean site-type error 0.040. Runner-up: trial 109, 0.181. The ten sets' 30-run means span 0.1755–0.1869.
+- Each weight is an integer importance score from 0 to 7 (7 = most important); only the normalised values enter the model, so the integers' sum carries no meaning (Itay, 2026-10-26).
+- Sources: `rerun_top10.csv` (per set) and `rerun_top10_runs.csv` (per run; the 30 runs of trial 197 give mean 0.1755, SD 0.0190) from the study's `analysis\` folder; Drive copies in `G:\My Drive\MA Thesis\ABM chapter\`, read 2026-10-26. The SDs are sample SDs across the ten sets. Values approved by Itay, 2026-10-26.
 
 ## Spatial and temporal
 | Parameter | Code | Where | Documented |
