@@ -8,9 +8,36 @@
 
 ### 1. Purpose and patterns
 
-> **To write** (S1 pp. 4–6; checklist p. 6). The model's specific purpose or purposes. The patterns used as criteria for judging whether the model suits that purpose.
->
-> **Material.** Itay's purpose reading ([overview › Purpose](../wiki/model/overview.md#purpose)): a test of plausibility after Lake (2014), not validation in the broad sense. Research question: [palimpsest sufficiency](../wiki/questions/palimpsest-sufficiency.md). Patterns: the spatial distribution of all sites (standard deviational ellipse, compared by IoU) and the ratio of enclosed compounds to other sites ([calibration objective](../wiki/mechanisms/calibration-objective.md)). Target: 463 sites in the model area, 32 enclosed compounds, 6.91% ([overview](../wiki/model/overview.md), Things to check, 2026-10-26).
+<!-- Agreed 2026-10-26. Open: the citation for the Iron Age IIA intensification in 1.1 ("[citation to add]"); naming and citing the competing interpretation after "sedentary settlement" in 1.1 is deferred. -->
+
+#### 1.1 Purpose
+
+Following the classification of Lake (2014), the model is of the hypothesis-testing type. It assesses the plausibility of the palimpsest hypothesis, testing whether a proposed mechanism can produce the observed archaeological pattern.
+
+The palimpsest hypothesis, as tested here, holds that the stone-built sites of the Negev Highlands accumulated over decades during the economic intensification of the Iron Age IIA [citation to add]. Both site types, the enclosed compounds and the other sites, represent the repeated seasonal returns of a few mobile pastoral households. They therefore do not record a single horizon of contemporaneous sedentary settlement. The model asks whether such local households, moving each year in response to the environment and to their own past use of the land, can generate a regional distribution of sites and a share of enclosed compounds similar to those observed.
+
+This is a test of plausibility rather than of validity. Reproducing the patterns would show that the mechanisms suffice to generate them, but would not rule out other explanations. A secondary purpose is to estimate, through calibration, the relative importance of the environmental and historical factors that shaped where households camped.
+
+#### 1.2 Patterns
+
+Two patterns in the observed record serve as criteria for judging whether the model suits its purpose. Both are regional, so the model is not judged on where any single site lies.
+
+The observed record comprises 463 Iron Age IIA sites, 32 of them enclosed compounds, taken from the sites table of the Negev Highlands (Lubel 2026). The table lists 510 sites, and the other 47 lie outside the model area. Most of them lie just across the border in Egypt, where the geological, rainfall and other environmental data the model needs are insufficient. The rest lie south and east of the Negev Highlands, close to them but outside their ecological zone.
+
+**Pattern 1: the regional distribution of all sites.** The sites are clustered at every scale tested, with no sign of regular spacing, and they concentrate in an east–west band about 4–8 km wide that runs from the Avdat–Ramat Matred area through Ramat Barnea towards Tell el-Qudeirat (Lubel 2026). Secondary concentrations lie in the north-east (the Yeroham–Dimona syncline) and the south-west (the Horsha–Lotz area). The band coincides with the least-cost passage from the northern Arabah, through the Zin Valley and the central Negev Highlands, to Tell el-Qudeirat. Within it, site densities would exceed what the region could sustain at any one time (compare Rosen & Finkelstein, 1992). The palimpsest hypothesis explains this density as repeated, largely seasonal occupations, with favoured places revisited across generations. If the hypothesis holds, the households' accumulated occupation should concentrate in the same area and along the same axis.
+
+The pattern is measured with a standard deviational ellipse, centred on the mean of the sites, with its two axes scaled to two standard deviations of their spread along the directions of greatest and least dispersion (Yuill, 1971). Its size, elongation and orientation describe where the sites concentrate and along which axis they are drawn out. The observed ellipse is 2.2 times as long as it is wide because of the east–west band, and the sites in the north-east turn its long axis northward, to 55.7° from east.
+
+**Pattern 2: the site-type ratio.** Enclosed compounds, structures with a central courtyard enclosed by a casemate wall, are thought in the literature to be the central nodes of this phenomenon (e.g. Aharoni et al. 1960; Rothenberg 1967; Meshel 1975; Haiman 1992; Cohen & Cohen Amin, 2004; Finkelstein 2014). Sites with an enclosed compound are a small minority, and they may also include circular structures, rectangular structures, towers, four-room houses or unclassified structures. The other sites have no enclosed compound and consist of these structure types alone, singly or in combination. The site classification follows Lubel (2026). The two types are hypothesized to contribute to the archaeological record differently: the other sites record frequent, short-lived repositioning of small social units (e.g. nuclear families), whereas the enclosed compounds were probably reoccupied and reused over longer intervals (Ben-Yosef 2026; Lubel 2026). The palimpsest hypothesis takes the enclosed compounds to be communal, kin-based, multi-purpose territorial centres, built from accumulated household surplus and reused over the years. The ratio of compounds to other sites therefore tests whether the households' decisions to build and reuse compounds produce them at a frequency resembling the observed one.
+
+| Pattern | Observed value (463 sites) | Test |
+|---|---|---|
+| 1. Regional distribution of all sites | Standard deviational ellipse at 2 SD: mean centre 168,385 E, 515,557 N (ITM); semi-axes 33.3 and 15.2 km (2.2:1); area 1,589 km²; long axis 55.7° anticlockwise from east | Overlap of the observed and simulated ellipses, as intersection over union (IoU) |
+| 2. Site-type ratio | 32 enclosed compounds to 431 other sites: a ratio of 0.074 (1:13.5); 6.91% of all sites | Absolute difference between the observed and simulated ratios of enclosed compounds to other sites |
+
+Matching both patterns at once reduces equifinality, since many parameter sets may reproduce one of them but far fewer reproduce both (Grimm et al., 2005; Gallagher et al., 2021). The simulated record is measured in the same way, from the sites that the households' accumulated occupation leaves on the grid (4.11 Observation; 7.10 Site classification). The calibration combines the two tests into one error, described in the section on calibration after the ODD.
+
+The observed and simulated records are not symmetrical. The observed record is an accumulation of seasonal activity across the period, filtered further by differential preservation, variable survey coverage and post-depositional processes; the simulated record holds every household position and enclosed compound over the run. The model is therefore judged realistic enough not when it matches the observed patterns exactly, but when the remaining differences could plausibly be attributed to this asymmetry.
 
 ### 2. Entities, state variables, and scales
 
