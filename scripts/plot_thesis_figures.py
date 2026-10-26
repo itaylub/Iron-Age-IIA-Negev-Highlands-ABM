@@ -28,6 +28,16 @@ From ``sensitivity_analysis.ipynb``:
 - ``null_baseline``: histogram of the equal-weights scores against the
   calibrated mean (thesis Fig. A5.1).
 
+Made outside the notebooks for the thesis (Ch. 5), from the calibrated run of
+median score in the null test (``sensitivity/null/``, seeds 8,000,000+; only
+these runs saved each compound event with its cell):
+- ``enclosure_dynamics`` (Fig. 5.10): (A) uses per compound location, with
+  the mean; (B) cumulative unique locations by year, phases split at year 25.
+  Also writes the locations and a summary as .csv;
+- ``occupation_intensity`` (Fig. 5.11): summed occupation per occupied cell,
+  log count axis, with the 0.6 site-classification threshold. Also writes a
+  summary .csv.
+
 From the model itself:
 - ``spatial_similarity``: ``model.obj_func``'s own plot of the run of median
   score, copied from that run's folder;
@@ -320,6 +330,124 @@ def fig_maps(ctx):
     return files
 
 
+# ------------------------------------------------------------ thesis Fig. 5.10 and 5.11 (not in the notebooks)
+
+def sensitivity_median_run(ctx):
+    """The calibrated run of median score in the null test (seeds 8,000,000+).
+
+    Only the sensitivity runs saved each compound event with its cell
+    (``<arm>/enclosures/``), so Fig. 5.10 and 5.11 use one of them.
+    """
+    d = read_csv(ctx, "sensitivity", "null", "runs.csv")
+    cal = d[d["arm"] == "calibrated"].reset_index(drop=True)
+    if cal.empty:
+        raise ValueError("No calibrated runs in sensitivity/null/runs.csv")
+    med = cal["score"].median()
+    r = cal.iloc[(cal["score"] - med).abs().argsort().iloc[0]]
+    return int(r["seed"]), float(r["score"]), int(r["years"])
+
+
+def write_summary(ctx, name, row):
+    import pandas as pd
+
+    p = out(ctx, name, "csv")
+    pd.DataFrame([row]).to_csv(p, index=False)
+    return p
+
+
+def fig_enclosure_dynamics(ctx):
+    """Thesis Fig. 5.10: (A) uses per compound location; (B) cumulative unique locations."""
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    seed, score, years = sensitivity_median_run(ctx)
+    ev = read_csv(ctx, "sensitivity", "null", "calibrated", "enclosures", f"run_{seed}.csv")
+    if ev.empty:
+        raise ValueError(f"Run {seed} has no compound events")
+    loc = (ev.groupby(["mesa_x", "mesa_y"])
+             .agg(uses=("year", "size"), first_year=("year", "min"))
+             .reset_index().sort_values(["uses", "first_year"], ascending=[False, True]))
+    loc_csv = out(ctx, "enclosure_dynamics_locations", "csv")
+    loc.to_csv(loc_csv, index=False)
+
+    n_loc, n_ev = len(loc), len(ev)
+    uses = loc["uses"].to_numpy()
+    mean_uses, max_uses = float(uses.mean()), int(uses.max())
+    yrs = np.arange(years)
+    cum = np.searchsorted(np.sort(loc["first_year"].to_numpy()), yrs, side="right")
+    by25 = int((loc["first_year"] <= 25).sum())  # as run_measures.py: model years 0-25
+    summary = write_summary(ctx, "enclosure_dynamics_summary", {
+        "seed": seed, "score": round(score, 5), "years": years, "locations": n_loc, "events": n_ev,
+        "mean_uses": round(mean_uses, 2), "max_uses": max_uses, "locations_by_year_25": by25,
+        "share_by_year_25_pct": round(100 * by25 / n_loc, 1)})
+    say(f"    seed {seed} (score {score:.4f}): {n_loc} locations, {n_ev} events, mean {mean_uses:.1f} "
+        f"uses, max {max_uses}; {by25} locations by year 25")
+
+    fig, (a, b) = plt.subplots(1, 2, figsize=(14, 5))
+    a.hist(uses, bins=np.arange(0.5, max_uses + 1.5, 1), color="steelblue", edgecolor="black", linewidth=0.5)
+    a.axvline(mean_uses, color="red", linestyle="--", label=f"Mean: {mean_uses:.1f} uses per location")
+    a.annotate(f"Max: {max_uses} uses", xy=(max_uses, int((uses == max_uses).sum())),
+               xytext=(-70, 45), textcoords="offset points",
+               arrowprops=dict(arrowstyle="->", color="black"))
+    a.set_xlabel("Total uses per location")
+    a.set_ylabel("Number of locations")
+    a.set_title(f"A. Location reuse frequency ({n_loc} locations, {n_ev} events)")
+    a.legend()
+    a.grid(axis="y", alpha=0.3)
+
+    b.plot(yrs, cum, color="green", lw=2)
+    b.fill_between(yrs, 0, cum, color="green", alpha=0.15)
+    b.axvline(25, color="black", linestyle=":", lw=1)
+    top = max(int(cum.max()), 1)
+    b.text(12.5, top * 0.3, "Phase I\nRapid construction", ha="center", style="italic", color="dimgray")
+    b.text((25 + years) / 2, top * 0.3, "Phase II\nNew locations rare", ha="center", style="italic",
+           color="dimgray")
+    b.annotate(f"{n_loc} unique locations", xy=(yrs[-1], cum[-1]), xytext=(-150, -40),
+               textcoords="offset points", arrowprops=dict(arrowstyle="->", color="black"),
+               bbox=dict(boxstyle="round", fc="white", ec="gray"))
+    b.set_xlim(0, years - 1)
+    b.set_ylim(0, top * 1.1)
+    b.set_xlabel("Simulation year")
+    b.set_ylabel("Cumulative unique locations")
+    b.set_title("B. Cumulative unique enclosure locations")
+    b.grid(alpha=0.3)
+    plt.tight_layout()
+    return save(ctx, "enclosure_dynamics") + [loc_csv, summary]
+
+
+def fig_occupation_intensity(ctx):
+    """Thesis Fig. 5.11: summed occupation per cell, log count axis, the 0.6 threshold."""
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    seed, score, years = sensitivity_median_run(ctx)
+    p = path_of(ctx, "sensitivity", "null", "calibrated", "occupation", f"run_{seed}.npz")
+    if not os.path.exists(p):
+        raise FileNotFoundError(f"{p} not found")
+    with np.load(p) as d:
+        occ = d["occupation"]
+    if occ.ndim == 3:
+        occ = occ[-1]
+    vals = occ[occ > 0].ravel()
+    threshold = 0.6
+    summary = write_summary(ctx, "occupation_intensity_summary", {
+        "seed": seed, "score": round(score, 5), "years": years, "occupied_cells": int(vals.size),
+        "cells_at_or_above_threshold": int((vals >= threshold).sum()), "threshold": threshold,
+        "max_intensity": round(float(vals.max()), 2)})
+    say(f"    seed {seed}: {vals.size} occupied cells, {int((vals >= threshold).sum())} at or above "
+        f"{threshold}, max {vals.max():.1f}")
+
+    plt.figure(figsize=(10, 5))
+    plt.hist(vals, bins=100, color="#4c72b0", log=True)
+    plt.axvline(threshold, color="tab:red", linestyle="--")
+    plt.text(threshold + 0.01 * float(vals.max()), 0.95, "site-classification\nthreshold (0.6)",
+             color="tab:red", va="top", transform=plt.gca().get_xaxis_transform())
+    plt.xlabel(f"Cumulative occupation intensity per cell (summed over {years} years)")
+    plt.ylabel("Number of cells (log scale)")
+    plt.title("Distribution of simulated occupation intensity")
+    return save(ctx, "occupation_intensity") + [summary]
+
+
 FIGURES = {
     "optimization_history": fig_optimization_history,
     "param_importances": fig_param_importances,
@@ -330,6 +458,8 @@ FIGURES = {
     "territory": fig_territory,
     "null_baseline": fig_null_baseline,
     "spatial_similarity": fig_spatial_similarity,
+    "enclosure_dynamics": fig_enclosure_dynamics,
+    "occupation_intensity": fig_occupation_intensity,
     "maps": fig_maps,
 }
 
