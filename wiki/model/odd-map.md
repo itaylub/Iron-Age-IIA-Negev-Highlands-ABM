@@ -7,7 +7,7 @@ created: 2026-10-08
 
 ODD elements after Grimm et al. (2020), the protocol the README names for the journal version. For each element: where the material is in this wiki and in the owner's documentation, and what is missing. "Gap" means something the ODD needs that neither the code nor Ch. 5 / App. 5 supplies yet, or where they disagree.
 
-The ODD describes the code after PR 8 (commit in [overview](overview.md) frontmatter). Gaps that PR 8 closed in the code are marked "done in PR 8" (2026-10-26); the thesis text for them is corrected through the write-up list in `log.md`. The mechanism pages' bodies still describe the earlier code (status note on each page).
+The ODD is written in [`docs/ODD.md`](../../docs/ODD.md) (Markdown in the repository; a PDF of it for the JAS supplement, the file itself for CoMSES `docs/`; Itay, 2026-10-26), with the headings of Grimm et al. (2020) S1 and, after the ODD, the four sections of S7. The ODD describes the code after PR 8 (commit in [overview](overview.md) frontmatter). Gaps that PR 8 closed in the code are marked "done in PR 8" (2026-10-26); the thesis text for them is corrected through the write-up list in `log.md`. The mechanism pages' bodies still describe the earlier code (status note on each page).
 
 | ODD element | Wiki pages | Owner's documentation | Gaps |
 |---|---|---|---|

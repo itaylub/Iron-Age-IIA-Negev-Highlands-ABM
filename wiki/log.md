@@ -307,3 +307,9 @@ Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13, 14, 15, 16; al
 
 ## [2026-10-26] readings | Q cap decided | — | Claude (Claude Code, research-wiki)
 - Itay, 2026-10-26: leave Q uncapped; record that it never exceeds 1 in the calibrated runs. Recorded on mechanisms/enclosure-construction.md (Things to check, with a write-up line) and model/parameters.md. No code change.
+
+## [2026-10-26] convention | ODD template and format | — | Claude (Claude Code, research-wiki)
+- Itay, 2026-10-26: the ODD is Markdown in the repository, `docs/ODD.md`; a PDF of it goes to JAS as the supplement; CoMSES takes the file in its `docs/` folder.
+- created: `docs/ODD.md`, a skeleton (outside the wiki, at Itay's request): the opening sentence's place, Elements 1–7 with all 11 design concepts and one Element 7 subsection per mechanism plus a parameter table, then "Calibration, simulation experiments, and model analysis" in S7's four parts, software and data, references. Each part has a "To write" block (the S1 or S7 checklist paraphrased, with page numbers) and a "Material" block (wiki links and settled decisions). The calibration objective sits under calibration (S7), not Element 7.
+- format checks: CoMSES review asks for standalone ODD-style documentation that allows replication without the code (comses.net/reviews); its upload tutorial accepts plain text, Markdown, ODT or PDF in `docs/`. The JAS guide for authors (read 2026-10-26): supplementary files "will appear online exactly as received", and articles "should not normally exceed 5000 words excluding tables and references".
+- updated: model/odd-map.md (where the ODD is written).
