@@ -304,3 +304,6 @@ Several of these change calibrated behaviour (1, 3, 4, 9, 12, 13, 14, 15, 16; al
 - site count: `Data/P_for_calib_strict_sites.csv` (Drive copy of the PC's `Data/`) gives 462 table sites on `place_raster` and 463 by the script's default area test; the extra one is site 378, on the buffer band. Itay, 2026-10-26: go with 463; the excluded sites to be described as outside the strict Negev Highlands zone on the Israeli side. Recorded on model/overview.md, Things to check.
 - Q: trial 197's 30 runs (command run by Itay on the PC) give 20,250 values, 0.135–0.545, none above 1. Recorded on mechanisms/enclosure-construction.md and model/parameters.md. Whether to cap Q at 1 is still for Itay.
 - Mesa: the PC environment that ran the calibration has mesa 3.5.1, numpy 2.5.3, Python 3.12.14 (reported by Itay). `requirements.txt` and `environment.yml` now pin `mesa==3.5.1` (conda-forge has 3.5.1); README names Mesa 3, pinned to 3.5.1. Edits outside the wiki made at Itay's request (2026-10-26). CHANGELOG not updated; it does not yet record PR 8 either.
+
+## [2026-10-26] readings | Q cap decided | — | Claude (Claude Code, research-wiki)
+- Itay, 2026-10-26: leave Q uncapped; record that it never exceeds 1 in the calibrated runs. Recorded on mechanisms/enclosure-construction.md (Things to check, with a write-up line) and model/parameters.md. No code change.
