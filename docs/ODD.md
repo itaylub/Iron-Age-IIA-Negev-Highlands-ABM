@@ -22,13 +22,13 @@ This is a test of plausibility rather than of validity. Reproducing the patterns
 
 Two patterns in the observed record serve as criteria for judging whether the model suits its purpose. Both are regional, so the model is not judged on where any single site lies.
 
-The observed record comprises 463 Iron Age IIA sites, 32 of them enclosed compounds, taken from the sites table of the Negev Highlands (Lubel 2026). The table lists 510 sites, and the other 47 lie outside the model area. Most of them lie just across the border in Egypt, where the geological, rainfall and other environmental data the model needs are insufficient. The rest lie south and east of the Negev Highlands, close to them but outside their ecological zone.
+The observed record comprises 463 Iron Age IIA sites, 32 of them enclosed compounds, taken from the sites table of the Negev Highlands (Lubel, 2026). The table lists 510 sites, and the other 47 lie outside the model area. Most of them lie just across the border in Egypt, where the geological, rainfall and other environmental data the model needs are insufficient. The rest lie south and east of the Negev Highlands, close to them but outside their ecological zone.
 
-**Pattern 1: the regional distribution of all sites.** The sites are clustered at every scale tested, with no sign of regular spacing, and they concentrate in an east–west band about 4–8 km wide that runs from the Avdat–Ramat Matred area through Ramat Barnea towards Tell el-Qudeirat (Lubel 2026). Secondary concentrations lie in the north-east (the Yeroham–Dimona syncline) and the south-west (the Horsha–Lotz area). The band coincides with the least-cost passage from the northern Arabah, through the Zin Valley and the central Negev Highlands, to Tell el-Qudeirat. Within it, site densities would exceed what the region could sustain at any one time (compare Rosen & Finkelstein, 1992). The palimpsest hypothesis explains this density as repeated, largely seasonal occupations, with favoured places revisited across generations. If the hypothesis holds, the households' accumulated occupation should concentrate in the same area and along the same axis.
+**Pattern 1: the regional distribution of all sites.** The sites are clustered at every scale tested, with no sign of regular spacing, and they concentrate in an east–west band about 4–8 km wide that runs from the Avdat–Ramat Matred area through Ramat Barnea towards Tell el-Qudeirat (Lubel and Davidovich, in press). Secondary concentrations lie in the north-east (the Yeroham–Dimona syncline) and the south-west (the Horsha–Lotz area). The band coincides with the least-cost passage from the northern Arabah, through the Zin Valley and the central Negev Highlands, to Tell el-Qudeirat. Within it, site densities would exceed what the region could sustain at any one time (compare Rosen and Finkelstein, 1992). The palimpsest hypothesis explains this density as repeated, largely seasonal occupations, with favoured places revisited across generations. If the hypothesis holds, the households' accumulated occupation should concentrate in the same area and along the same axis.
 
 The pattern is measured with a standard deviational ellipse, centred on the mean of the sites, with its two axes scaled to two standard deviations of their spread along the directions of greatest and least dispersion (Yuill, 1971). Its size, elongation and orientation describe where the sites concentrate and along which axis they are drawn out. The observed ellipse is 2.2 times as long as it is wide because of the east–west band, and the sites in the north-east turn its long axis northward, to 55.7° from east.
 
-**Pattern 2: the site-type ratio.** Enclosed compounds, structures with a central courtyard enclosed by a casemate wall, are thought in the literature to be the central nodes of this phenomenon (e.g. Aharoni et al. 1960; Rothenberg 1967; Meshel 1975; Haiman 1992; Cohen & Cohen Amin, 2004; Finkelstein 2014). Sites with an enclosed compound are a small minority, and they may also include circular structures, rectangular structures, towers, four-room houses or unclassified structures. The other sites have no enclosed compound and consist of these structure types alone, singly or in combination. The site classification follows Lubel (2026). The two types are hypothesized to contribute to the archaeological record differently: the other sites record frequent, short-lived repositioning of small social units (e.g. nuclear families), whereas the enclosed compounds were probably reoccupied and reused over longer intervals (Ben-Yosef 2026; Lubel 2026). The palimpsest hypothesis takes the enclosed compounds to be communal, kin-based, multi-purpose territorial centres, built from accumulated household surplus and reused over the years. The ratio of compounds to other sites therefore tests whether the households' decisions to build and reuse compounds produce them at a frequency resembling the observed one.
+**Pattern 2: the site-type ratio.** Enclosed compounds, structures with a central courtyard enclosed by a casemate wall, are thought in the literature to be the central nodes of this phenomenon (e.g. Aharoni et al., 1960; Rothenberg, 1967; Meshel, 1975; Haiman, 1992; Cohen and Cohen Amin, 2004; Finkelstein, 2014). Sites with an enclosed compound are a small minority, and they may also include circular structures, rectangular structures, towers, four-room houses or unclassified structures. The other sites have no enclosed compound and consist of these structure types alone, singly or in combination. The site classification follows Lubel (2026). The two types are hypothesized to contribute to the archaeological record differently: the other sites record frequent, short-lived repositioning of small social units (e.g. nuclear families), whereas the enclosed compounds were probably reoccupied and reused over longer intervals (Ben-Yosef, 2026; Lubel and Davidovich, in press). The palimpsest hypothesis takes the enclosed compounds to be communal, kin-based, multi-purpose territorial centres, built from accumulated household surplus and reused over the years. The ratio of enclosed compounds to other sites therefore tests whether the households' decisions to build and reuse enclosed compounds produce them at a frequency resembling the observed one.
 
 | Pattern | Observed value (463 sites) | Test |
 |---|---|---|
@@ -41,9 +41,95 @@ The observed and simulated records are not symmetrical. The observed record is a
 
 ### 2. Entities, state variables, and scales
 
-> **To write** (S1 pp. 6–10; checklist p. 10). The kinds of entities and what each represents, and why these were included and others left out. A table of each entity's state variables: meaning, units, dynamic or static, type, range. Time: discrete or continuous, step length, extent. Space: discrete or continuous, unit shape and size, extent. Any other dimensions. Why these scales.
->
-> **Material.** [Overview › Entities and state variables](../wiki/model/overview.md#entities-and-state-variables) and [› Scales](../wiki/model/overview.md#scales). Household agents (about ten nuclear families each; the families are not agents); grid cells with the environmental layers; the model-level records (enclosures, this year's territories, occupation accumulator). No crisis flag. Grid 318 rows × 280 columns of 250 m; the extent (3,251.54 km²) includes the buffer. Annual steps, 75 years.
+<!-- Agreed 2026-11-24 in the Claude doc "ODD Element 2: Entities, state variables, and scales". -->
+
+#### 2.1 Entities
+
+The model contains three types of entities: Households, Environment (represented as a raster grid) and Enclosed compounds. Each of the following entities has distinct attributes and roles in the model, as detailed below:
+
+- **Households:** The only agent type, representing an aggregation of closely related families, implemented as 10 nuclear families, each about 5-6 people. The families are not agents: they have no state of their own and appear in the model only as camps, the household's main camp and nine family camps placed within its territory each year. One of those families acts as the main branch of the household which stands for the leader of such social unit. The household communally manages its herd and all its sub-units revolve around the main household camp, bounded in a territory around it. The households are taken to represent the social level where decisions on where to move and camp, whether to build or reuse an enclosed compound and when to sell animals were taken (Khazanov, 1984; Salzman, 2004; Hammer, 2025), and thus are key for the emergence of the palimpsest pattern. The household is a modelling simplification, not a reconstruction of any specific tribal organisation. The model holds a stable population of nine households throughout a run; a household that fails is replaced by a new one (7.9). Nine is half the roughly 18 households the study area could support at carrying capacity: if the palimpsest forms from so few households, a larger population is expected to reinforce it (5).
+- **Environment:** The model's environment is represented as a raster grid of 318 × 280 cells, whose main layer (`suitability_raster`) is the composite score of the following environmental variables:
+  - Proximity to the Tell el-Qudeirat–Faynan corridor (permanent): walking-time cost-distance to the least-cost route between Tell el-Qudeirat and the Faynan copper district.
+  - Proximity to permanent water (permanent): walking-time cost-distance to springs and wells.
+  - Mean annual rainfall (permanent): the long-term mean, interpolated from IMS station records.
+  - Slope (permanent): from the ALOS PALSAR DEM; cells too steep for camping (slope suitability below 1) are set to zero in the composite.
+  - Current-year rainfall (annual): the rainfall of one observed year at a time, interpolated in the same way; the years come in a random order, each used once per run.
+  - Resource exhaustion (dynamic): the degradation that past occupation has accumulated around each cell, recent occupation weighing more.
+  - Reuse potential (dynamic): the accumulated occupation of each cell, which draws households back to used locations, above all to enclosed compounds.
+
+  Those variables are taken to represent the set of considerations that guided the locational decisions of the agents as well as their ability to invest in non-essential building (enclosed compounds). The environment is dynamic and updates landscape-wide once a year (according to the year's rainfall and the occupation history) and locally in relation to the agents' actions (e.g. a camp lowers the suitability of the cells around it for the rest of the year (7.5)). This dynamic representation of the environment is meant to capture the temporal dimension and considerations that led the agents' locational decisions. The environment records the agents' camps and enclosed compounds through the yearly occupation layer (`target_raster`), added each year to the occupation history (`return_raster`), which in turn alters the environmental values.
+
+  Besides the composite, the grid holds two annual layers that are kept out of it: the year's pasture and cultivable land. Both derive from that year's rainfall, so weighting them beside it would count rainfall twice. The households read them directly instead: pasture, reduced where resources are exhausted, sets what the herds can graze; cultivable land lowers the herd a household needs; and both help rank the sites for enclosed compounds (7.6, 7.7, 7.8).
+- **Enclosed compounds:** Built structures that represent the enclosed compounds of the archaeological record (1.2), an architectural type that has been attributed significant importance throughout the research history (1.2). In the model, following the palimpsest hypothesis, they are taken to be communal infrastructure built from accumulated household surplus, rather than fortresses or seats of authority, and they are hypothesized to have served for seasonal storage, social gatherings and perhaps also exchange (Lubel and Davidovich, in press). They are the model's only lasting trace of household wealth, and through them the yearly decisions of a few households can fix places in the landscape for decades. No enclosed compounds exist at the start of a run; their number is an outcome of the households' prosperity rather than a parameter (7.8). Enclosed compounds have no behaviour of their own. Each occupies a single cell and holds a history of use, the year and household of every build or reuse, so one enclosed compound can record many visits by several households. A build or reuse is assumed to weigh more in the occupation history than a camp, so standing enclosed compounds draw households back (7.2), and in the output every cell that has held one becomes an enclosed compound site (7.10).
+
+#### 2.2 State variables
+
+The state variables in the model are split for convenience of presentation by entity: households, environment and enclosed compounds.
+
+**Households** (`Household_Agent`; values from `Code/model.py` at `b5a951f`)
+
+| Variable (code) | Type and units | Static or dynamic | Initial value | Meaning |
+|---|---|---|---|---|
+| Herd size (`flock_head`) | integer; goats (all animals counted as goats) | dynamic, yearly | sum of ten draws of ⌊N(105, 15)⌋, one per family; a replacement inherits the failed household's herd plus ten draws of ⌊N(90, 15)⌋ | the household's main productive asset |
+| Manpower (`manpower`) | integer; people | dynamic, yearly | max(35, ⌊herd / 20⌋) | the people available for herding, moving and building |
+| Surplus (`surplus`) | real number; surplus units (a model unit with no real-world equivalent) | dynamic, yearly | 0; a replacement inherits the failed household's surplus | accumulated wealth, drawn on in lean years and spent on enclosed compounds |
+| Main camp (`pos`) | grid cell, (x, y) integers | dynamic, drawn each year | drawn on the shared suitability surface alone at Year 0 | where the household camps this year |
+| Last camp (`last_camp`) | grid cell, (x, y) integers | dynamic | none until the first year ends | last year's main camp, kept to move the home-range centre |
+| Home-range centre (`general_territory_center`) | (x, y) real numbers; grid cells | dynamic | the first camp | the centre of the area the household returns to; moved a tenth of the way towards each year's camp |
+| Territory (`territory`) | set of grid cells, each (x, y) integers | dynamic, set each year | radius 25 around the camp at Year 0 | the cells within 20, 25 or 30 cells of the main camp, the radius larger where local suitability is low; the family camps lie inside it |
+| Camp memory (`memory`) | list of (cell, (x, y) integers; local mean suitability, real number on the 0–10 scale; year, integer) | dynamic | the Year-0 main and family camps | past main and family camps; each entry is forgotten at random, the more likely the older it is |
+| Enclosure memory (`enc_memory`) | list of (cell, (x, y) integers; year, integer) | dynamic | empty | the enclosed compounds the household has built or reused |
+| Prosperity index (`prosperity_index`) | real number; dimensionless | derived, each year | none | surplus per worker × Q; gates enclosed compound building and reuse |
+| Environmental quality, Q (`env_quality`) | real number; dimensionless | derived, each year | none | mean shared suitability within 20 cells of the camp ÷ 10 |
+| Personal suitability surface (`own_suitability_raster`, `home_memory_bonus`) | 318 × 280 grid of real numbers; suitability scale | derived, rebuilt each year | none | the shared surface plus the household's home-range, camp-memory and territory bonuses; the household draws its camps from it |
+
+**Environment: global variables** (`NomadModel`)
+
+| Variable (code) | Type and units | Static or dynamic | Meaning |
+|---|---|---|---|
+| Year (`year`) | integer; years | dynamic | the current year, counted from 0; a run lasts 75 years |
+| Rainfall order (`inds`) | list of integers; indices of the rainfall years | static within a run | the order of the observed rainfall years, shuffled once per run so that each is used once |
+| Suitability weights (`weights`) | seven real numbers summing to 1; dimensionless | static | the weights of the seven layers in the composite, and the only parameters fitted in the calibration |
+| Territories this year (`territories`) | list of sets of grid cells, each (x, y) integers | dynamic, reset each year | the territories already set this year, which later households avoid overlapping |
+| Enclosed compound events (`enclosures`) | list of (cell, (x, y) integers; year, integer; household) | dynamic | every build and reuse so far; this list is the state of the enclosed compounds |
+| Waiting replacements (`scheduled_new_agents`) | list of (herd, integer goats; surplus, real number in surplus units) | dynamic | the herd and surplus of households that failed this year, handed to their replacements at the start of the next |
+
+**Environment: grid layers** (318 × 280 cells)
+
+| Layer (code) | Type and scale | Static or dynamic | Meaning |
+|---|---|---|---|
+| Corridor proximity (`kb_suitability_raster`) | real number, 0–10 | static | walking-time cost-distance to the least-cost route between Tell el-Qudeirat and the Faynan copper district (2.1) |
+| Permanent water (`pw_suitability_raster`) | real number, 0–10 | static | walking-time cost-distance to springs and wells (2.1) |
+| Mean annual rainfall (`rain_suitability_raster`) | real number, 0–10 | static | the long-term mean, interpolated from IMS station records (2.1) |
+| Slope (`slp_suitability_raster`) | real number, 0–10 | static | from the ALOS PALSAR DEM; where it is below 1 the composite is set to 0 (2.1) |
+| Current-year rainfall (`YrainFuzzyMember_calc`) | real number, 0–10 | yearly | the rainfall of the year in turn |
+| Resource exhaustion (`yi_hu_stressed_z`, kept as `stress_ras`) | real number, 0–10 | yearly | the occupation history smoothed over a 20-cell radius and rescaled: 10 where the surroundings are unused, falling to 0 where they are heavily used |
+| Reuse potential (`return_ras`) | real number, 0 upwards, no upper bound | yearly | the occupation history × 5, cell by cell |
+| Shared suitability (`suitability_raster`) | real number, 0–10, higher only where reuse potential is high | yearly, and lowered within the year around each camp | the weighted sum of the seven layers, set to 0 on slopes too steep for camping and outside the Negev Highlands outline |
+| Occupation history (`return_raster`) | real number, 0 upwards | yearly | halved each year, with last year's occupation added (cells at 2 or more weighted × 1.5) |
+| Occupation this year (`target_raster`) | real number, 0 upwards | within the year, reset each year | +0.5 per main camp, +0.25 per family camp, +1 per enclosed compound reuse, +(1 + 2 × prosperity index) per new enclosed compound |
+| Pasture (`veg_ras`) and grazable pasture (`veg_map`) | real number, 0 upwards | yearly | the year's pasture, and the same reduced where resources are exhausted |
+| Cultivable land (`ag_ras`) | real number, 0–10 | yearly | the year's cultivable land |
+| Negev Highlands outline (`ext_raster`) | integer, 0 or 1 | static | suitability is 0 outside it |
+| Placement area (`place_raster`) | integer, 0 or 1 | static | where camps may be placed; the band between it and the outline is the buffer |
+
+**Enclosed compounds** (records in `enclosures`)
+
+| Variable | Type and units | Static or dynamic | Meaning |
+|---|---|---|---|
+| Location | grid cell, (x, y) integers | static once built | the cell the enclosed compound occupies |
+| History of use | list of (year, integer; household) | dynamic | one entry per build or reuse at that cell |
+| Time since last use | integer; years | derived | sets whether a household may reuse it: its own within 35 years, others' within 25 (7.8) |
+
+#### 2.3 Scales
+
+The model's space is a discrete grid of 318 × 280 square cells, each 250 × 250 m, covering 79.5 km from north to south and 70 km from east to west. All layers share the Israel Transverse Mercator projection (EPSG:2039), consistent with the sites database (Lubel, 2026) and with the spatial analysis (Lubel and Davidovich, in press). The cell size balances computational cost against two spatial limits. The positional error of survey coordinates can be roughly 100–500 m, as most were taken by hand (Sion, 2014; Davidovich, 2014). Moreover, the remains of a site can often extend over some 400 m (e.g. Rothenberg, 1967; Bruins et al., 2012). A finer cell size would therefore suggest more precise site locations than the recorded coordinates and their own spread represent.
+
+The modelled area follows the natural topographic limits of the Negev Highlands, except in the west, where the placement area is cut at the modern Israel–Egypt border for lack of comparable environmental data (1.2). The Negev Highlands outline (3,251 km²) bounds the suitable landscape, and the placement area (2,347 km²) confines camps to the Israeli part. Space is bounded, not toroidal (Lake, 2020). The band between the masks acts as a buffer: degradation and resource availability are computed across it, but no camp is placed in it, which is meant to keep the region's edge from leaving an artefact in the simulated record. At this scale, the households' working distances of 5–7.5 km for territories and 5 km for Q and the enclosed compound search tie each decision to a local neighbourhood, while the pattern the model is judged on is regional (1.2).
+
+Time advances in annual steps; each step is one episode of occupation in the Negev Highlands, in which every household sets a main camp and its family camps. The model does not specify where a move begins (the Arabah, the previous camp or elsewhere). One move a year simplifies an unknown and diverse rhythm of movement. Annual steps are fine enough to simulate the decisions hypothesized to generate the record, and a finer resolution would add uncertainty and computational cost without need (KISS; Romanowska et al., 2021). The order of the processes within a year is given in section 3.
+
+A run lasts 75 steps (Years 0–74), and each step uses one of the observed rainfall years, drawn in a random order so that each is used once (2.2). Seventy-five years is the minimum duration attributed to the Iron Age IIA activity under the low chronology (Boaretto et al., 2010; Finkelstein and Piasetzky, 2011), although radiocarbon dates suggest it persisted considerably longer (Bruins and van der Plicht, 2007; Mamalya and Erickson-Gini, 2019). The minimal span is a deliberate choice: if the palimpsest can emerge within the shortest span the record allows, a longer duration is expected to reinforce it.
 
 ### 3. Process overview and scheduling
 
